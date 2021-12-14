@@ -1,0 +1,404 @@
+{{#is type 'text'}}
+    <div class="container-block">
+        <div class="html-block rich-text">{{{text}}}</div>
+    </div>
+{{else}}{{#is type 'button'}}
+    {{#if button.url}}
+        {{#if button.is_new_tab}}
+            <a href="{{button.url}}" target="_blank" class="button-block">{{text}}</a>
+        {{else}}
+            <a href="{{button.url}}" class="button-block">{{text}}</a>
+        {{/if}}
+    {{else}}{{#if button.block}}
+        <a href="#" data-block="{{button.block}}" class="button-block">{{text}}</a>
+    {{/if}}{{/if}}
+{{else}}{{#is type 'divider'}}
+    <div class="divider-block">
+        {{#is divider.type 'empty'}}
+            <div class="divider-line"></div>
+            {{#if text}}
+                <div class="divider-content">
+                    <p class="divider-text">{{text}}</p>
+                </div>
+            {{/if}}
+        {{else}}
+            <div class="divider-line"></div>
+            <div class="divider-content">
+                {{#if text}}<p class="divider-text">{{text}}</p>{{/if}}
+                {{#is divider.type 'animation'}}
+                    <p class="divider-btn" data-name="{{divider.name}}">Play animation</p>
+                {{else}}{{#is divider.type 'music'}}
+                    <div class="audio-block">
+                        <audio src="https://d1u3z33x3g234l.cloudfront.net/music/{{divider.name}}.mp3" preload="auto" controls></audio>
+                    </div>
+                {{/is}}{{/is}}
+            </div>
+        {{/is}}
+    </div>
+{{else}}{{#is type 'toggle_list'}}
+    <div class="toggle-block">
+        {{#each items}}
+            <div class="one-item one-toggle-item">
+                <div class='item-title'>{{title}}</div>
+                <div class='item-text'>{{{text}}}</div>
+            </div>
+        {{/each}}
+    </div>
+{{else}}{{#is type 'image'}}
+    <div class="container-block">
+        <div class="image-block"><img src="{{image.l}}" alt="{{title}}"></div>
+    </div>
+{{else}}{{#is type 'audio'}}
+    <div class="container-block">
+        {{#if title}}<p class="block-title">{{title}}</p>{{/if}}
+        <div class="audio-block">
+            <audio src="{{provider.url}}" preload="auto" controls></audio>
+        </div>
+    </div>
+{{else}}{{#is type 'video'}}
+    <div class="container-block">
+        {{#if title}}<p class="block-title">{{title}}</p>{{/if}}
+        <div class="video-block">
+            <video class="video-js view-video" width="960" height="540" preload="auto" controls>
+                <source src="{{provider.url}}" type="video/mp4">
+            </video>
+        </div>
+    </div>
+{{else}}{{#is type 'file'}}
+    <div class="file-block block-table">
+        <div class="block-type file-type">
+             <div class="{{getFileIcon file.ext}}">
+                 <label>{{file.ext}}</label>
+             </div>
+        </div>
+        <div class="container-block block-details">
+            <p class="block-title">{{title}}</p>
+            <p class="block-provider">
+                <a href='{{provider.url}}' target="_blank">
+                    <span>{{provider.name}}</span>
+                    {{#if file.size}}
+                        <span>| {{getFileSize file.size}}</span>
+                    {{/if}}
+                </a>
+            </p>
+        </div>
+    </div>
+{{else}}{{#is type 'link'}}
+    <div class="link-block block-table">
+        {{#and embed embed.code}}
+            <div class="block-embed">{{{embed.code}}}</div>
+        {{else}}{{#if image.m}}
+            <div class="block-image image-left" style="background-image: url('{{image.m}}'); height: {{bound}}px;"></div>
+        {{/if}}{{/and}}
+        {{#and embed embed.code}}<div class="container-block block-details with-embed">{{else}}<div class="container-block block-details">{{/and}}
+            <p class="block-title">{{title}}</p>
+            <p class="block-provider">
+                <a href='{{provider.url}}' target="_blank">
+                    <span>{{provider.name}}</span>
+                    {{#if file.size}}
+                        <span>| {{getFileSize file.size}}</span>
+                    {{/if}}
+                </a>
+            </p>
+            <p class="block-text">{{{text}}}</p>
+        </div>
+    </div>
+{{else}}{{#is type 'gif'}}
+    <div class="container-block gif-block">
+        <video autoplay loop muted width="{{gif.width}}px;" height="{{gif.height}}px;" src="{{gif.embed}}">
+        </video>
+    </div>
+{{else}}{{#is type 'mcq'}}
+    <div class="container-block mcq-block">
+        <p class="block-title">{{title}}</p>
+        {{#and mcqs mcqs.length}}
+            <div class="block-options">
+            {{#each mcqs}}
+                {{#hasUserSelectedOption voters}}
+                    <div class="block-option selected" data-id="{{_id}}">
+                {{else}}
+                    <div class="block-option" data-id="{{_id}}">
+                {{/hasUserSelectedOption}}
+                    {{#if image.m}}
+                        <div class="block-image" style="background-image: url('{{image.m}}'); height: {{bound}}px;"></div>
+                    {{/if}}
+                    <div class="block-details">
+                        <p class="block-text">{{{text}}}</p>
+                    </div>
+                </div>
+            {{/each}}
+            </div>
+        {{/and}}
+    </div>
+{{else}}{{#is type 'fill'}}
+    <div class="container-block fill-block">
+        <p class="block-title">{{title}}</p>
+        {{#if text}}<p class="block-text">{{{text}}}</p>{{/if}}
+        {{#and fills fills.length}}
+            <div class="block-fills">
+            {{#each fills}}
+                {{#if text}}
+                    <span class="one-fill">{{text}}</span>
+                {{else}}
+                    {{#and responses responses.length}}
+                        <input placeholder="" type="text" autocomplete="off" class="blank-fill entity-title" data-id="{{_id}}" style="width: {{getSizeX size 200}}px;" value="{{getUserFill responses}}">
+                    {{else}}
+                        <input placeholder="" type="text" autocomplete="off" class="blank-fill entity-title" data-id="{{_id}}" style="width: {{getSizeX size 200}}px;">
+                    {{/and}}
+                {{/if}}
+            {{/each}}
+            </div>
+            <a class="js-fill-blanks entity-btn" href="#">Save</a>
+        {{/and}}
+    </div>
+{{else}}{{#is type 'match'}}
+    <div class="container-block match-block">
+        <p class="block-title">{{title}}</p>
+        {{#if text}}<p class="block-text">{{{text}}}</p>{{/if}}
+        <div class="match-options">
+            {{#and options options.length}}
+                <div class="block-options block-options-left">
+                    {{#each (getMatchOptions options false)}}
+                        <div class="block-option block-table" data-id="{{_id}}">
+                            {{#if color}}
+                                <p class="match-colors"><span class="one-color" style="background-color: {{color}};"></span></p>
+                            {{/if}}
+                            {{#if image.m}}
+                                <div class="block-image" style="background-image: url('{{image.m}}'); height: {{bound}}px;"></div>
+                            {{/if}}
+                            <div class="block-details">
+                                <p class="block-text">{{{text}}}</p>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+                <div class="block-options block-options-right">
+                    {{#each (getMatchOptions options true)}}
+                        <div class="block-option block-table block-table-right" data-id="{{_id}}">
+                            {{#and matchers matchers.length}}
+                                <p class="match-colors">
+                                {{#each (getMatchColors ../options matchers)}}
+                                    <span class="one-color" style="background-color: {{color}};" data-id="{{matched_to}}"></span>
+                                {{/each}}
+                                </p>
+                            {{/and}}
+                            {{#if image.m}}
+                                <div class="block-image" style="background-image: url('{{image.m}}'); height: {{bound}}px;"></div>
+                            {{/if}}
+                            <div class="block-details">
+                                <p class="block-text">{{{text}}}</p>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+            {{/and}}
+        </div>
+    </div>
+{{else}}{{#is type 'response'}}
+    <div class="container-block response-block">
+        <p class="block-title">{{title}}</p>
+        {{#if text}}<p class="block-text">{{{text}}}</p>{{/if}}
+        {{#is response_type 'text'}}
+            {{#and responses responses.length}}
+                <textarea placeholder="Write your thoughts/answer here..." class="text-response entity-text">{{{responses.0.text}}}</textarea>
+                <a class="js-submit-response js-update-response entity-btn" href="#">Update</a>
+                <span class="remove-response u-delete">Remove</span>
+            {{else}}
+                <textarea placeholder="Write your thoughts/answer here..." class="text-response entity-text"></textarea>
+                <a class="js-submit-response entity-btn" href="#">Save</a>
+            {{/and}}
+        {{else}}{{#is response_type 'audio'}}
+            {{#and responses responses.length}}
+                <audio class="video-js view-audio" width="480" height="360" preload="auto" controls>
+                    <source src="{{responses.0.attachments.0.provider.url}}" type="audio/webm">
+                </audio>
+                <span class="remove-response u-delete">Remove</span>
+            {{else}}
+                <audio id="response-{{_id}}" class="video-js response-audio vjs-default-skin"></audio>
+                <p class="block-text">Click microphone above to record your audio</p>
+                <form method="post" action="https://chibuzz-uploads.s3.amazonaws.com/" enctype="multipart/form-data" class="audio-response">
+                    <div class="audio-response-drop">
+                        <input type="hidden" name="key">
+                        <input type="hidden" name="AWSAccessKeyId" value="AKIAIT3BY3EDOZPAPDEQ">
+                        <input type="hidden" name="acl" value="public-read">
+                        <input type="hidden" name="policy">
+                        <input type="hidden" name="signature">
+                        <input type="hidden" name="success-action-status" value="201">
+                        <input type="hidden" name="Content-Type">
+                        <input type="file" name="file" class="file-input">
+                    </div>
+                </form>
+            {{/and}}
+        {{else}}{{#is response_type 'video'}}
+            {{#and responses responses.length}}
+                <video class="video-js view-video" width="480" height="360" preload="auto" controls>
+                    <source src="{{responses.0.attachments.0.provider.url}}" type="video/webm">
+                </video>
+                <span class="remove-response u-delete">Remove</span>
+            {{else}}
+                <video id="response-{{_id}}" class="video-js response-video vjs-default-skin"></video>
+                <p class="block-text">Click microphone above to record your video</p>
+                <form method="post" action="https://chibuzz-uploads.s3.amazonaws.com/" enctype="multipart/form-data" class="video-response">
+                    <div class="video-response-drop">
+                        <input type="hidden" name="key">
+                        <input type="hidden" name="AWSAccessKeyId" value="AKIAIT3BY3EDOZPAPDEQ">
+                        <input type="hidden" name="acl" value="public-read">
+                        <input type="hidden" name="policy">
+                        <input type="hidden" name="signature">
+                        <input type="hidden" name="success-action-status" value="201">
+                        <input type="hidden" name="Content-Type">
+                        <input type="file" name="file" class="file-input">
+                    </div>
+                </form>
+            {{/and}}
+        {{else}}{{#is response_type 'canvas'}}
+            <div id="response-{{_id}}" class="response-canvas"></div>
+        {{else}}{{#is response_type 'file'}}
+            {{#and responses responses.length}}
+                <div class="view-file file-type">
+                     <div class="{{getFileIcon file.ext}}">
+                         <label>{{responses.0.attachments.0.file.ext}}</label>
+                     </div>
+                     <a href='{{responses.0.attachments.0.provider.url}}' target="_blank" class="block-provider">
+                         <span>{{responses.0.attachments.0.provider.name}}</span>
+                         {{#if responses.0.attachments.0.file.size}}
+                             <span>| {{getFileSize responses.0.attachments.0.file.size}}</span>
+                         {{/if}}
+                     </a>
+                </div>
+                <span class="remove-response u-delete">Remove</span>
+            {{else}}
+                <form method="post" action="https://chibuzz-uploads.s3.amazonaws.com/" enctype="multipart/form-data" class="file-response">
+                    <div id="response-{{_id}}" class="file-response-drop drop-area">
+                        <span>Choose files or drag and drop them here</span>
+                        <input type="hidden" name="key">
+                        <input type="hidden" name="AWSAccessKeyId" value="AKIAIT3BY3EDOZPAPDEQ">
+                        <input type="hidden" name="acl" value="public-read">
+                        <input type="hidden" name="policy">
+                        <input type="hidden" name="signature">
+                        <input type="hidden" name="success-action-status" value="201">
+                        <input type="hidden" name="Content-Type">
+                        <input type="file" name="file" class="file-input">
+                    </div>
+                </form>
+            {{/and}}
+        {{/is}}{{/is}}{{/is}}{{/is}}{{/is}}
+    </div>
+{{else}}{{#is type 'grid'}}
+    <div class="container-block grid-block">
+        <p class="block-title">{{title}}</p>
+        {{#if text}}<p class="block-text">{{{text}}}</p>{{/if}}
+        {{#and items items.length}}
+            <div class="block-options">
+            {{#each items}}
+                <div class="block-option" data-id="{{_id}}">
+                    {{#if image.m}}
+                        <div class="block-image" style="background-image: url('{{image.m}}'); height: {{bound}}px;"></div>
+                    {{/if}}
+                    {{#if text}}
+                        <div class="block-details">
+                            <p class="block-text">{{{text}}}</p>
+                        </div>
+                    {{/if}}
+                </div>
+            {{/each}}
+            </div>
+        {{/and}}
+    </div>
+{{else}}{{#is type 'list'}}
+    <div class="container-block list-block">
+        <p class="block-title">{{title}}</p>
+        {{#if text}}<p class="block-text">{{{text}}}</p>{{/if}}
+        {{#and items items.length}}
+            <div class="list-items">
+            {{#each items}}
+                <div class="one-list-item" data-id="{{_id}}">
+                    {{#if is_right}}
+                        <div class="one-list-content is-right">
+                            {{#if text}}
+                                <p class="list-text">{{{text}}}</p>
+                            {{else}}
+                                <input placeholder="..." type="text" autocomplete="off" class="list-input entity-title">
+                            {{/if}}
+                            {{#if image.m}}
+                                <span class="list-image" style="background-image: url('{{image.m}}');"></span>
+                            {{/if}}
+                        </div>
+                    {{else}}
+                    <div class="one-list-content">
+                        {{#if image.m}}
+                            <span class="list-image" style="background-image: url('{{image.m}}');"></span>
+                        {{/if}}
+                        {{#if text}}
+                            <p class="list-text">{{{text}}}</p>
+                        {{else}}
+                            <input placeholder="..." type="text" autocomplete="off" class="list-input entity-title">
+                        {{/if}}
+                    </div>
+                    {{/if}}
+                </div>
+            {{/each}}
+            </div>
+        {{/and}}
+    </div>
+{{else}}{{#is type 'container'}}
+    <div class="container-block container-item-block">
+        <div class="container-content">
+            {{#if title}}<p class="block-title">{{title}}</p>{{/if}}
+            {{#if text}}<p class="block-text">{{{text}}}</p>{{/if}}
+        </div>
+        {{#if image.m}}
+            <div class="container-image" style="background-image: url('{{image.m}}'); height: {{bound}}px;"></div>
+        {{/if}}
+    </div>
+{{else}}{{#is type 'comic'}}
+    <div class="container-block comic-block">
+        {{#if text}}<p class="block-text">{{{text}}}</p>{{/if}}
+        {{#and image image.m}}<div class="comic-image"><img src="{{image.l}}"></div>{{/and}}
+    </div>
+{{else}}{{#is type 'embed'}}
+    <div class="container-block embed-block">
+        {{#if title}}<p class="block-title">{{title}}</p>{{/if}}
+        <div class="block-embed">{{{embed.code}}}</div>
+    </div>
+{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}{{/is}}
+{{#if art}}
+    <div class="block-art" style="background-image: url('{{art.m}}'); height: {{art.bound}}px;"></div>
+{{/if}}
+{{#hasCourseEditingRights}}
+    <div class="block-actions">
+        <span class="action-edit-block js-edit-block" title="Edit block - {{order}}"></span>
+        <span class="action-edit-theme js-edit-theme" title="Edit theme"></span>
+        <span class="action-discuss js-discuss" title="Discuss"></span>
+        {{#canShowResponse type}}
+            <span class="action-show-responses js-show-responses" title="Show responses"></span>
+        {{/canShowResponse}}
+        {{#canShowIfttt type}}
+            <span class="action-edit-ifttt js-edit-ifttt" title="Add feedback or Update progress"></span>
+        {{/canShowIfttt}}
+        <span class="action-add-block-below js-add-block-below" title="Add a block below"></span>
+    </div>
+{{else}}
+    {{#if has_discussion}}
+        <div class="block-actions only-discuss">
+            <span class="action-discuss js-discuss" title="Discuss"></span>
+        </div>
+    {{/if}}
+{{/hasCourseEditingRights}}
+{{#and has_discussion comments.length}}
+    <div class="block-comment">
+        {{#isCurrentUser comments.0.creator._id}}
+            {{#if comments.0.summary}}
+                <p class="comment-main"><span class="name" data-username="{{comments.0.creator.name}}">You</span>: <span class="comment-html">{{{comments.0.summary}}}</span></p>
+            {{else}}
+                <p class="comment-main"><span class="name" data-username="{{comments.0.creator.name}}">You</span>: <span class="comment-html">{{{comments.0.text}}}</span></p>
+            {{/if}}
+        {{else}}
+            {{#if comments.0.summary}}
+                <p class="comment-main"><span class="name" data-username="{{comments.0.creator.username}}">{{getFirstName comments.0.creator.name}}</span>: <span class="comment-html">{{{comments.0.summary}}}</span></p>
+            {{else}}
+                <p class="comment-main"><span class="name" data-username="{{comments.0.creator.username}}">{{getFirstName comments.0.creator.name}}</span>: <span class="comment-html">{{{comments.0.text}}}</span></p>
+            {{/if}}
+        {{/isCurrentUser}}
+    </div>
+{{/and}}

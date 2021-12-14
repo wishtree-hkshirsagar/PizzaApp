@@ -1,0 +1,22 @@
+<div class="overlay-box course-members-box">
+    <div class="overlay-form">
+        <h2 class="message">Accept members:</h2>
+        <input type="text" class="collab-input entity-title" placeholder="Add members (comma-separated list of unique ids)" autocomplete="off" spellcheck="false">
+        <div class="member-list"></div>
+        <div class="entity-done js-done">Done</div>
+    </div>
+    <div class="overlay-about">
+        <div class="course-creator">
+            <p class="overlay-label">Created by:</p>
+            <div class="person">
+                {{#if creator.dp}}
+                    <p class="user-image" style="background-image:url({{creator.dp.s}})"></p>
+                {{else}}
+                    <p class="user-initials"><span>{{creator.initials}}</span></p>
+                {{/if}}
+                <p class="name">{{creator.name}}</p>
+            </div>
+        </div>
+    </div>
+    <a class="overlay-close js-close" href="#"></a>
+</div>

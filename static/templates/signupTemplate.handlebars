@@ -1,0 +1,43 @@
+<div class="overlay-box signup-box">
+    <div class="overlay-form">
+        <h2 class="message js-title">Sign Up<span></span></h2>
+        <form method="post" action="/signup" class="form form--modal js-form">
+            <div class="js-email">
+                <p class="u-formError"></p>
+                <input class="input" name="email" value="" placeholder="Your email" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="js-name">
+                <p class="u-formError"></p>
+                <input class="input" name="name" value="" placeholder="Your name" autocomplete="off" type="text">
+            </div>
+            <div class="js-contact">
+                <p class="u-formError"></p>
+                <input class="input" name="contact" value="" placeholder="Your contact number" autocomplete="off" type="number">
+            </div>
+            <div class="js-password">
+                <p class='u-formError'></p>
+                <input class="input input--show" name="password" value="" autocomplete="off" placeholder="Password (min 8 characters)" type="password">
+                <span class="show-password u-noSelect">show</span>
+            </div>
+            <div class="js-confirm-password">
+                <p class='u-formError'></p>
+                <input class="input input--show" name="confirmPassword" value="" placeholder="Confirm password (min 8 characters)" type="password">
+            </div>
+            <div class='form-action'>
+                <div class='action-consent u-alignLeft'>
+                    <label class="label">
+                        <input class="checkbox" type="checkbox" name="allow_consent">
+                        <b>I agree to FramerSpace <a href="#" target="_blank" class="js-terms">Terms and Data Policy.</a><b>
+                    </label>
+                </div>
+            </div>
+            <input name="submit" value="Sign up" class="btn-submit js-submit u-disabled" type="submit">
+        </form>
+    </div>
+    <div class="overlay-about">
+        <div class="overlay-art"></div>
+        <p class="message">Already have an account?</p>
+        <a href="/login" class="overlay-btn js-login">Log in</a>
+    </div>
+    <a class="overlay-close js-close" href="#"></a>
+</div>

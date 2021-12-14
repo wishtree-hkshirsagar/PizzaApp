@@ -1,0 +1,33 @@
+<div class="overlay-box course-badges-box">
+    <div class="overlay-form">
+        <h2 class="message">Add badges and skills:</h2>
+        <form method="post" action="https://chibuzz-uploads.s3.amazonaws.com/" enctype="multipart/form-data" class="badge-upload">
+            <div id="drop-badge" class="drop-area drop-area-small">
+                <span>Add image</span>
+                <input type="hidden" name="key">
+                <input type="hidden" name="AWSAccessKeyId" value="AKIAIT3BY3EDOZPAPDEQ">
+                <input type="hidden" name="acl" value="public-read">
+                <input type="hidden" name="policy">
+                <input type="hidden" name="signature">
+                <input type="hidden" name="success-action-status" value="201">
+                <input type="hidden" name="Content-Type">
+                <input type="file" name="file" class="file-input">
+            </div>
+        </form>
+        <input placeholder="Badge name*" type="text" autocomplete="off" class="badge-title entity-title">
+        <p class="overlay-label">Is skill?</p>
+        <label class="overlay-checkbox skill-label">
+            <input class="checkbox" type="checkbox" name="skill-input"><span>Make this badge a skill. This allows to track incremental progress.</span>
+        </label>
+        <div class="entity-btn save-badge js-save-badge">Add <span>badge</span></div>
+    </div>
+    <div class="overlay-about">
+        <div class="course-badges">
+            <p class="overlay-label">Skills:</p>
+            <div class="skill-list"></div>
+            <p class="overlay-label">Badges:</p>
+            <div class="badge-list"></div>
+        </div>
+    </div>
+    <a class="overlay-close js-close" href="#"></a>
+</div>

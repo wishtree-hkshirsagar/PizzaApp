@@ -1,0 +1,47 @@
+{{#is type 'response'}}
+    <p class="type">{{type}} - {{response_type}}</p>
+{{else}}
+    <p class="type">{{type}}</p>
+{{/is}}
+<p>{{#if title}}{{title}}{{else}}{{{text}}}{{/if}}</p>
+<p class="insight-responses">
+    {{#is type 'mcq'}}
+        {{#and mcqs mcqs.length}}
+            {{#each mcqs}}
+                <span class="one-response">{{text}}</span>
+            {{/each}}
+        {{/and}}
+    {{else}}{{#is type 'fill'}}
+        {{#and fills fills.length}}
+            {{#each (getBlankFills fills)}}
+                {{#if responses.length}}
+                    <span class="one-response">Blank {{add @index '1'}} - {{responses.0.text}}</span>
+                {{/if}}
+            {{/each}}
+        {{/and}}
+    {{else}}{{#is type 'match'}}
+        {{#and options options.length}}
+            {{#each (getMatchArr options)}}
+                <span class="one-response">Option: {{this.[0].[1]}} - {{this.[0].[4]}}</span>
+            {{/each}}
+        {{/and}}
+    {{else}}{{#is type 'response'}}
+        {{#is response_type 'text'}}
+            {{#each responses}}
+                <span class="one-response">{{text}}</span>
+            {{/each}}
+        {{else}}{{#is response_type 'audio'}}
+            {{#each responses}}
+                <span class="one-response"><a href="{{attachments.0.provider.url}}" target="_blank">Play audio here</a></span>
+            {{/each}}
+        {{else}}{{#is response_type 'video'}}
+            {{#each responses}}
+                <span class="one-response"><a href="{{attachments.0.provider.url}}" target="_blank">Play video here</a></span>
+            {{/each}}
+        {{else}}{{#is response_type 'file'}}
+            {{#each responses}}
+                <span class="one-response"><a href="{{attachments.0.provider.url}}" target="_blank">View {{attachments.0.file.ext}} file here</a></span>
+            {{/each}}
+        {{/is}}{{/is}}{{/is}}{{/is}}
+    {{/is}}{{/is}}{{/is}}{{/is}}
+</p>

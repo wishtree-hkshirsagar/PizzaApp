@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pizza Hut</title>
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="/images/site/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="/images/site/favicon.ico" type="image/x-icon">
+       
+        <!-- Responsive meta tags -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400;1,600&family=IBM+Plex+Serif:ital,wght@0,400;0,700;1,400;1,600&display=swap" rel="stylesheet">
+        <!-- Style -->
+        <link rel="stylesheet" type="text/css" href="/css/login_style.css">
+        <link rel="stylesheet" type="text/css" href="/css/lib/intro.min.css">
+    </head>
+    <body>
+        <!-- Header -->
+        <div class="headerWrap">
+            <div class="sectionBox">
+                <a href='/' class="logo-main">
+                    <img src="/images/site/logo.png" srcset="/images/site/logo@2x.png 2x">
+                </a>
+                <div class="navBar">
+                    {{!-- <a class="link-help js-help" href="#">Help</a> --}}
+                    <a class="link-about js-about" href="/about">About</a>
+                    <a class="link-login js-login" href="/login">Log In</a>
+                    <a class="link-signup js-signup" href="/signup">Sign Up</a>
+                </div>
+            </div>
+        </div>
+        <!-- About FramerSpace -->
+        <div class="aboutWrap">
+            <div class="sectionBox">
+                <p class="about-tagline animate-reveal animate-first">Explore your taste buds</p>
+                {{!-- <p class="about-desc animate-reveal animate-second">FramerSpace is a co-creation platform that provides building blocks to support the creation of online courses and connects learners to peers and creators through Artificial Intelligence.</p>
+                <a class="about-btn animate-reveal animate-second" href="/courses">View Public Courses</a> --}}
+            </div>
+        </div>
+        <!-- Features -->
+        <div class="featuresWrap">
+            <div class="sectionBox">
+                <div class="feature-card card-full animate-reveal animate-third">
+                    <div class="card-one feature-social">
+                        <div class="card-content">
+                            <div class="card-title">PIZZA A</div>
+                            <div class="card-text">
+                                <a href="/login">Purchase Now</a>
+                            </div>
+                        </div>
+                        <div class="card-illustration"></div>
+                    </div>
+                    <div class="card-one feature-privacy">
+                        <div class="card-content">
+                            <div class="card-title">PIZZA B</div>
+                           <div class="card-text">
+                                <a href="/login">Purchase Now</a>
+                            </div>
+                        </div>
+                        <div class="card-illustration"></div>
+                    </div>
+                    
+                </div>
+                <div class="feature-card animate-reveal animate-fourth">
+                    <div class="card-one feature-social">
+                        <div class="card-content">
+                            <div class="card-title">PIZZA A</div>
+                            <div class="card-text">
+                                <a href="/login">Purchase Now</a>
+                            </div>
+                        </div>
+                        <div class="card-illustration"></div>
+                    </div>
+                    <div class="card-one feature-privacy">
+                        <div class="card-content">
+                            <div class="card-title">PIZZA B</div>
+                            <div class="card-text">
+                                <a href="/login">Purchase Now</a>
+                            </div>
+                        </div>
+                        <div class="card-illustration"></div>
+                    </div>
+                </div>
+                <div class="feature-card card-full animate-reveal animate-fifth">
+                      <div class="card-one feature-social">
+                        <div class="card-content">
+                            <div class="card-title">PIZZA A</div>
+                            <div class="card-text">
+                                <a href="/login">Purchase Now</a>
+                            </div>
+                        </div>
+                        <div class="card-illustration"></div>
+                    </div>
+                    <div class="card-one feature-privacy">
+                        <div class="card-content">
+                            <div class="card-title">PIZZA B</div>
+                            <div class="card-text">
+                                <a href="/login">Purchase Now</a>
+                            </div>
+                        </div>
+                        <div class="card-illustration"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer -->
+        <div class="footer">
+            <div class="sectionBox">
+                <p class="footer-made">
+                    <a href="http://mgiep.unesco.org/" target="_blank">
+                        <img src="/images/site/logo.png" srcset="/images/site/mgiep-logo@2x.png 2x">
+                        <span>A product by PIZZA HUT</span>
+                    </a>
+                </p>
+                <p class="footer-links">
+                    <a href="/login" class="js-login">Log In</a>
+                    <a href="/signup" class="js-signup">Sign Up</a>
+                </p>
+            </div>
+        </div>
+        <!-- Overlay window -->
+        <div class="overlay"></div>
+        <!-- Scripts -->
+        <script type="text/javascript" src="/js/lib/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="/js/lib/underscore/underscore.min.js"></script>
+        <script type="text/javascript" src="/js/lib/backbone/backbone.min.js"></script>
+        <script type="text/javascript" src="/js/lib/marionette/backbone.marionette.min.js"></script>
+        <script type="text/javascript" src="/js/lib/handlebars/handlebars.min.js"></script>
+        <script type="text/javascript" src="/js/lib/validator/validator.min.js"></script>
+        <script type="text/javascript" src="/js/lib/intro/intro.min.js"></script>
+        <script type="text/javascript" src="/js/loadTemplate.js"></script>
+        <script type="text/javascript" src="/js/authManager.js"></script>
+        <script type="text/javascript">
+            AccountManager.start();
+        </script>
+    </body>
+</html>

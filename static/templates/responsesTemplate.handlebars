@@ -1,0 +1,142 @@
+<div class="overlay-box responses-box">
+    <div class="overlay-form">
+        <h2 class="message">Responses:</h2>
+        <div class="chart-area">
+            <canvas id="myChart" width="600" height="600"></canvas>
+            <div class="chart-loader">
+                <div class="loading-wrapper">
+                    <div class="loading-text">ANALYSING</div>
+                    <div class="loading-content"></div>
+                </div>
+            </div>
+        </div>
+        <div id="wordcloud"></div>
+        <div class="response-list">
+            {{#is type 'mcq'}}
+                <canvas id="mcqChart" width="600" height="600"></canvas>
+                {{#and mcqs mcqs.length}}
+                    {{#each mcqs}}
+                        {{#if voters.length}}
+                            <div class="one-response">
+                                <p class="response-title">{{text}} - {{voters.length}} responses</p>
+                                <p class="response-text">
+                                    {{#each voters}}
+                                        <span class="response-user user-name" data-user="{{_id}}">{{name}}</span>
+                                    {{/each}}
+                                </p>
+                            </div>
+                        {{/if}}
+                    {{/each}}
+                {{/and}}
+            {{else}}{{#is type 'fill'}}
+                {{#and fills fills.length}}
+                    {{#each (getBlankFills fills)}}
+                        {{#if responses.length}}
+                            <div class="one-response">
+                                <p class="response-title">Blank {{add @index '1'}} - {{responses.length}} responses</p>
+                                <p class="response-text">
+                                    {{#each responses}}
+                                        <span class="response-user user-name" data-user="{{creator._id}}">{{creator.name}} - {{text}}</span>
+                                    {{/each}}
+                                </p>
+                            </div>
+                        {{/if}}
+                    {{/each}}
+                {{/and}}
+            {{else}}{{#is type 'match'}}
+                {{#and options options.length}}
+                    {{#each (getMatchArr options)}}
+                        <div class="one-response">
+                            <p class="response-title">Option: {{this.[0].[1]}}</p>
+                            <p class="response-text">
+                                {{#each this}}
+                                    <span class="response-user user-name" data-user="{{this.[2]}}">{{this.[3]}} &#8594; {{this.[4]}}</span>
+                                {{/each}}
+                            </p>
+                        </div>
+                    {{/each}}
+                {{/and}}
+            {{else}}{{#is type 'response'}}
+                {{#is response_type 'text'}}
+                    {{#each responses}}
+                        <div class="one-response">
+                            <p class="response-title user-name" data-user="{{creator._id}}">{{creator.name}}</p>
+                            <p class="response-text">{{text}}</p>
+                            {{!-- More --}}
+                            <span class="more-btn js-more-response"></span>
+                            <div class="context-menu context-response js-context-response">
+                                <div class="triangle">
+                                    <span class="triangle-outer"></span>
+                                    <span class="triangle-inner"></span>
+                                </div>
+                                <p class="js-phrase">Get key phrases</p>
+                                <p class="js-syntax">Syntax analysis</p>
+                                <p class="js-entity">Recognise entities</p>
+                                <p class="js-language">Get dominant language</p>
+                                <p class="js-translate">Translate to English</p>
+                            </div>
+                        </div>
+                    {{/each}}
+                {{else}}{{#is response_type 'audio'}}
+                    {{#each responses}}
+                        <div class="one-response">
+                            <p class="response-title user-name" data-user="{{creator._id}}">{{creator.name}}</p>
+                            <p class="response-text"><a href="{{attachments.0.provider.url}}" target="_blank">Play audio here</a></p>
+                        </div>
+                    {{/each}}
+                {{else}}{{#is response_type 'video'}}
+                    {{#each responses}}
+                        <div class="one-response">
+                            <p class="response-title user-name" data-user="{{creator._id}}">{{creator.name}}</p>
+                            <p class="response-text"><a href="{{attachments.0.provider.url}}" target="_blank">Play video here</a></p>
+                        </div>
+                    {{/each}}
+                {{else}}{{#is response_type 'file'}}
+                    {{#each responses}}
+                        <div class="one-response">
+                            <p class="response-title user-name" data-user="{{creator._id}}">{{creator.name}}</p>
+                            <p class="response-text"><a href="{{attachments.0.provider.url}}" target="_blank">View {{attachments.0.file.ext}} file here</a></p>
+                        </div>
+                    {{/each}}
+                {{/is}}{{/is}}{{/is}}{{/is}}
+            {{/is}}{{/is}}{{/is}}{{/is}}
+        </div>
+        <div class="entity-done js-done">Done</div>
+    </div>
+    <div class="overlay-about">
+        <div class="response-data">
+            {{#is type 'mcq'}}
+                {{#and mcqs mcqs.length}}
+                    <p class="overlay-label">{{getTotalResponses 'mcq' mcqs}} unique responses</p>
+                {{/and}}
+            {{else}}{{#is type 'fill'}}
+                {{#and fills fills.length}}
+                    <p class="overlay-label">{{getTotalResponses 'fill' fills}} unique responses</p>
+                {{/and}}
+            {{else}}{{#is type 'match'}}
+                {{#and options options.length}}
+                    <p class="overlay-label">{{getTotalResponses 'match' options}} unique responses</p>
+                {{/and}}
+            {{else}}{{#is type 'response'}}
+                {{#and responses responses.length}}
+                    <p class="overlay-label">{{responses.length}} unique responses</p>
+                {{/and}}
+            {{/is}}{{/is}}{{/is}}{{/is}}
+        </div>
+        {{#is type 'response'}}
+            {{#is response_type 'text'}}
+                <div class="analysis-settings">
+                    <p class="overlay-label">Analyse the responses:</p>
+                    <div class="analysis-options">
+                        <p class="js-wordcloud">Word Cloud</p>
+                        <p class="js-sentiment">Sentiment analysis</p>
+                        <p class="js-emotion-tone">Emotion and Tone</p>
+                        <p class="js-emotion">Emotion analysis</p>
+                        <p class="js-tone">Tonal analysis</p>
+                    </div>
+                </div>
+            {{/is}}
+        {{/is}}
+    </div>
+    <a class="overlay-close js-close" href="#"></a>
+</div>

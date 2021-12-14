@@ -1,0 +1,22 @@
+<div class="course-content">
+    <p class="course-title">{{title}}</p>
+    {{#if tagline}}
+        <p class="course-tagline">{{tagline}}</p>
+    {{/if}}
+    <p class="course-tags">
+        {{#if tag.core}}
+            <span class="tag-core" title="Core subjects">{{tag.core}}</span>
+            <span class="tag-arrow">&#8594;</span>
+        {{/if}}
+        {{#if tag.sel}}
+            <span class="tag-sel" title="SEL components">{{tag.sel}}</span>
+            <span class="tag-arrow">&#8594;</span>
+        {{/if}}
+        {{#if tag.sdg}}
+            <span class="tag-sdg" title="Target SDGs">{{tag.sdg}}</span>
+        {{/if}}
+    </p>
+</div>
+{{#if image.m}}
+    <div class="course-image" style="background-image: url('{{image.m}}'); height: {{bound}}px;"></div>
+{{/if}}

@@ -1,0 +1,19 @@
+<div class="overlay-box forgot-box">
+    <div class="overlay-form">
+        <h2 class="message">Reset password</h2>
+        <form method="post" action="/forgot" class="form form--modal js-form">
+            <div class="js-email">
+                <p class='u-formError'></p>
+                <input class="input" name="email" value="" placeholder="Email address" autocomplete="off" spellcheck="false">
+            </div>
+            <input name="submit" value="Reset" class="btn-submit js-submit" type="submit">
+        </form>
+        <p class="reset-message">If an account exists, we will send you an email that will allow you to reset your password. You may need to check your spam folder or wait for few minutes.</p>
+    </div>
+    <div class="overlay-about">
+        <div class="overlay-art"></div>
+        <p class="message">Remembered your password?</p>
+        <a href="/login" class="overlay-btn js-login">Log in</a>
+    </div>
+    <a class="overlay-close js-close" href="#"></a>
+</div>

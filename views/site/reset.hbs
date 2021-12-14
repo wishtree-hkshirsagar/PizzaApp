@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>FramerSpace: Password reset</title>
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="/images/site/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="/images/site/favicon.ico" type="image/x-icon">
+        <!-- Apple meta -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <link rel="apple-touch-icon-precomposed" href="/images/site/apple-touch-icon.png">
+        <!-- Responsive meta tags -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400;1,600&family=IBM+Plex+Serif:ital,wght@0,400;0,700;1,400;1,600&display=swap" rel="stylesheet">
+        <!-- Style -->
+        <link rel="stylesheet" type="text/css" href="/css/login_style.css">
+    </head>
+    <body>
+        <!-- Header -->
+        <div class="headerWrap">
+            <div class="sectionBox">
+                <a href='/' class="logo-main">
+                    <img src="/images/site/logo.png" srcset="/images/site/logo@2x.png 2x">
+                </a>
+            </div>
+        </div>
+        <!-- Content -->
+        <div class="contentWrap">
+            <!-- Inline reset form -->
+            <div class="resetForm">
+                <div class="form-message">
+                    <h2>Reset your password</h2>
+                    <p>Please enter a new password for your <b>{{email}}</b> account. Must be at least 8 characters.</p>
+                </div>
+                <form method="post" action="/reset/{{token}}" class="form form--modal js-form">
+                    <div class="js-password">
+                        <p class='u-formError'></p>
+                        <input class="input" name="password" value="" placeholder="New password" type="password" required>
+                    </div>
+                    <div class="js-password2">
+                        <p class='u-formError'></p>
+                        <input class="input" name="password2" value="" placeholder="Confirm password" type="password" required>
+                    </div>
+                    <input name="submit" value="Reset password & log in" class="btn-submit js-submit" type="submit">
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

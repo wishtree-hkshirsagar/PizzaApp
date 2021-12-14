@@ -1,0 +1,16 @@
+{{#if text}}<div class="feedback-content"><p class="feedback-text">{{text}}</p></div>{{/if}}
+{{#and badges badges.length}}
+    {{#each badges}}
+        {{#if badge.is_skill}}
+            <div class="feedback-content">
+                {{#if badge.image.m}}<div class="feedback-image" style="background-image: url('{{badge.image.m}}'); height: {{badge.bound}}px;"></div>{{/if}}
+                <p class="feedback-text">Congratulations! your following skill: <b>{{badge.title}}</b> got increased by {{getPercentage skill_inc badge.skill_total}}% 🎉</p>
+            </div>
+        {{else}}
+            <div class="feedback-content">
+                {{#if badge.image.m}}<div class="feedback-image" style="background-image: url('{{badge.image.m}}'); height: {{badge.bound}}px;"></div>{{/if}}
+                <p class="feedback-text">Congratulations! you got a new badge: <b>{{badge.title}}</b> 🎉</p>
+            </div>
+        {{/if}}
+    {{/each}}
+{{/and}}

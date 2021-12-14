@@ -1,0 +1,45 @@
+{{!-- Reply-creator --}}
+<div class="comment-creator js-reply-creator">
+    <div class="user-initials"><span>{{creator.initials}}</span></div>
+    {{#isCurrentUser creator._id}}
+        <span class="name" data-username="{{creator.username}}">You</span>
+    {{else}}
+        <span class="name" data-username="{{creator.username}}">{{getFirstName creator.name}}</span>
+    {{/isCurrentUser}}
+</div>
+{{!-- More --}}
+<span class="more-btn js-more-reply"></span>
+{{!-- Comment like --}}
+{{#hasCurrentUser likes}}
+    <span class="like-btn js-reply-like selected"></span>
+{{else}}
+    <span class="like-btn js-reply-like"></span>
+{{/hasCurrentUser}}
+{{!-- Reply-text --}}
+<div class="comment-main js-reply-main">
+    <div class="comment-html rich-text js-reply-html">{{{text}}}</div>
+    {{!-- Reply-actions --}}
+    <p class="comment-actions js-reply-actions">
+        {{#isCurrentUser creator._id}}
+            <span class="edit-btn">Edit</span>
+            <span class="sep-btn">&#183;</span>
+            <span class="delete-btn">Delete</span>
+        {{else}}
+            {{#isAdmin}}
+                <span class="sep-btn">&#183;</span>
+                <span class="delete-btn">Delete</span>
+            {{/isAdmin}}
+        {{/isCurrentUser}}
+    </p>
+    <div class="context-menu js-context-reply">
+        <div class="triangle">
+            <span class="triangle-outer"></span>
+            <span class="triangle-inner"></span>
+        </div>
+        <p class="js-phrase">Get key phrases</p>
+        <p class="js-syntax">Syntax analysis</p>
+        <p class="js-entity">Recognise entities</p>
+        <p class="js-language">Get dominant language</p>
+        <p class="js-translate">Translate to English</p>
+    </div>
+</div>

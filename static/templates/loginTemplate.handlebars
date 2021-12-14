@@ -1,0 +1,31 @@
+<div class="overlay-box login-box">
+    <div class="overlay-form">
+        <h2 class="message">Welcome back!</h2>
+        <form method="post" action="/login" class="form form--modal js-form">
+            <div class="js-email">
+                <p class='u-formError'></p>
+                <input class="input" name="email" value="" placeholder="Email ID" autocomplete="on" spellcheck="false">
+            </div>
+            <div class="js-password">
+                <p class='u-formError'></p>
+                <input class="input input--show" name="password" value="" placeholder="Password" type="password">
+                <span class="show-password u-noSelect">show</span>
+            </div>
+            {{!-- <div class='form-action'>
+                <div class='action-remember u-alignLeft'>
+                    <label class="label">
+                        <input class="checkbox" type="checkbox" name="remember_me" value="1" checked="1">  Remember me
+                    </label>
+                </div>
+                <a href="/forgot" class="link--grey u-alignRight js-forgot">Forgot password?</a>
+            </div> --}}
+            <input name="submit" value="Log in" class="btn-submit js-submit" type="submit">
+        </form>
+    </div>
+    <div class="overlay-about">
+        <div class="overlay-art"></div>
+        <p class="message">New to FramerSpace? </p>
+        <a href="/signup" class="overlay-btn js-signup">Sign up</a>
+    </div>
+    <a class="overlay-close js-close" href="#"></a>
+</div>

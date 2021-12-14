@@ -1,0 +1,32 @@
+<div class="overlay-box insight-box">
+    <div class="overlay-form">
+        <h2 class="message">User Insight:</h2>
+        <div class="user-insight-area">
+            <p class="name">Full name: <span>{{user.name}}</span></p>
+            <p class="email">Unique ID: <span>{{user.email}}</span></p>
+            {{#if user.about}}<p class="about">About: <span>{{user.about}}</span></p>{{/if}}
+            {{#if user.city}}<p class="city">City: <span>{{user.city}}</span></p>{{/if}}
+            {{#if user.country}}<p class="country">Country: <span>{{user.country}}</span></p>{{/if}}
+            {{#if user.sex}}<p class="gender">Gender: <span>{{user.sex}}</span></p>{{/if}}
+            {{#if user.job}}
+                {{#if user.job.org}}<p class="job_org">Organisation: <span>{{user.job.org}}</span></p>{{/if}}
+                {{#if user.job.title}}<p class="job_title">Position: <span>{{user.job.title}}</span></p>{{/if}}
+            {{/if}}
+            {{#isNotCurrentUser user._id}}
+                <a class="overlay-message js-message" href="#">Message {{getFirstName user.name}}</a>
+            {{/isNotCurrentUser}}
+        </div>
+        <div class="insight-users">
+            <p class="entity-btn js-show-comments">Show user comments &rarr;</p>
+            <div class="overlay-table-header">
+                <div class="insight-row">
+                    <p>Block type</p><p>Block details</p><p>User response</p>
+                </div>
+            </div>
+            <div class="overlay-table"></div>
+        </div>
+    </div>
+    <a class="overlay-download js-download u-hide" href="#">Download</a>
+    <a class="overlay-back js-back" href="#"></a>
+    <a class="overlay-close js-close" href="#"></a>
+</div>

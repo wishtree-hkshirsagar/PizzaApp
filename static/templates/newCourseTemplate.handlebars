@@ -1,0 +1,46 @@
+<div class="overlay-box new-course-box">
+    <div class="overlay-form">
+        <h2 class="message">Create new course:</h2>
+        <p class="u-formError"></p>
+        <input placeholder="Course name*" type="text" autocomplete="off" class="course-title entity-title">
+        <textarea placeholder="Describe your course" class="course-tagline entity-text"></textarea>
+        <p class="overlay-label">Targets:</p>
+        <input placeholder="Core subjects: Physics, Maths, Civics, ..." type="text" autocomplete="off" class="course-core entity-title">
+        <input placeholder="SEL components: Empathy, Compassion, ..." type="text" autocomplete="off" class="course-sel entity-title">
+        <input placeholder="Target SDGs: Gender Equality, Climate Change, ..." type="text" autocomplete="off" class="course-sdg entity-title">
+        <p class="overlay-label">Privacy:</p>
+        <label class="overlay-radio privacy-label">
+            <input type="radio" id="private-radio" name="privacy-radio" value="private" checked>
+            <label for="private-radio">Private</label>
+            <input type="radio" id="unlisted-radio" name="privacy-radio" value="unlisted">
+            <label for="unlisted-radio">Unlisted</label>
+            <input type="radio" id="public-radio" name="privacy-radio" value="public" class="u-hide">
+            <label for="public-radio" class="u-hide">Public</label>
+        </label>
+        <p class="overlay-label u-hide">Certification:</p>
+        <label class="overlay-checkbox certification-label u-hide">
+            <input class="checkbox" type="checkbox" name="certification-input"><span>Make this a certificate course</span>
+        </label>
+        <div class="entity-btn save-course js-save">Save course</div>
+    </div>
+    <div class="overlay-about">
+        <form method="post" action="https://chibuzz-uploads.s3.amazonaws.com/" enctype="multipart/form-data" class="cover-upload">
+            <div id="drop-cover" class="drop-area">
+                <span>Choose course cover image <br>(800px X 800px or a square image)</span>
+                <input type="hidden" name="key">
+                <input type="hidden" name="AWSAccessKeyId" value="AKIAIT3BY3EDOZPAPDEQ">
+                <input type="hidden" name="acl" value="public-read">
+                <input type="hidden" name="policy">
+                <input type="hidden" name="signature">
+                <input type="hidden" name="success-action-status" value="201">
+                <input type="hidden" name="Content-Type">
+                <input type="file" name="file" class="file-input">
+            </div>
+        </form>
+        <div class="course-actions u-hide">
+            <span class="archive-course js-archive-course">Archive Course</span>
+            <span class="delete-course js-delete-course">Delete Course</span>
+        </div>
+    </div>
+    <a class="overlay-close js-close" href="#"></a>
+</div>

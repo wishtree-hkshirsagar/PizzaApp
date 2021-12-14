@@ -1,0 +1,41 @@
+<p class="header-title"></p>
+<p class="header-desc">{{tagline}}</p>
+<p class="course-tags">
+    {{#if tag.core}}
+        <span class="tag-core" title="Core subjects">{{tag.core}}</span>
+        <span class="tag-arrow">&#8594;</span>
+    {{/if}}
+    {{#if tag.sel}}
+        <span class="tag-sel" title="SEL components">{{tag.sel}}</span>
+        <span class="tag-arrow">&#8594;</span>
+    {{/if}}
+    {{#if tag.sdg}}
+        <span class="tag-sdg" title="Target SDGs">{{tag.sdg}}</span>
+    {{/if}}
+</p>
+<!-- Add block -->
+{{#hasEditingRights creator._id members}}
+    <div class="action-btns">
+        <a class="add-entity action-edit js-edit-course" href="#" title="Edit course"><span></span></a>
+        <a class="add-entity action-add-members js-add-members" href="#" title="Add members"><span></span></a>
+        <a class="add-entity action-add-block js-add-block" href="#" title="Add new block"><span></span></a>
+        <a class="add-entity action-progress js-add-badges" href="#" title="Add skills and badges"><span></span></a>
+        <a class="add-entity action-insights js-show-insights" href="#" title="Show insights"><span></span></a>
+        <a class="add-entity action-add-cohort js-add-cohort" href="#" title="Add cohort"><span></span></a>
+    </div>
+{{else}}
+    <div class="action-btns">
+        {{#isInvited members}}
+            <a class="add-entity action-join js-remove-request" href="#" title="Remove Request"><b>Remove request</b></a>
+        {{else}}
+            <a class="add-entity action-join js-request-access" href="#" title="Request Access"><b>Request access to course</b></a>
+        {{/isInvited}}
+        <a class="add-entity action-progress js-show-badges" href="#" title="View your progress"><span></span></a>
+    </div>
+{{/hasEditingRights}}
+<!-- Minimap button -->
+<div class="hamburger hamburger--collapse minimap-btn js-minimap" title="Show course minimap">
+  <div class="hamburger-box">
+    <div class="hamburger-inner"></div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<div class="overlay-box insight-box">
+    <div class="overlay-form">
+        <h2 class="message">Insights:</h2>
+        <div class="basic-insight-area insight-table">
+            <div class="insight-row">
+                <div class="insight-cell">
+                    <p class="num">{{all_blocks_count}}</p>
+                    <p class="desc">Total number of blocks</p>
+                </div>
+                <div class="insight-cell">
+                    <p class="num">{{response_blocks_count}}</p>
+                    <p class="desc">Total number of response blocks</p>
+                </div>
+            </div>
+            <div class="insight-row">
+                <div class="insight-cell">
+                    <p class="num">{{discussion_blocks_count}}</p>
+                    <p class="desc">Total number of discussion blocks</p>
+                </div>
+                <div class="insight-cell">
+                    <p class="num">{{comments_count}}</p>
+                    <p class="desc">Total number of comments</p>
+                </div>
+            </div>
+            <div class="insight-row">
+                <div class="insight-cell">
+                    <p class="num">{{viewers.length}}</p>
+                    <p class="desc">Unique viewers ({{getTotalViews viewers}} views)</p>
+                </div>
+                <div class="insight-cell">
+                    <p class="num">{{learners}}</p>
+                    <p class="desc">Total learners</p>
+                </div>
+            </div>
+        </div>
+        <div class="entity-btn js-show-users">Show users &rarr;</div>
+    </div>
+    <a class="overlay-close js-close" href="#"></a>
+</div>
