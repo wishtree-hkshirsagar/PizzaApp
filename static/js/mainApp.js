@@ -3796,12 +3796,7 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                         processData: false,
                         cache: false,
                         data: data,
-                        success: function(res){
-                            alert(res);
-                        },
-                        error: function(){
-                            alert('Error: In sending the request!...');
-                        }
+                        success: function(){}
                     })
                 });
             });
