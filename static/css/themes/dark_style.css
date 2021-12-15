@@ -687,7 +687,8 @@ select{
 .minimap-btn.hamburger{
     background-color: #ffd370;
 }
-.new-course-box .overlay-about{
+.new-course-box .overlay-about,
+.new-pizza-box .overlay-about{
     background-image: linear-gradient(#7CA8C7, #9CBAD5);
 }
 .new-block-box .overlay-about,

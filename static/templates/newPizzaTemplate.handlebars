@@ -7,7 +7,7 @@
         
        
         <p class="overlay-label">Choose pizza size:</p>
-         <select class="select-pizza" data-placeholder="Pizza">
+         <select class="select-pizza" data-placeholder="Pizza" id="select-pizza">
                 <option value=""></option>
                 <option value="small">Small</option>
                 <option value="medium">Medium</option>
@@ -15,10 +15,20 @@
         </select>
 
         <p class="overlay-label">Price:</p>
-        <input type="number" name="price"  min="1" placeholder="price">
+        <input type="number" name="price"  min="1" placeholder="price" class="pizza-price entity-title">
          
        
         <div class="entity-btn save-pizza js-save">Save pizza</div>
+    </div>
+    <div class="overlay-about">
+         <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="file" id="uploadFile">
+            {{!-- <input type="submit" value="upload"> --}}
+        </form>
+        <div class="course-actions u-hide">
+            <span class="archive-course js-archive-course">Archive Course</span>
+            <span class="delete-course js-delete-course">Delete Course</span>
+        </div>
     </div>
     
     <a class="overlay-close js-close" href="#"></a>

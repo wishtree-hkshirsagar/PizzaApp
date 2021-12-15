@@ -45,6 +45,7 @@ var mime = require('mime'),
 //Realtime functions
 var online = require('../app/online');
 var IO;
+var uploadedfile;
 //Page size
 var PAGE_SIZE = 20;
 //Export all API functions
@@ -53,8 +54,11 @@ module.exports = function(app, passport, io){
 
      /* ----------------- PIZZA API ------------------ */
 
-     app.post('/api/pizza', isLoggedIn, _addPizza, upload.single('file'));     
-
+     app.post('/api/pizza', isLoggedIn, _addPizza);     
+     app.post('/api/upload',isLoggedIn, upload.single('file'), (req, res) => {
+        uploadedfile = req.file;
+        console.log(uploadedfile);
+    });
 
 
     /* ----------------- COURSE API ------------------ */
@@ -576,29 +580,32 @@ var storage = multer.diskStorage({
 })
 var upload = multer({ storage: storage })
 
+
+
 //POST Request function - Pizza
 // Add a pizza
 var _addPizza = function(req, res){
     if(!req.body.title){
         return res.status(400).send({error: "Invalid parameters. We are expecting a title"});
     }
-
+    console.log('add pizza');
+    console.log(uploadedfile.filename)
     //Slug
     var key = shortid.generate();
     var slug = key + '-' + getSlug(req.body.title);
-
+    // var file = req.file;
     //New Pizza
     var new_pizza = new Pizza({
         slug: slug,
         title: req.body.title,
         size: req.body.size,
         price: req.body.price,
-        image: req.body.image,
+        image: uploadedfile.filename,
         updated_at: new Date(Date.now())
     });
     try{
        new_pizza.save(() => {
-          res.send(new_pizza); 
+          res.status(200).json(new_pizza); 
        });
     } catch(error){
         return res.status(501).json(error);

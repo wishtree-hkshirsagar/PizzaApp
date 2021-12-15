@@ -2194,10 +2194,12 @@ select{
     display: none;
 }
 .new-course-box .drop-area,
-.settings-box .drop-area{
+.settings-box .drop-area,
+.new-pizza-box .drop-area{
     margin-top: 66px;
 }
 .new-course-box .drop-area,
+.new-pizza-box .drop-area,
 .new-block-box .block-container .drop-area{
     padding-top: 178px;
 }

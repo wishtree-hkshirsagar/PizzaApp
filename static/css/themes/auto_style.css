@@ -701,7 +701,8 @@ select{
 .minimap-btn.hamburger{
     background-color: #1b07f2;
 }
-.new-course-box .overlay-about{
+.new-course-box .overlay-about,
+.new-pizza-box .overlay-about{
     background-image: linear-gradient(#e3eeff, #eef1f5);
 }
 .new-block-box .overlay-about,
@@ -1396,7 +1397,8 @@ select{
         background-color: #232323;
     }
     .new-course-box .overlay-form,
-    .new-cohort-box .overlay-form{
+    .new-cohort-box .overlay-form,
+    .new-pizza-box .overlay-form{
         background-image: linear-gradient(#336081, #5E8AAB);
     }
     .new-block-box .overlay-form,
@@ -1705,7 +1707,8 @@ select{
     .minimap-btn.hamburger{
         background-color: #ffd370;
     }
-    .new-course-box .overlay-about{
+    .new-course-box .overlay-about,
+    .new-pizza-box .overlay-about{
         background-image: linear-gradient(#7CA8C7, #9CBAD5);
     }
     .new-block-box .overlay-about,

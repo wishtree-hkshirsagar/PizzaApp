@@ -521,7 +521,7 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
             } else if(this._id) {
                 return '/api/course/' + this._id
             } else {
-                return '/api/course'
+                return '/api/pizza'
             }
         },
         idAttribute: '_id'
@@ -973,7 +973,23 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
             ProjectManager.commands.execute('close:overlay');
         },
         openFileBrowserForCover: function(ev){
-            this.$('#drop-cover .file-input').click();
+            console.log('file')
+        //     var data = new FormData($('#uploadForm')[0]);
+        // $.ajax({
+        //     url:'/api/upload',
+        //     type: 'POST',
+        //     contentType: false,
+        //     processData: false,
+        //     cache: false,
+        //     data: data,
+        //     success: function(res){
+        //         alert(res);
+        //     },
+        //     error: function(){
+        //         alert('Error: In sending the request!');
+        //     }
+        // })
+            // this.$('#drop-cover .file-input').click();
         },
         doNothing: function(ev){
             ev.stopPropagation();
@@ -984,11 +1000,20 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
         },
         saveCourse: function(ev){
             console.log('save')
-            // ev.preventDefault();
-            // if(!this.$('.course-title').val()){
-            //     this.$('.u-formError').text('Please enter a course name:').show();
-            //     this.$('.course-title').addClass('hasError');
-            // } else {
+            ev.preventDefault();
+            if(!this.$('.pizza-title').val()){
+                this.$('.u-formError').text('Please enter a pizza name:').show();
+                this.$('.course-title').addClass('hasError');
+            } else {
+                var value = {
+                    title: this.$('.pizza-title').val().trim(),
+                    size: this.$('#select-pizza').find(":selected").val(),
+                    price: parseInt(this.$('.pizza-price').val())
+                }
+                console.log(value);
+                this.trigger('save:course', value);
+            }
+            // else {
             //     var value = {
             //         title: this.$('.course-title').val().trim(),
             //         tagline: this.$('.course-tagline').val().trim(),
@@ -3761,83 +3786,34 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                 //Focus
                 newCourseView.$('.course-title').focus();
                 //Upload cover
-                newCourseView.$('.cover-upload').each(function(){
-                    /* For each file selected, process and upload */
-                    var form = $(this);
-                    $(this).fileupload({
-                        dropZone: $('#drop-cover'),
-                        url: form.attr('action'), //Grab form's action src
+                newCourseView.$("#uploadFile").on('change',function(e) {
+                    e.preventDefault();
+                    var data = new FormData($('#uploadForm')[0]);
+                    $.ajax({
+                        url:'/api/upload',
                         type: 'POST',
-                        autoUpload: true,
-                        dataType: 'xml', //S3's XML response,
-                        add: function(event, data){
-                            //Check file type
-                            var fileType = data.files[0].name.split('.').pop(), allowedtypes = 'jpeg,jpg,png,gif';
-                            if (allowedtypes.indexOf(fileType) < 0) {
-                                alert('Invalid file type, aborted');
-                                return false;
-                            }
-                            //Get bound
-                            var image = new Image();
-                            image.src = window.URL.createObjectURL(data.files[0]);
-                            image.onload = function() {
-                                bound = ( image.naturalHeight * 800 ) / image.naturalWidth;
-                                bound = bound / 2; //for retina
-                                if(bound) bound = parseInt(bound);
-                                window.URL.revokeObjectURL(image.src);
-                            };
-                            //Upload through CORS
-                            $.ajax({
-                                url: '/api/signed',
-                                type: 'GET',
-                                dataType: 'json',
-                                data: {title: data.files[0].name}, // Send filename to /signed for the signed response
-                                async: false,
-                                success: function(data){
-                                    // Now that we have our data, we update the form so it contains all
-                                    // the needed data to sign the request
-                                    form.find('input[name=key]').val(data.key);
-                                    form.find('input[name=policy]').val(data.policy);
-                                    form.find('input[name=signature]').val(data.signature);
-                                    form.find('input[name=Content-Type]').val(data.contentType);
-                                }
-                            });
-                            data.submit();
+                        contentType: false,
+                        processData: false,
+                        cache: false,
+                        data: data,
+                        success: function(res){
+                            alert(res);
                         },
-                        send: function(e, data){
-                            newCourseView.$('#drop-cover span').html('Uploading <b>...</b>');
-                            newCourseView.$('.js-save').addClass('u-disabled');
-                        },
-                        progress: function(e, data){
-                            var percent = Math.round((e.loaded / e.total) * 100);
-                            newCourseView.$('#drop-cover span b').text(percent + '%');
-                        },
-                        fail: function(e, data){
-                            newCourseView.$('#drop-cover span').html('Choose course cover image');
-                            newCourseView.$('.js-save').removeClass('u-disabled');
-                        },
-                        success: function(data){
-                            cover_image_url = 'https://d1u3z33x3g234l.cloudfront.net/' +  form.find('input[name=key]').val();
-                            cover_image_url = encodeURI(cover_image_url);
-                            //Show save button
-                            newCourseView.$('#drop-cover span').addClass('u-hide');
-                            newCourseView.$('#drop-cover').css('backgroundImage', 'url('+cover_image_url+')');
-                            newCourseView.$('.js-save').removeClass('u-disabled');
+                        error: function(){
+                            alert('Error: In sending the request!...');
                         }
-                    });
+                    })
                 });
             });
             //Save new course
             newCourseView.on('save:course', function(value){
+                console.log(value)
+                // return;
                 var new_course = new ProjectManager.Entities.Course({
                     title: value.title,
-                    tagline: value.tagline,
-                    image: cover_image_url,
-                    bound: bound,
-                    core: value.core,
-                    sel: value.sel,
-                    sdg: value.sdg,
-                    privacy: value.privacy
+                    size: value.size,
+                    price: value.price,
+                    image: value.image
                 });
                 new_course.save({}, {success: function(){
                     ProjectManager.vent.trigger('add:course', new_course);
