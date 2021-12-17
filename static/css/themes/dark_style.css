@@ -187,7 +187,7 @@ select{
 .action-add-cohort:hover span{
     background-position: -320px -40px;
 }
-.one-course{
+.one-course, .one-pizza{
     background-color: #232323;
     border: 0px;
     box-shadow: none;

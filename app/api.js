@@ -54,10 +54,52 @@ module.exports = function(app, passport, io){
 
      /* ----------------- PIZZA API ------------------ */
 
-     app.post('/api/pizza', isLoggedIn, _addPizza);     
-     app.post('/api/upload',isLoggedIn, upload.single('file'), (req, res) => {
-        uploadedfile = req.file;
-        console.log(uploadedfile);
+     app.post('/api/pizza', isLoggedIn, _addPizza); 
+     app.get('/api/pizza', isLoggedIn, _getPizza);
+     app.get('/api/pizza/:_id', isLoggedIn, _getOnePizzaByIdOrSlug);
+     app.put('/api/pizza/:_id', isLoggedIn, _updatePizza);
+
+     // ADD Pizza Image
+    function getTime() {
+        var today = new Date().toLocaleDateString()
+        today = today.toString().replace('/', '-')
+        today = today.replace('/', '-')
+
+        const date = new Date();
+        let h = date.getHours();
+        let m = date.getMinutes();
+        let s = date.getSeconds();
+
+        today += '-' + h + '-' + m + '-' + s
+
+        return today;
+    }
+
+    var storage = multer.diskStorage({
+
+        destination: (req, file, callBack) => {
+            callBack(null, './static/images/site')
+        },
+        filename: (req, file, callBack) => {
+            callBack(null, `${getTime()}-${file.originalname}`)
+        }
+    })
+    var upload = multer({
+         storage: storage 
+        }).single('file');  
+     app.post('/api/upload',isLoggedIn, (req, res) => {
+         console.log('inside upload')
+        upload(req, res, (err) =>{
+            uploadedfile = req.file;
+            console.log(uploadedfile);
+            if(err){
+                console.log('error');
+                res.send(err);
+            }else{
+                console.log('Uploaded successfully...')
+                res.send('Successful');
+            }
+        });
     });
 
 
@@ -553,32 +595,7 @@ var _getCourseByIdOrSlug = function(req, res){
     });
 };
 
-// ADD Pizza Image
-function getTime() {
-    var today = new Date().toLocaleDateString()
-    today = today.toString().replace('/', '-')
-    today = today.replace('/', '-')
 
-    const date = new Date();
-    let h = date.getHours();
-    let m = date.getMinutes();
-    let s = date.getSeconds();
-
-    today += '-' + h + '-' + m + '-' + s
-
-    return today;
-}
-
-var storage = multer.diskStorage({
-
-    destination: (req, file, callBack) => {
-        callBack(null, './static/images/site')
-    },
-    filename: (req, file, callBack) => {
-        callBack(null, `${getTime()}-${file.originalname}`)
-    }
-})
-var upload = multer({ storage: storage })
 
 
 
@@ -611,6 +628,49 @@ var _addPizza = function(req, res){
         return res.status(501).json(error);
     }
 }
+
+//GET Request function - get all pizza
+var _getPizza = function(req, res) {
+    console.log('get pizza');
+    Pizza.find({}, (err, pizzas) => {
+        console.log(pizzas)
+        if (err) {
+            res.status(500).json({ errmsg: err })
+        }
+        res.send(pizzas);
+    })
+}
+
+
+//GET Request function - get one pizza
+var _getOnePizzaByIdOrSlug = function(req, res) {
+    if(req.params._id.match(/^[0-9a-fA-F]{24}$/)){
+        var query = {
+            _id: req.params._id
+        }
+    } else {
+        var query = {
+            slug: req.params._id
+        }
+    }
+
+    Pizza.findOne(query, function(err, pizza){
+        if(!pizza){
+            console.log('error')
+            res.send(err);
+        }
+        console.log('_getOnePizzaByIdOrSlug');
+        res.status(200).send(pizza);
+    });
+    
+
+}
+
+var _updatePizza = function(req, res){
+    
+}
+
+
 //POST Requests function - Course
 //Create a course
 var _createCourse  = function(req, res){

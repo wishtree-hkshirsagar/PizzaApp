@@ -105,7 +105,7 @@ select{
 .u-formError{
     display: none;
     font-size: 14px;
-    padding: 4px;
+    padding: 0px;
     color: red;
 }
 .u-alignLeft{
@@ -502,7 +502,8 @@ select{
 }
 .mainHeader .header-title,
 .mainHeader .header-now,
-.mainHeader .header-back{
+.mainHeader .header-back,
+.pizza-title{
     font-family: 'IBM Plex Serif', serif;
     font-weight: 600;
     font-size: 40px;
@@ -564,7 +565,7 @@ select{
     background-repeat: no-repeat;
 }
 /* Courses */
-.one-course{
+.one-course, .one-pizza{
     position: relative;
     display: block;
     width: 100%;
@@ -3337,5 +3338,47 @@ select{
     }
     .one-comment .like-btn{
         background-size: 64px 32px;
+        /* color: #FFAE42; */
     }
+}
+
+
+.pizza-form{
+    width: 800px !important;
+}
+
+.overlay-close-pizza{
+    right: 100px !important;
+}
+
+select:required:invalid {
+    color: gray;
+}
+option[value=""][disabled] {
+    display: none;
+}
+option {
+    color: black;
+}
+
+label[name=wrap-pizzaType]:after{
+    content: "\25BE";
+    color: gray;
+    position: absolute;
+    right: -25px;
+    top: 135px;
+    z-index: 1;
+    width: 10%;
+    height: 100%;
+    pointer-events: none;
+    transform: scale(1,0.6);
+}
+
+.pizza-image{
+    float: right;
+    margin: auto;
+}
+
+.pizza-title{
+    text-transform: capitalize !important;
 }

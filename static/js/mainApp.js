@@ -241,7 +241,7 @@ ProjectManager.commands.setHandler('close:sidebar', function(){
 ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbone, Marionette, $, _) {
     ProjectApp.Router = Marionette.AppRouter.extend({
         appRoutes: {
-            '': 'publicCoursesView',
+            '': 'publicPizzaView',
             'drafts': 'draftCoursesView',
             'archived': 'archivedCoursesView',
             'course/:slug': 'courseView',
@@ -269,14 +269,15 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
         editBlockOverlayView: function(block_id){
             ProjectManager.ProjectApp.EntityController.Controller.showEditBlockOverlay(block_id);
         },
+        // publicPizzaView: function(){
+        //     console.log('publicPizzaView')
+        //     ProjectManager.ProjectApp.EntityController.Controller.showPizzaHeader('Admin');
+        //     ProjectManager.ProjectApp.EntityController.Controller.showPizza('Admin');
+        // },
         publicPizzaView: function(){
-            console.log('publicPizzaView')
-            ProjectManager.ProjectApp.EntityController.Controller.showPizzaHeader('Admin');
-            ProjectManager.ProjectApp.EntityController.Controller.showPizza('Admin');
-        },
-        publicCoursesView: function(){
-            ProjectManager.ProjectApp.EntityController.Controller.showCoursesHeader('public');
-            ProjectManager.ProjectApp.EntityController.Controller.showCourses('public');
+            console.log('publicPizzaView');
+            ProjectManager.ProjectApp.EntityController.Controller.showPizzaHeader();
+            ProjectManager.ProjectApp.EntityController.Controller.showPizzas();
         },
         draftCoursesView: function(){
             ProjectManager.ProjectApp.EntityController.Controller.showCoursesHeader('drafts');
@@ -287,6 +288,7 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
             ProjectManager.ProjectApp.EntityController.Controller.showCourses('archived');
         },
         coursesView: function(type){
+            conosole.log('coursesView')
             ProjectManager.ProjectApp.EntityController.Controller.showCoursesHeader(type);
             ProjectManager.ProjectApp.EntityController.Controller.showCourses(type);
         },
@@ -390,6 +392,13 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
             ProjectManager.navigate(type);
         }
         API.coursesView(type);
+    });
+     //Show pizza and pizza modules
+     ProjectManager.vent.on('pizza:show', function(slug){
+        //Show course modules
+        ProjectManager.navigate('pizza/' + slug);
+        console.log('pizza navigate');
+        // API.courseView(slug, back_type);
     });
     //Show course and course modules
     ProjectManager.vent.on('course:show', function(slug, back_type){
@@ -525,6 +534,13 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
             }
         },
         idAttribute: '_id'
+    });
+    Entities.PizzaCollection = Backbone.Collection.extend({
+        url: function(){
+            console.log('PizzaCollection');
+            return '/api/pizza'
+        },
+        model: Entities.Pizza
     });
     Entities.CourseCollection = Backbone.Collection.extend({
         initialize: function(models, options){
@@ -728,6 +744,18 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
     });
     //Functions to get data
     var API = {
+        getPizza: function(){
+            console.log('getPizza API')
+            var pizza = new Entities.PizzaCollection([],{});
+            var defer = $.Deferred();
+            pizza.fetch({
+                success: function(data){
+                    defer.resolve(data);
+                }
+            });
+            return defer.promise();
+        },
+
         getCourses: function(_type){
             var courses = new Entities.CourseCollection([], {
                 _type: _type
@@ -895,6 +923,10 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
         }
     };
     //Request Response Callbacks
+    ProjectManager.reqres.setHandler('pizza:entities', function(){
+        console.log('Request Response Callbacks')
+        return API.getPizza();
+    });
     ProjectManager.reqres.setHandler('course:entities', function(_type){
         return API.getCourses(_type);
     });
@@ -961,57 +993,38 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
         template: 'newPizzaTemplate',
         events: {
             'click .js-close': 'closeOverlay',
-            'click #drop-cover': 'openFileBrowserForCover',
-            'click .file-input': 'doNothing',
-            'focus .course-title': 'hideError',
-            'click .js-save:not(.u-disabled)': 'saveCourse',
-            'click .js-archive-course': 'archiveCourse',
+            'focus .pizza-title': 'hideError',
+            'click .js-save:not(.u-disabled)': 'savePizza',
             'click .js-delete-course': 'deleteCourse'
         },
         closeOverlay: function(ev){
             ev.preventDefault();
             ProjectManager.commands.execute('close:overlay');
         },
-        openFileBrowserForCover: function(ev){
-            console.log('file')
-        //     var data = new FormData($('#uploadForm')[0]);
-        // $.ajax({
-        //     url:'/api/upload',
-        //     type: 'POST',
-        //     contentType: false,
-        //     processData: false,
-        //     cache: false,
-        //     data: data,
-        //     success: function(res){
-        //         alert(res);
-        //     },
-        //     error: function(){
-        //         alert('Error: In sending the request!');
-        //     }
-        // })
-            // this.$('#drop-cover .file-input').click();
-        },
-        doNothing: function(ev){
-            ev.stopPropagation();
-        },
         hideError: function(ev){
             this.$('.u-formError').text('').hide();
             this.$('.course-title').removeClass('hasError');
         },
-        saveCourse: function(ev){
+        savePizza: function(ev){
             console.log('save')
             ev.preventDefault();
             if(!this.$('.pizza-title').val()){
-                this.$('.u-formError').text('Please enter a pizza name:').show();
-                this.$('.course-title').addClass('hasError');
-            } else {
+                this.$('.pizza-name').text('Please enter a pizza name:').show();
+                this.$('.pizza-title').addClass('hasError');
+            } else if(!this.$('#select-pizza').find(":selected").val()){
+                this.$('.pizza-size').text('Please select pizza size:').show();
+                this.$('.select-pizza').addClass('hasError');
+            }else if(!this.$('.pizza-price').val()){
+                this.$('.price').text('Please enter the pizza price:').show();
+                this.$('.pizza-price').addClass('hasError');
+            }else {
                 var value = {
                     title: this.$('.pizza-title').val().trim(),
                     size: this.$('#select-pizza').find(":selected").val(),
                     price: parseInt(this.$('.pizza-price').val())
                 }
                 console.log(value);
-                this.trigger('save:course', value);
+                this.trigger('save:pizza', value);
             }
             // else {
             //     var value = {
@@ -1042,14 +1055,6 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
             //         this.trigger('save:course', value);
             //     }
             // }
-        },
-        archiveCourse: function(ev){
-            ev.preventDefault();
-            if(this.$('.js-archive-course').hasClass('archive-course')){
-                this.trigger('archive:course');
-            } else {
-                this.trigger('unarchive:course');
-            }
         },
         deleteCourse: function(ev){
 
@@ -1108,6 +1113,26 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
             }
         }
     });
+     //Pizza item view
+     EntityViews.PizzaItemView = Marionette.ItemView.extend({
+        tagName: 'a',
+        className: 'one-pizza',
+        template: 'pizzaOneTemplate',
+        initialize: function(){
+            console.log('pizzaOneTemplate')
+            this.$el.attr('href', '/pizza/' + this.model.get('slug'));
+            this.$el.attr('data-slug', this.model.get('slug'));
+            // this.$el.attr('data-id', this.model.get('_id'));
+        },
+        events: {
+            'click': 'getOnePizza'
+        },
+        getOnePizza: function(ev){
+            console.log('getOnePizza')
+                ev.preventDefault();    
+                ProjectManager.vent.trigger('pizza:show', this.model.get('slug'));
+            }
+    });
     //Course item view
     EntityViews.CourseItemView = Marionette.ItemView.extend({
         tagName: 'a',
@@ -1132,6 +1157,11 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
                 ProjectManager.vent.trigger('course:show', this.model.get('slug'), 'public');
             }
         }
+    });
+    //Pizza collection view
+    EntityViews.PizzaView = Marionette.CollectionView.extend({
+        className: 'all-pizza sectionBox',
+        childView: EntityViews.PizzaItemView
     });
     //Courses collection view
     EntityViews.CoursesView = Marionette.CollectionView.extend({
@@ -3797,18 +3827,16 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                         cache: false,
                         data: data,
                         success: function(){}
-                    })
+                    });
                 });
             });
             //Save new course
-            newCourseView.on('save:course', function(value){
+            newCourseView.on('save:pizza', function(value){
                 console.log(value)
-                // return;
                 var new_course = new ProjectManager.Entities.Course({
                     title: value.title,
                     size: value.size,
-                    price: value.price,
-                    image: value.image
+                    price: value.price
                 });
                 new_course.save({}, {success: function(){
                     ProjectManager.vent.trigger('add:course', new_course);
@@ -4054,28 +4082,56 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
             });
             ProjectManager.overlayRegion.show(newCohortView);
         },
+        showPizzas: function(){
+            console.log('show pizza');
+            var loadingView = new ProjectManager.Common.Views.Loading();
+            ProjectManager.contentRegion.show(loadingView);
+             //Fetch pizzas
+             var fetchingPizza = ProjectManager.request('pizza:entities');
+             $.when(fetchingPizza).done(function(pizza){
+                console.log('fetching pizza');
+                var pizzaView = new ProjectManager.ProjectApp.EntityViews.PizzaView({
+                    collection: pizza
+                });
+                console.log(pizza);
+                pizzaView.on('show', function(){
+
+                });
+
+                ProjectManager.vent.off('add:course');
+                ProjectManager.vent.on('add:course', function(pizza){
+                    pizza.add(pizza, {at: 0});
+                    ProjectManager.commands.execute('close:overlay');
+                });
+
+                ProjectManager.contentRegion.show(pizzaView);
+             });
+        },
         showCourses: function(type){
+            console.log('showCourses')
             //Update learner progress
             learnerProgress = '', learnerContainers = [];
             //Show loading page
             var loadingView = new ProjectManager.Common.Views.Loading();
             ProjectManager.contentRegion.show(loadingView);
             //Fetch courses
-            var fetchingCourses = ProjectManager.request('course:entities', type);
+            var fetchingCourses = ProjectManager.request('pizza:entities', type);
             $.when(fetchingCourses).done(function(courses){
                 var coursesView = new ProjectManager.ProjectApp.EntityViews.CoursesView({
                     collection: courses
                 });
+
+                console.log(courses);
                 //Show
                 coursesView.on('show', function(){
-                    //Updated title
-                    if(type == 'drafts'){
-                        document.title = 'FramerSpace: Draft Courses';
-                    } else if(type == 'archived'){
-                        document.title = 'FramerSpace: Archived Courses';
-                    } else {
-                        document.title = 'FramerSpace: Courses';
-                    }
+                    // //Updated title
+                    // if(type == 'drafts'){
+                    //     document.title = 'FramerSpace: Draft Courses';
+                    // } else if(type == 'archived'){
+                    //     document.title = 'FramerSpace: Archived Courses';
+                    // } else {
+                    //     document.title = 'FramerSpace: Courses';
+                    // }
                 });
                 //Add course
                 ProjectManager.vent.off('add:course');

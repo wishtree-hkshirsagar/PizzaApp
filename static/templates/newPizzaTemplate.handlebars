@@ -1,35 +1,41 @@
 <div class="overlay-box new-pizza-box">
-    <div class="overlay-form">
-        <h2 class="message">Add new pizza:</h2>
-        <p class="u-formError"></p>
+    <div class="overlay-form pizza-form">
 
+
+        <h2 class="message">Add new pizza:</h2>
+        <p class="overlay-label">Pizza name:</p>
+        <p class="u-formError pizza-name"></p>
         <input placeholder="Pizza name*" type="text" autocomplete="off" class="pizza-title entity-title">
         
        
         <p class="overlay-label">Choose pizza size:</p>
-         <select class="select-pizza" data-placeholder="Pizza" id="select-pizza">
-                <option value=""></option>
+        <p class="u-formError pizza-size"></p>
+        <label class="wrap-pizzaType" name="wrap-pizzaType">
+        <select class="select-pizza entity-title" data-placeholder="Pizza" id="select-pizza" required>
+                <option value="" disabled selected hidden>Select your option</option>
                 <option value="small">Small</option>
                 <option value="medium">Medium</option>
                 <option value="large">Large</option>
         </select>
+        </label>
+
 
         <p class="overlay-label">Price:</p>
+        <p class="u-formError price"></p>
         <input type="number" name="price"  min="1" placeholder="price" class="pizza-price entity-title">
-         
+
+
+        <p class="overlay-label">Upload Image:</p>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="file" id="uploadFile">
+        </form>
        
         <div class="entity-btn save-pizza js-save">Save pizza</div>
     </div>
-    <div class="overlay-about">
-         <form id="uploadForm" enctype="multipart/form-data">
-            <input type="file" name="file" id="uploadFile">
-            {{!-- <input type="submit" value="upload"> --}}
-        </form>
+        
         <div class="course-actions u-hide">
-            <span class="archive-course js-archive-course">Archive Course</span>
             <span class="delete-course js-delete-course">Delete Course</span>
         </div>
-    </div>
     
-    <a class="overlay-close js-close" href="#"></a>
+    <a class="overlay-close js-close overlay-close-pizza" href="#"></a>
 </div>

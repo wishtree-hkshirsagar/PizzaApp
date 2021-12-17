@@ -45,7 +45,7 @@ var sessionStore = new mongoStore({
 });
 //Session middleware
 var sessionMiddleware = session({
-    name: 'framerspace.sid',
+    name: 'pizza.sid',
     store: sessionStore,
     secret: 'Sa802u5LH67pPASasBPopLxa9618',
     cookie: {maxAge: 24 * 60 * 60 * 1000},

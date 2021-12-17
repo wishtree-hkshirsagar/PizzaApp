@@ -10,7 +10,7 @@ select{
     background-color: #232323;
 }
 .u-formError{
-    color: #232323;
+    color: #f00;
 }
 .u-delete{
     color: #8c8c8c;
@@ -188,7 +188,7 @@ select{
 .action-add-cohort:hover span{
     background-position: -320px 0px;
 }
-.one-course{
+.one-course, .one-pizza{
     background-color: #fff;
     border: 1px solid #e9e9ef;
     box-shadow: 0px 0px 20px #e9e9ef;
