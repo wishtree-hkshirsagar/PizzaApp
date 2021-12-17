@@ -81,7 +81,8 @@ module.exports = function(app, passport) {
                         initials: req.user.initials,
                         dp: req.user.dp.s,
                         type: req.user.type,
-                        theme: req.user.theme
+                        theme: req.user.theme,
+                        page_layout: req.user.layout
                     });
                 } else {
                     console.log(req.user);

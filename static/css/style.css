@@ -502,8 +502,8 @@ select{
 }
 .mainHeader .header-title,
 .mainHeader .header-now,
-.mainHeader .header-back,
-.pizza-title{
+.mainHeader .header-back
+{
     font-family: 'IBM Plex Serif', serif;
     font-weight: 600;
     font-size: 40px;
@@ -3379,6 +3379,10 @@ label[name=wrap-pizzaType]:after{
     margin: auto;
 }
 
-.pizza-title{
-    text-transform: capitalize !important;
+.pizza-title-name{
+    font-family: 'IBM Plex Serif', serif;
+    font-weight: 600;
+    font-size: 40px;
+    margin-bottom: 5px;
+    text-transform: capitalize;
 }

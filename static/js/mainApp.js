@@ -252,7 +252,7 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
     var API = {
         newPizzaOverlayView: function(){
             console.log('newPizzaOverlayView')
-            ProjectManager.ProjectApp.EntityController.Controller.showNewPizzaOverlay();
+            ProjectManager.ProjectApp.EntityController.Controller.showNewCourseOverlay();
         },
         newCourseOverlayView: function(){
             ProjectManager.ProjectApp.EntityController.Controller.showNewCourseOverlay();
@@ -291,6 +291,10 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
             conosole.log('coursesView')
             ProjectManager.ProjectApp.EntityController.Controller.showCoursesHeader(type);
             ProjectManager.ProjectApp.EntityController.Controller.showCourses(type);
+        },
+        pizzaView: function(slug){
+            console.log('pizzaView');
+            ProjectManager.ProjectApp.EntityController.Controller.showOnePizza(slug);     
         },
         courseView: function(slug, back_type){
             ProjectManager.ProjectApp.EntityController.Controller.showOneCourse(slug, '', back_type);
@@ -1068,6 +1072,7 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
             'click .js-add-pizza': 'openNewPizzaOverlay'
         },
         openNewPizzaOverlay: function(ev){
+            ev.preventDefault();
             console.log('openNewPizzaOverlay')
             ProjectManager.vent.trigger('newPizzaOverlay:show');
         }
@@ -4088,19 +4093,19 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
             ProjectManager.contentRegion.show(loadingView);
              //Fetch pizzas
              var fetchingPizza = ProjectManager.request('pizza:entities');
-             $.when(fetchingPizza).done(function(pizza){
+             $.when(fetchingPizza).done(function(pizzas){
                 console.log('fetching pizza');
                 var pizzaView = new ProjectManager.ProjectApp.EntityViews.PizzaView({
-                    collection: pizza
+                    collection: pizzas
                 });
-                console.log(pizza);
-                pizzaView.on('show', function(){
+                console.log(pizzas);
+                // pizzaView.on('show', function(){
 
-                });
+                // });
 
                 ProjectManager.vent.off('add:course');
                 ProjectManager.vent.on('add:course', function(pizza){
-                    pizza.add(pizza, {at: 0});
+                    pizzas.add(pizza, {at: 0});
                     ProjectManager.commands.execute('close:overlay');
                 });
 
@@ -4156,6 +4161,7 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
             });
         },
         showOneCourse: function(slug, container, back_type){
+            console.log('showOneCourse')
             //Fetch course
             var fetchingCourse = ProjectManager.request('course:entity', slug);
             $.when(fetchingCourse).done(function(course){

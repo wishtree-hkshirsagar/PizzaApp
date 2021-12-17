@@ -633,7 +633,7 @@ var _addPizza = function(req, res){
 var _getPizza = function(req, res) {
     console.log('get pizza');
     Pizza.find({}, (err, pizzas) => {
-        console.log(pizzas)
+        // console.log(pizzas)
         if (err) {
             res.status(500).json({ errmsg: err })
         }
@@ -667,7 +667,7 @@ var _getOnePizzaByIdOrSlug = function(req, res) {
 }
 
 var _updatePizza = function(req, res){
-    
+
 }
 
 
