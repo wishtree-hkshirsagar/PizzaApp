@@ -402,7 +402,7 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
         //Show course modules
         ProjectManager.navigate('pizza/' + slug);
         console.log('pizza navigate');
-        // API.courseView(slug, back_type);
+        API.pizzaView(slug);
     });
     //Show course and course modules
     ProjectManager.vent.on('course:show', function(slug, back_type){
@@ -448,6 +448,15 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
             ProjectManager.navigate('course/' + course_slug);
             API.blocksView(course_id);
         }
+    });
+
+    //Show pizza details
+    ProjectManager.vent.on('pizzaDetail:show', function(pizza_id){
+        console.log(pizza_id);
+        var pizza_slug = $('.mainHeader .header-title').data('slug');
+        console.log(pizza_slug);
+        ProjectManager.navigate('pizza/' + pizza_slug);
+        API.blocksView(pizza_id);
     });
     //Show block theme overlay
     ProjectManager.vent.on('blockThemeOverlay:show', function(block_id){
@@ -577,6 +586,18 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
             }
         },
         idAttribute: '_id'
+    });
+    Entities.DetailCollection = Backbone.Collection.extend({
+        initialize: function(models, options){
+            //_id is pizza id
+            this._id = options._id;
+        },
+        url: function(){
+           
+            return '/api/pizza/' + this._id
+            
+        },
+        model: Entities.Pizza
     });
     Entities.BlockCollection = Backbone.Collection.extend({
         initialize: function(models, options){
@@ -772,12 +793,36 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
             });
             return defer.promise();
         },
+        getOnePizza: function(_id){
+            var pizza = new Entities.Pizza({
+                _id: _id
+            });
+            var defer = $.Deferred();
+            pizza.fetch({
+                success: function(data){
+                    defer.resolve(data);
+                }
+            });
+            return defer.promise();
+        },
         getOneCourse: function(_id){
             var course = new Entities.Course({
                 _id: _id
             });
             var defer = $.Deferred();
             course.fetch({
+                success: function(data){
+                    defer.resolve(data);
+                }
+            });
+            return defer.promise();
+        },
+        getDetails: function(_id){
+            var details = new Entities.DetailCollection([], {
+                _id: _id
+            });
+            var defer = $.Deferred();
+            details.fetch({
                 success: function(data){
                     defer.resolve(data);
                 }
@@ -934,8 +979,14 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
     ProjectManager.reqres.setHandler('course:entities', function(_type){
         return API.getCourses(_type);
     });
+    ProjectManager.reqres.setHandler('pizza:entity', function(_id){
+        return API.getOnePizza(_id);
+    });
     ProjectManager.reqres.setHandler('course:entity', function(_id){
         return API.getOneCourse(_id);
+    });
+    ProjectManager.reqres.setHandler('pizza:details', function(_id){
+        return API.getDetails(_id);
     });
     ProjectManager.reqres.setHandler('block:entities', function(_id, _container){
         return API.getBlocks(_id, _container);
@@ -1172,6 +1223,14 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
     EntityViews.CoursesView = Marionette.CollectionView.extend({
         className: 'all-courses sectionBox',
         childView: EntityViews.CourseItemView
+    });
+    // Pizza details header view
+    EntityViews.PizzaDetailHeaderView = Marionette.ItemView.extend({
+        className: 'sectionBox',
+        template: 'pizzaDetailHeaderTemplate',
+        events: {
+
+        }
     });
     //Course header view
     EntityViews.CourseHeaderView = Marionette.ItemView.extend({
@@ -2431,8 +2490,9 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
         className: 'one-block u-transparent',
         template: 'blockOneTemplate',
         initialize: function(){
+            console.log(this.model)
             this.$el.attr('data-id', this.model.get('_id'));
-            this.$el.attr('data-order', this.model.get('order'));
+            // this.$el.attr('data-order', this.model.get('order'));
             //Theme and Size
             if(this.model.get('size')){
                 var width = this.model.get('size').width;
@@ -4158,6 +4218,26 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                     }});
                 });
                 ProjectManager.contentRegion.show(coursesView);
+            });
+        },
+        showOnePizza: function(slug){
+            console.log('showOnePizza')
+            var fetchingPizza = ProjectManager.request('pizza:entity', slug);
+            $.when(fetchingPizza).done(function(pizza){
+                var pizzaDetailHeaderView = new ProjectManager.ProjectApp.EntityViews.PizzaDetailHeaderView({
+                    model: pizza
+                });
+                console.log(pizza)
+                pizzaDetailHeaderView.on('show', function(){
+                    document.title = 'Pizza Hut: ' + pizza.get('title');
+                    //Add course id to header
+                    pizzaDetailHeaderView.$('.header-title').data('id', pizza.get('_id'));
+                    pizzaDetailHeaderView.$('.header-title').data('slug', pizza.get('slug'));
+
+                    ProjectManager.vent.trigger('pizzaDetail:show', pizza.get('_id'));
+                });
+
+                ProjectManager.headerRegion.show(pizzaDetailHeaderView);
             });
         },
         showOneCourse: function(slug, container, back_type){
@@ -7199,86 +7279,55 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
         },
         showBlocks: function(course_id, container_id, container_title){
             //Show loading page
+            console.log(course_id);
             var loadingView = new ProjectManager.Common.Views.Loading();
             ProjectManager.contentRegion.show(loadingView);
+            
             //Fetch blocks
-            var fetchingBlocks = ProjectManager.request('block:entities', course_id, container_id);
-            $.when(fetchingBlocks).done(function(blocks){
+            var fetchingPizzaDetails = ProjectManager.request('pizza:details', course_id);
+            $.when(fetchingPizzaDetails).done(function(details){
                 var blocksView = new ProjectManager.ProjectApp.EntityViews.BlocksView({
-                    collection: blocks
+                    collection: details
                 });
+                console.log(details);
+
                 //Show
                 blocksView.on('show', function(){
-                    //Update header title
-                    if(container_id){
-                        if(container_title){
-                            var title = container_title;
-                        } else if(blocks && blocks.length){
-                            var title = blocks.first().get('container').title;
-                        } else {
-                            var title = '...';
-                        }
-                        var course_slug = $('.mainHeader .header-title').data('slug');
-                        $('.mainHeader .header-now').addClass('header-back').removeClass('header-now');
-                        $('.mainHeader .header-title').append("<span class='header-seperator'>/</span>");
-                        $('.mainHeader .header-title').append("<a href='/course/" + course_slug + "/"+ container_id +"' class='header-container header-now' data-id='"+container_id+"'>"+title+"</a>");
-                    }
-                    //Show progress btn
-                    if(!learnerProgress){
-                        blocksView.$('.js-start-course').removeClass('u-hide');
-                    } else {
-                        //Show all blocks
-                        blocksView.$('.all-blocks').removeClass('u-hide');
-                        //Show mark done btn
-                        if(learnerProgress == 'certified'){
-                            blocksView.$('.js-mark-done').removeClass('u-hide').addClass('js-certified').text('Download certificate');
-                        } else if(learnerProgress == 'uncertified'){
-                            blocksView.$('.js-mark-done').removeClass('u-hide').addClass('js-uncertified').text('Check for certificate');
-                        } else if(learnerProgress == 'completed'){
-                            blocksView.$('.js-mark-done').addClass('u-hide');
-                        } else if(container_id && learnerContainers.length && learnerContainers.indexOf(container_id) > -1){
-                            //Check if inside container
-                            blocksView.$('.js-mark-done').addClass('u-hide');
-                        } else {
-                            blocksView.$('.js-mark-done').removeClass('u-hide');
-                        }
-                    }
-                    //Mark containers as opaque
-                    if(!container_id && (learnerProgress == 'active' || learnerProgress == 'certified') && learnerContainers.length){
-                        for(var i=0; i<learnerContainers.length; i++){
-                            blocksView.$(".one-block[data-id='" + learnerContainers[i] + "']").addClass('u-opaque');
-                        }
-                    }
-                    //Show blocks
-                    if($('.pageWrap').data('layout') == 'grid' && $('body').width() > 1100){
-                        var totalWidth = parseInt(blocksView.$('.all-blocks').css('width'));
-                        var start_index;
-                        var heights = [];
-                        blocksView.$('.all-blocks .one-block').each(function(i, obj) {
-                            if(parseInt($(this).css('width')) != totalWidth){
-                                if(!start_index) start_index = i;
-                                heights.push(parseInt($(this).css('height')));
-                            } else if(heights.length) {
-                                var max_height = Math.max(...heights);
-                                for(var j=start_index; j<i; j++){
-                                    blocksView.$('.all-blocks .one-block').eq(j).css('height', max_height + 'px');
-                                }
-                                start_index = '';
-                                heights = [];
+                   
+         
+                //Show all blocks
+                blocksView.$('.all-blocks').removeClass('u-hide');
+                    
+                //Show blocks
+                if($('.pageWrap').data('layout') == 'grid' && $('body').width() > 1100){
+                    var totalWidth = parseInt(blocksView.$('.all-blocks').css('width'));
+                    var start_index;
+                    var heights = [];
+                    blocksView.$('.all-blocks .one-block').each(function(i, obj) {
+                        if(parseInt($(this).css('width')) != totalWidth){
+                            if(!start_index) start_index = i;
+                            heights.push(parseInt($(this).css('height')));
+                        } else if(heights.length) {
+                            var max_height = Math.max(...heights);
+                            for(var j=start_index; j<i; j++){
+                                blocksView.$('.all-blocks .one-block').eq(j).css('height', max_height + 'px');
                             }
-                        });
-                        blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
-                    } else {
-                        blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
-                    }
-                    //Show typeform
-                    if(blocksView.$('.typeform-embed').length){
-                        blocksView.$('iframe.typeform-embed').each(function(index){
-                            var source = $('iframe.typeform-embed').eq(index).attr('src');
-                            source = source + '#uniqueid=' + $('.pageWrap').data('uniqueid');
-                            $('iframe.typeform-embed').eq(index).attr('src', source).attr('height', 600);
-                        });
-                    }
+                            start_index = '';
+                            heights = [];
+                        }
+                    });
+                    blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
+                } else {
+                    blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
+                }
+                //Show typeform
+                if(blocksView.$('.typeform-embed').length){
+                    blocksView.$('iframe.typeform-embed').each(function(index){
+                        var source = $('iframe.typeform-embed').eq(index).attr('src');
+                        source = source + '#uniqueid=' + $('.pageWrap').data('uniqueid');
+                        $('iframe.typeform-embed').eq(index).attr('src', source).attr('height', 600);
+                    });
+                }
                     //Show video player
                     if(blocksView.$('.view-video').length){
                         blocksView.$('.view-video').each(function(index){
