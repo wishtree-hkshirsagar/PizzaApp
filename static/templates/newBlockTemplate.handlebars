@@ -1,335 +1,40 @@
 <div class="overlay-box new-block-box">
     <div class="overlay-form">
-        <h2 class="message">Create new block:</h2>
+        <h2 class="message"></h2>
+        <div class="image"><img src=""></div>
         <div class="new-block-area">
-            {{!-- Text block --}}
-            <div class="block-area block-text">
-                <div class="text-content form-text rich-text" data-placeholder="Write here..."></div>
-            </div>
-            {{!-- Button block --}}
-            <div class="block-area block-button u-hide">
-                <input placeholder="Button text" type="text" autocomplete="off" class="block-button-text entity-title">
-                <p class="overlay-label">Jump to block number:</p>
-                <input placeholder="Block number" type="text" autocomplete="off" class="block-button-number entity-title">
-                <p class="overlay-label">Or external URL:</p>
-                <input placeholder="URL" type="text" autocomplete="off" class="block-button-url entity-title">
-                <label class="overlay-checkbox newtab-label">
-                    <input class="checkbox" type="checkbox" name="newtab-input"><span>Opens in new tab?</span>
-                </label>
-            </div>
-            {{!-- Divider block --}}
-            <div class="block-area block-divider u-hide">
-                <input placeholder="Text" type="text" autocomplete="off" class="block-divider-text entity-title">
-                <input placeholder="Wait time in seconds" type="text" autocomplete="off" class="block-divider-time entity-title">
-                <p class="overlay-label">Select animation:</p>
-                <div class="select-animation">
-                    <span class="select-label animation-wave">Wave</span>
-                    <span class="select-label animation-breathing">Breathing</span>
-                    <span class="select-label animation-water">Water</span>
-                </div>
-                <p class="overlay-label">Or select music:</p>
-                <div class="select-music">
-                    <span class="select-label music-harmony">Harmony</span>
-                    <span class="select-label music-still">Still</span>
-                    <span class="select-label music-thoughts">Thoughts</span>
-                    <span class="select-label music-acceptance">Acceptance</span>
-                    <span class="select-label music-moment">Moment</span>
-                </div>
-            </div>
-            {{!-- Toggle list --}}
-            <div class="block-area block-toggle-list u-hide">
-                <input placeholder="Title / Question" type="text" autocomplete="off" class="block-toggle-title entity-title">
-                <textarea placeholder="Text / Answer" class="block-toggle-text entity-text"></textarea>
-                <div class="form-btn save-toggle-item js-save-toggle-item">Add item</div>
-                <p class="overlay-label">Items:</p>
-                <div class="overlay-items toggle-list"></div>
-            </div>
-            {{!-- File/Image/Audio/Video --}}
-            <div class="block-area block-file u-hide">
-                <form method="post" action="https://chibuzz-uploads.s3.amazonaws.com/" enctype="multipart/form-data" class="direct-upload">
-                    <input placeholder="Title" type="text" autocomplete="off" class="block-file-title entity-title">
-                    <div id="drop-file" class="drop-area">
-                        <span>Choose files or drag and drop them here</span>
-                        <input type="hidden" name="key">
-                        <input type="hidden" name="AWSAccessKeyId" value="AKIAIT3BY3EDOZPAPDEQ">
-                        <input type="hidden" name="acl" value="public-read">
-                        <input type="hidden" name="policy">
-                        <input type="hidden" name="signature">
-                        <input type="hidden" name="success-action-status" value="201">
-                        <input type="hidden" name="Content-Type">
-                        <input type="file" name="file" class="file-input">
-                    </div>
-                </form>
-            </div>
-            {{!-- Link --}}
-            <div class="block-area block-link u-hide">
-                <input placeholder="Type or paste a URL for embedding" type="text" autocomplete="off" class="link-embed entity-title">
-                <div class="form-btn link-add u-hide">Preview link</div>
-                <div class="throbber-loader u-hide">Loading…</div>
-                {{!-- Preview link --}}
-                <p class="overlay-label u-hide">Select a cover image for the bookmark:</p>
-                <div class="link-preview">
-                    <p class="preview-title"></p>
-                    <span class="preview-provider"><a href="" target="_blank"></a></span>
-                    <div class="preview-desc"></div>
-                    <div class="preview-shots"></div>
-                    <div class="preview-embed"></div>
-                </div>
-            </div>
-            {{!-- GIF block --}}
-            <div class="block-area block-gif u-hide">
-                <input placeholder="Search for gifs" type="text" autocomplete="off" class="search-gifs entity-title">
-                <div class="throbber-loader u-hide">Loading…</div>
-                {{!-- Preview Results --}}
-                <p class="overlay-label u-hide">Select a gif:</p>
-                <div class="overlay-items gif-results"></div>
-            </div>
-            {{!-- MCQ block --}}
-            <div class="block-area block-mcq u-hide">
-                <input placeholder="Question" type="text" autocomplete="off" class="block-mcq-title entity-title">
-                <label class="is-multiple-label">
-                    <input class="checkbox" type="checkbox" name="is-multiple-input"> <span>Has more than one correct answer?</span>
-                </label>
-                <div class="mcq-new-option u-hide">
-                    <p class="overlay-label">Create new option:</p>
-                    <form method="post" action="https://chibuzz-uploads.s3.amazonaws.com/" enctype="multipart/form-data" class="option-image-upload">
-                        <div id="option-image" class="drop-area drop-area-small">
-                            <span>Optional image</span>
-                            <input type="hidden" name="key">
-                            <input type="hidden" name="AWSAccessKeyId" value="AKIAIT3BY3EDOZPAPDEQ">
-                            <input type="hidden" name="acl" value="public-read">
-                            <input type="hidden" name="policy">
-                            <input type="hidden" name="signature">
-                            <input type="hidden" name="success-action-status" value="201">
-                            <input type="hidden" name="Content-Type">
-                            <input type="file" name="file" class="file-input">
-                        </div>
-                    </form>
-                    <input placeholder="Option text" type="text" autocomplete="off" class="option-text entity-title">
-                    <div class="form-btn save-mcq-item js-save-mcq-item">Add option</div>
-                    <p class="overlay-label">Options:</p>
-                    <div class="overlay-items mcq-option-list"></div>
-                </div>
-            </div>
-            {{!-- Fill in the blanks block --}}
-            <div class="block-area block-fill u-hide">
-                <input placeholder="Question" type="text" autocomplete="off" class="block-fill-title entity-title">
-                <textarea placeholder="Describe your question" class="block-fill-text entity-text"></textarea>
-                <div class="fill-new-item u-hide">
-                    <p class="overlay-label">Add text or blanks:</p>
-                    <input placeholder="Text (or Leave empty for blanks)" type="text" autocomplete="off" class="fill-text entity-title">
-                    <input placeholder="Size of blank (Input 2 for 2x width, 3 for 3x width etc.)" type="text" autocomplete="off" class="fill-size entity-title">
-                    <div class="form-btn save-fill-item js-save-fill-item">Add</div>
-                    <p class="overlay-label">Fill in the blanks:</p>
-                    <div class="overlay-items fill-list"></div>
-                </div>
-            </div>
-            {{!-- Match the following block --}}
-            <div class="block-area block-match u-hide">
-                <input placeholder="Question" type="text" autocomplete="off" class="block-match-title entity-title">
-                <textarea placeholder="Describe your question" class="block-match-text entity-text"></textarea>
-                <div class="match-new-item u-hide">
-                    <p class="overlay-label">Create new option:</p>
-                    <div class="options-table">
-                        <div class="options-left">
-                            <form method="post" action="https://chibuzz-uploads.s3.amazonaws.com/" enctype="multipart/form-data" class="option-image-upload-left">
-                                <div id="option-image-left" class="drop-area drop-area-small drop-area-left">
-                                    <span>Optional image</span>
-                                    <input type="hidden" name="key">
-                                    <input type="hidden" name="AWSAccessKeyId" value="AKIAIT3BY3EDOZPAPDEQ">
-                                    <input type="hidden" name="acl" value="public-read">
-                                    <input type="hidden" name="policy">
-                                    <input type="hidden" name="signature">
-                                    <input type="hidden" name="success-action-status" value="201">
-                                    <input type="hidden" name="Content-Type">
-                                    <input type="file" name="file" class="file-input">
-                                </div>
-                            </form>
-                            <input placeholder="Option text" type="text" autocomplete="off" class="option-text-left entity-title">
-                            <div class="form-btn save-match-item js-save-match-item">Add option</div>
-                            <div class="overlay-items match-option-list-left"></div>
-                        </div>
-                        <div class="options-right">
-                            <form method="post" action="https://chibuzz-uploads.s3.amazonaws.com/" enctype="multipart/form-data" class="option-image-upload-right">
-                                <div id="option-image-right" class="drop-area drop-area-small drop-area-right">
-                                    <span>Optional image</span>
-                                    <input type="hidden" name="key">
-                                    <input type="hidden" name="AWSAccessKeyId" value="AKIAIT3BY3EDOZPAPDEQ">
-                                    <input type="hidden" name="acl" value="public-read">
-                                    <input type="hidden" name="policy">
-                                    <input type="hidden" name="signature">
-                                    <input type="hidden" name="success-action-status" value="201">
-                                    <input type="hidden" name="Content-Type">
-                                    <input type="file" name="file" class="file-input">
-                                </div>
-                            </form>
-                            <input placeholder="Option text" type="text" autocomplete="off" class="option-text-right entity-title">
-                            <div class="form-btn save-match-item js-save-match-item">Add option</div>
-                            <div class="overlay-items match-option-list-right"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {{!-- Response block --}}
-            <div class="block-area block-response u-hide">
-                <input placeholder="Title" type="text" autocomplete="off" class="block-response-title entity-title">
-                <textarea placeholder="Description" class="block-response-text entity-text"></textarea>
-                <p class="overlay-label u-hide">Correct answers:</p>
-                <textarea placeholder="Write keywords in comma seperated format like keyworda, keywordb, etc." class="block-response-keywords entity-text u-hide"></textarea>
-            </div>
-            {{!-- List block --}}
-            <div class="block-area block-list u-hide">
-                <input placeholder="Title" type="text" autocomplete="off" class="block-list-title entity-title">
-                <textarea placeholder="Description" class="block-list-text entity-text"></textarea>
-                <div class="list-new-item u-hide">
-                    <p class="overlay-label">Create new item:</p>
-                    <form method="post" action="https://chibuzz-uploads.s3.amazonaws.com/" enctype="multipart/form-data" class="list-image-upload">
-                        <div id="list-image" class="drop-area drop-area-small">
-                            <span>Optional image</span>
-                            <input type="hidden" name="key">
-                            <input type="hidden" name="AWSAccessKeyId" value="AKIAIT3BY3EDOZPAPDEQ">
-                            <input type="hidden" name="acl" value="public-read">
-                            <input type="hidden" name="policy">
-                            <input type="hidden" name="signature">
-                            <input type="hidden" name="success-action-status" value="201">
-                            <input type="hidden" name="Content-Type">
-                            <input type="file" name="file" class="file-input">
-                        </div>
-                    </form>
-                    <input placeholder="Item text" type="text" autocomplete="off" class="list-item-text entity-title">
-                    <label class="overlay-checkbox isright-label">
-                        <input class="checkbox" type="checkbox" name="isright-input"><span>Is right?</span>
-                    </label>
-                    <div class="form-btn save-list-item js-save-list-item">Add item</div>
-                    <p class="overlay-label">Items:</p>
-                    <div class="overlay-items list-item-list"></div>
-                </div>
-            </div>
-            {{!-- Container block --}}
-            <div class="block-area block-container u-hide">
-                <form method="post" action="https://chibuzz-uploads.s3.amazonaws.com/" enctype="multipart/form-data" class="container-upload">
-                    <div id="drop-container" class="drop-area">
-                        <span>Choose cover image or drop them here <br>(800px X 800px or a square image)</span>
-                        <input type="hidden" name="key">
-                        <input type="hidden" name="AWSAccessKeyId" value="AKIAIT3BY3EDOZPAPDEQ">
-                        <input type="hidden" name="acl" value="public-read">
-                        <input type="hidden" name="policy">
-                        <input type="hidden" name="signature">
-                        <input type="hidden" name="success-action-status" value="201">
-                        <input type="hidden" name="Content-Type">
-                        <input type="file" name="file" class="file-input">
-                    </div>
-                </form>
-                <input placeholder="Title" type="text" autocomplete="off" class="block-container-title entity-title">
-                <textarea placeholder="Description" class="block-container-text entity-text"></textarea>
-            </div>
-            {{!-- Grid block --}}
-            <div class="block-area block-grid u-hide">
-                <input placeholder="Title" type="text" autocomplete="off" class="block-grid-title entity-title">
-                <textarea placeholder="Description" class="block-grid-text entity-text"></textarea>
-                <div class="grid-new-item u-hide">
-                    <p class="overlay-label">Create new item:</p>
-                    <form method="post" action="https://chibuzz-uploads.s3.amazonaws.com/" enctype="multipart/form-data" class="grid-image-upload">
-                        <div id="grid-image" class="drop-area drop-area-small">
-                            <span>Optional image</span>
-                            <input type="hidden" name="key">
-                            <input type="hidden" name="AWSAccessKeyId" value="AKIAIT3BY3EDOZPAPDEQ">
-                            <input type="hidden" name="acl" value="public-read">
-                            <input type="hidden" name="policy">
-                            <input type="hidden" name="signature">
-                            <input type="hidden" name="success-action-status" value="201">
-                            <input type="hidden" name="Content-Type">
-                            <input type="file" name="file" class="file-input">
-                        </div>
-                    </form>
-                    <input placeholder="Item text" type="text" autocomplete="off" class="grid-item-text entity-title">
-                    <div class="form-btn save-grid-item js-save-grid-item">Add item</div>
-                    <p class="overlay-label">Items:</p>
-                    <div class="overlay-items grid-item-list"></div>
-                </div>
-            </div>
-            {{!-- Comic block --}}
-            <div class="block-area block-comic u-hide">
-                <form method="post" action="https://chibuzz-uploads.s3.amazonaws.com/" enctype="multipart/form-data" class="comic-upload">
-                    <div id="drop-comic" class="drop-area">
-                        <span>Choose comic strip or drop them here</span>
-                        <input type="hidden" name="key">
-                        <input type="hidden" name="AWSAccessKeyId" value="AKIAIT3BY3EDOZPAPDEQ">
-                        <input type="hidden" name="acl" value="public-read">
-                        <input type="hidden" name="policy">
-                        <input type="hidden" name="signature">
-                        <input type="hidden" name="success-action-status" value="201">
-                        <input type="hidden" name="Content-Type">
-                        <input type="file" name="file" class="file-input">
-                    </div>
-                </form>
-                <p class="overlay-label">Or type text:</p>
-                <textarea placeholder="Comic text" class="block-comic-text entity-text"></textarea>
-            </div>
-            {{!-- Embed block --}}
-            <div class="block-area block-embed u-hide">
-                <input placeholder="Title" type="text" autocomplete="off" class="block-embed-title entity-title">
-                <textarea placeholder="Embed code" class="block-embed-code entity-text"></textarea>
-                <p class="overlay-label">Embed size:</p>
-                <input placeholder="Width (in pixels)" type="text" autocomplete="off" class="block-embed-width entity-title">
-                <input placeholder="Height (in pixels)" type="text" autocomplete="off" class="block-embed-height entity-title">
-            </div>
+
+            {{!-- <div class="image"><img src=""></div> --}}
+
+
+            <p class="overlay-label">Pizza name:</p>
+            <p class="u-formError pizza-name"></p>
+            <input placeholder="Pizza name*" type="text" autocomplete="off" class="pizza-title entity-title">
+
+            <p class="overlay-label">Choose pizza size:</p>
+            <p class="u-formError pizza-size"></p>
+            <label class="wrap-pizzaType" name="wrap-pizzaType">
+            <select class="select-pizza entity-title" data-placeholder="Pizza" id="select-pizza" required>
+                    <option value="" disabled selected hidden>Select your option</option>
+                    <option value="small">Small</option>
+                    <option value="medium">Medium</option>
+                    <option value="large">Large</option>
+            </select>
+            </label>
+
+            <p class="overlay-label">Price:</p>
+            <p class="u-formError price"></p>
+            <input type="number" name="price"  min="1" placeholder="price" class="pizza-price entity-title">
+
+            
+            <p class="overlay-label">Upload Image:</p>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" name="file" id="uploadFile">
+            </form>
+
         </div>
-        <div class="entity-btn save-block js-save-block">Save block</div>
-        <div class="entity-done js-done u-hide">Done</div>
+        <div class="entity-btn edit-pizza-btn js-save-block">Save block</div>
+        <a class="overlay-close js-close" href="#"></a>
     </div>
-    <div class="overlay-about">
-        <div class="toolbar-area">
-            <div class="toolbar-btns">
-                <p class="toolbar-label">Basic blocks</p>
-                <p class="toolbar-btn btn-text selected"><span class="block-icon"></span>Rich text</p>
-                <p class="toolbar-btn btn-button"><span class="block-icon"></span>Button</p>
-                <p class="toolbar-btn btn-divider"><span class="block-icon"></span>Divider</p>
-                <p class="toolbar-btn btn-toggle-list"><span class="block-icon"></span>Toggle list</p>
-            </div>
-            <div class="toolbar-btns">
-                <p class="toolbar-label">Media</p>
-                <p class="toolbar-btn btn-image"><span class="block-icon"></span>Image</p>
-                <p class="toolbar-btn btn-link"><span class="block-icon"></span>Web Bookmark</p>
-                <p class="toolbar-btn btn-video"><span class="block-icon"></span>Video</p>
-                <p class="toolbar-btn btn-audio"><span class="block-icon"></span>Audio</p>
-                <p class="toolbar-btn btn-file"><span class="block-icon"></span>File</p>
-                <p class="toolbar-btn btn-gif"><span class="block-icon"></span>GIF</p>
-            </div>
-            <div class="toolbar-btns">
-                <p class="toolbar-label">Objective response</p>
-                <p class="toolbar-btn btn-mcq"><span class="block-icon"></span>MCQ</p>
-                <p class="toolbar-btn btn-fill"><span class="block-icon"></span>Fill in the blanks</p>
-                <p class="toolbar-btn btn-match"><span class="block-icon"></span>Match the following</p>
-            </div>
-            <div class="toolbar-btns">
-                <p class="toolbar-label">Subjective response</p>
-                <p class="toolbar-btn btn-response-text"><span class="block-icon"></span>Text response</p>
-                <p class="toolbar-btn btn-response-audio"><span class="block-icon"></span>Audio recording</p>
-                <p class="toolbar-btn btn-response-video"><span class="block-icon"></span>Video recording</p>
-                <p class="toolbar-btn btn-response-canvas u-hide"><span class="block-icon"></span>Drawing</p>
-                <p class="toolbar-btn btn-response-file"><span class="block-icon"></span>Upload file</p>
-            </div>
-            <div class="toolbar-btns">
-                <p class="toolbar-label">Advanced blocks</p>
-                <p class="toolbar-btn btn-list"><span class="block-icon"></span>List</p>
-                <p class="toolbar-btn btn-container"><span class="block-icon"></span>Container</p>
-                <p class="toolbar-btn btn-grid"><span class="block-icon"></span>Grid</p>
-                <p class="toolbar-btn btn-comic"><span class="block-icon"></span>Comic strip</p>
-                <p class="toolbar-btn btn-embed"><span class="block-icon"></span>Embed code</p>
-            </div>
-        </div>
-        {{!-- Actions --}}
-        <div class="block-overlay-actions u-hide">
-            <p class="overlay-label">New block order:</p>
-            <div class="new-block-order">
-                <input placeholder="Block order" type="text" autocomplete="off" class="block-order entity-title">
-                <div class="entity-btn update-order js-update-order">Save</div>
-            </div>
-            <div class="entity-done js-required u-hide">Mark as required</div>
-            <div class="entity-done js-hide-learner">Hide from learners</div>
-            <div class="entity-done u-delete js-delete-block">Delete block</div>
-        </div>
-    </div>
-    <a class="overlay-close js-close" href="#"></a>
+    
 </div>

@@ -2546,6 +2546,7 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
             ProjectManager.vent.trigger('blocks:show', this.model.get('course'), this.model.get('_id'), this.model.get('title'));
         },
         editBlock: function(ev){
+            console.log('edit block')
             ev.preventDefault();
             ev.stopPropagation();
             ProjectManager.vent.trigger('editBlockOverlay:show', this.model.get('_id'));
@@ -6221,312 +6222,32 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
             var mcq_option_bound, mcq_option_image_url;
             var left_image_url, left_bound, right_image_url, right_bound, list_item_image_url, list_item_bound, grid_item_image_url, grid_item_bound, container_image_url, container_bound;
             //Fetch block
-            var fetchingBlock = ProjectManager.request('block:entity', block_id);
+            var fetchingBlock = ProjectManager.request('pizza:entity', block_id);
             $.when(fetchingBlock).done(function(block){
                 var newBlockView = new ProjectManager.ProjectApp.EntityViews.NewBlockView();
                 //Editor
                 var richTextEditor;
                 var richTextEditorFiles = [];
+                console.log(block);
                 //Show
                 newBlockView.on('show', function(){
                     //Add edit class
                     newBlockView.$('.overlay-box').addClass('edit-box');
-                    newBlockView.$('.overlay-form .message').html('Edit block:');
+                    newBlockView.$('.overlay-form .message').html('Edit Pizza Details:');
                     setTimeout(function(){
                         newBlockView.$('.overlay-box').addClass('animate');
+                        newBlockView.$('.pizza-title').val(block.get('title')).focus();
+                        newBlockView.$('#select-pizza').val(block.get('size'));
+                        newBlockView.$('.pizza-price').val(block.get('price'));
+                        let path = '../images/site/'+block.get('image');
+                        console.log(path);
+                        newBlockView.$('.image img').attr('src', path)
                     }, 100);
                     //Hide scroll on main page
                     ProjectManager.commands.execute('show:overlay');
                     //Show section based on type
                     var type = block.get('type');
-                    //Hide toolbar-btns
-                    newBlockView.$('.toolbar-btns > p').addClass('u-hide');
-                    //Hide area
-                    newBlockView.$('.new-block-area .block-area').addClass('u-hide');
-                    newBlockView.$('.toolbar-btn.btn-text').removeClass('selected');
-                    //Show block actions
-                    newBlockView.$('.block-overlay-actions').removeClass('u-hide');
-                    //Show block order
-                    newBlockView.$('.block-order').val(block.get('order'));
-                    //If hidden from learners
-                    if(block.get('is_hidden')){
-                        newBlockView.$('.js-hide-learner').addClass('selected').text('Hidden from learners');
-                    }
-                    //Rich text
-                    if(type == 'text'){
-                        //Show toolbar-btn
-                        newBlockView.$('.toolbar-btn.btn-text').removeClass('u-hide').addClass('selected');
-                        //Show area
-                        newBlockView.$('.new-block-area .block-text').removeClass('u-hide');
-                        //Wait till editor is ready
-                        newBlockView.$('.block-text').bind('click mousedown dblclick', function(ev){
-                           ev.preventDefault();
-                           ev.stopImmediatePropagation();
-                        });
-                        richTextEditor = setUpAlloyToolbar(false, document.querySelector('.text-content'), false, false);
-                        var nativeEditor = richTextEditor.get('nativeEditor');
-                        //On editor ready
-                        nativeEditor.on('instanceReady', function(ev){
-                            newBlockView.$('.block-text').unbind();
-                            nativeEditor.setData(block.get('text'));
-                        });
-                        //On image upload
-                        nativeEditor.on('imageAdd', function(ev){
-                            var id = generateRandomUUID();
-                            ev.data.file.id = id;
-                            richTextEditorFiles.push(ev.data.file);
-                            $(ev.data.el.$).addClass('upload-image').attr('data-id', id);
-                        });
-                    } else if(type == 'button'){
-                        //Show toolbar-btn
-                        newBlockView.$('.toolbar-btn.btn-button').removeClass('u-hide').addClass('selected');
-                        //Show area
-                        newBlockView.$('.new-block-area .block-button').removeClass('u-hide');
-                        //Button fill values
-                        newBlockView.$('.block-button-text').val(block.get('text')).focus();
-                        if(block.get('button')){
-                            if(block.get('button').url) newBlockView.$('.block-button-url').val(block.get('button').url);
-                            if(block.get('button').block) newBlockView.$('.block-button-number').val(block.get('button').block);
-                            if(block.get('button').is_new_tab) newBlockView.$('.newtab-label input').prop('checked', true);
-                        }
-                    } else if(type == 'divider'){
-                        //Show toolbar-btn
-                        newBlockView.$('.toolbar-btn.btn-divider').removeClass('u-hide').addClass('selected');
-                        //Show area
-                        newBlockView.$('.new-block-area .block-divider').removeClass('u-hide');
-                        //Divider fill values
-                        if(block.get('text')) newBlockView.$('.block-divider-text').val(block.get('text')).focus();
-                        if(block.get('divider')){
-                            if(block.get('divider').time) newBlockView.$('.block-divider-time').val(block.get('divider').time);
-                            if(block.get('divider').type && block.get('divider').name) newBlockView.$('.select-label.' + block.get('divider').type + '-' + block.get('divider').name).addClass('selected');
-                        }
-                    } else if(type == 'toggle_list'){
-                        //Show toolbar-btn
-                        newBlockView.$('.toolbar-btn.btn-toggle-list').removeClass('u-hide').addClass('selected');
-                        //Show area
-                        newBlockView.$('.new-block-area .block-toggle-list').removeClass('u-hide');
-                        //Hide save block
-                        newBlockView.$('.js-save-block').addClass('u-hide');
-                        newBlockView.$('.js-done').removeClass('u-hide');
-                        //Fill values
-                        newBlockView.$('.block-toggle-title').val('').focus();
-                        newBlockView.$('.js-save-toggle-item').data('block', block.get('_id'));
-                        if(block.get('items') && block.get('items').length){
-                            for(var i=0; i<block.get('items').length; i++){
-                                var item = block.get('items')[i];
-                                newBlockView.$('.toggle-list').append("<div class='one-item one-toggle-item' data-id='"+item._id+"'><div class='item-title'>"+item.title+"</div><div class='item-text'>"+item.text+"</div><span class='remove-item u-delete'>Remove</span></div>");
-                            }
-                        }
-                    } else if(type == 'image' || type == 'video' || type == 'audio' || type == 'file'){
-                        //Show toolbar-btn
-                        newBlockView.$('.toolbar-btn.btn-' + type).removeClass('u-hide').addClass('selected');
-                        //Show area
-                        newBlockView.$('.new-block-area .block-file').removeClass('u-hide');
-                        //Fill values
-                        newBlockView.$('.block-file-title').val(block.get('title')).focus();
-                        newBlockView.$('#drop-file').addClass('u-hide');
-                    } else if(type == 'mcq'){
-                        //Show toolbar-btn
-                        newBlockView.$('.toolbar-btn.btn-mcq').removeClass('u-hide').addClass('selected');
-                        //Show area
-                        newBlockView.$('.new-block-area .block-mcq').removeClass('u-hide');
-                        //Fill values
-                        newBlockView.$('.block-mcq-title').val(block.get('title')).focus();
-                        if(block.get('is_multiple')) newBlockView.$('.is-multiple-label input').prop('checked', true);
-                        //Show mcqs
-                        newBlockView.$('.mcq-new-option').removeClass('u-hide');
-                        newBlockView.$('.js-save-mcq-item').data('block', block.get('_id'));
-                        if(block.get('mcqs') && block.get('mcqs').length){
-                            for(var i=0; i<block.get('mcqs').length; i++){
-                                var option = block.get('mcqs')[i];
-                                if(option.is_correct){
-                                    newBlockView.$('.mcq-option-list').append("<div class='one-item one-mcq-item' data-id='"+option._id+"'><div class='item-title'>"+option.text+"</div><span class='correct-item selected'>Correct option</span><span class='remove-item u-delete'>Remove</span></div>");
-                                } else {
-                                    newBlockView.$('.mcq-option-list').append("<div class='one-item one-mcq-item' data-id='"+option._id+"'><div class='item-title'>"+option.text+"</div><span class='correct-item'>Set as correct</span><span class='remove-item u-delete'>Remove</span></div>");
-                                }
-                            }
-                        }
-                        //Trigger file browser
-                        newBlockView.trigger('open:mcqFileBrowser');
-                    } else if(type == 'fill'){
-                        //Show toolbar-btn
-                        newBlockView.$('.toolbar-btn.btn-fill').removeClass('u-hide').addClass('selected');
-                        //Show area
-                        newBlockView.$('.new-block-area .block-fill').removeClass('u-hide');
-                        //Fill values
-                        newBlockView.$('.block-fill-title').val(block.get('title')).focus();
-                        if(block.get('text')){
-                            var tmp = document.createElement('div');
-                            tmp.innerHTML = block.get('text').replace(/<br\s*[\/]?>/gi, '\n');
-                            var text = tmp.textContent || tmp.innerText || "";
-                            newBlockView.$('.block-fill-text').val(text);
-                        }
-                        //Show fills
-                        newBlockView.$('.fill-new-item').removeClass('u-hide');
-                        newBlockView.$('.js-save-fill-item').data('block', block.get('_id'));
-                        if(block.get('fills') && block.get('fills').length){
-                            for(var i=0; i<block.get('fills').length; i++){
-                                var fill = block.get('fills')[i];
-                                if(fill.text){
-                                    newBlockView.$('.fill-list').append("<div class='one-item one-fill-item' data-id='"+fill._id+"'><div class='item-title'>"+fill.text+"</div><span class='remove-item u-delete'>Remove</span></div>");
-                                } else {
-                                    var keywords = '';
-                                    if(fill.keywords && fill.keywords.length){
-                                        keywords = fill.keywords.join().replace(/,/g, ", ");
-                                    }
-                                    newBlockView.$('.fill-list').append("<div class='one-item one-fill-item' data-id='"+fill._id+"'><input placeholder='' type='' autocomplete='' class='blank-fill entity-title' value='"+keywords+"'><span class='update-item'>Update</span><span class='remove-item u-delete'>Remove</span></div>");
-                                }
-                            }
-                        }
-                    } else if(type == 'match'){
-                        //Show toolbar-btn
-                        newBlockView.$('.toolbar-btn.btn-match').removeClass('u-hide').addClass('selected');
-                        //Show area
-                        newBlockView.$('.new-block-area .block-match').removeClass('u-hide');
-                        //Fill values
-                        newBlockView.$('.block-match-title').val(block.get('title')).focus();
-                        if(block.get('text')){
-                            var tmp = document.createElement('div');
-                            tmp.innerHTML = block.get('text').replace(/<br\s*[\/]?>/gi, '\n');
-                            var text = tmp.textContent || tmp.innerText || "";
-                            newBlockView.$('.block-match-text').val(text);
-                        }
-                        //Show options
-                        newBlockView.$('.match-new-item').removeClass('u-hide');
-                        newBlockView.$('.js-save-match-item').data('block', block.get('_id'));
-                        if(block.get('options') && block.get('options').length){
-                            for(var i=0; i<block.get('options').length; i++){
-                                var option = block.get('options')[i];
-                                if(option.is_optionb){
-                                    newBlockView.$('.match-option-list-right').append("<div class='one-item' data-id='"+option._id+"'><div class='item-text'>"+option.text+"</div></div>");
-                                } else {
-                                    newBlockView.$('.match-option-list-left').append("<div class='one-item' data-id='"+option._id+"'><div class='item-text'>"+option.text+"</div></div>");
-                                }
-                            }
-                        }
-                        //Trigger file browser
-                        newBlockView.trigger('open:matchFileBrowser');
-                    } else if(type == 'response'){
-                        //Show toolbar-btn
-                        newBlockView.$('.toolbar-btn.btn-response-' + block.get('response_type')).removeClass('u-hide').addClass('selected');
-                        //Show area
-                        newBlockView.$('.new-block-area .block-response').removeClass('u-hide');
-                        //Fill values
-                        newBlockView.$('.block-response-title').val(block.get('title')).focus();
-                        if(block.get('text')){
-                            var tmp = document.createElement('div');
-                            tmp.innerHTML = block.get('text').replace(/<br\s*[\/]?>/gi, '\n');
-                            var text = tmp.textContent || tmp.innerText || "";
-                            newBlockView.$('.block-response-text').val(text);
-                        }
-                        //If text response
-                        if(block.get('response_type') == 'text'){
-                            //Show keywords
-                            newBlockView.$('.new-block-area .block-response .overlay-label').removeClass('u-hide');
-                            newBlockView.$('.new-block-area .block-response .block-response-keywords').removeClass('u-hide');
-                            if(block.get('keywords') && block.get('keywords').length){
-                                var keywords = block.get('keywords').join().replace(/,/g, ", ");
-                                newBlockView.$('.block-response-keywords').val(keywords);
-                            }
-                        }
-                        //Show required btn
-                        newBlockView.$('.block-overlay-actions .js-required').removeClass('u-hide');
-                        //If required
-                        if(block.get('is_required')){
-                            newBlockView.$('.js-required').addClass('selected').text('Required*');
-                        }
-                    } else if(type == 'list'){
-                        //Show toolbar-btn
-                        newBlockView.$('.toolbar-btn.btn-list').removeClass('u-hide').addClass('selected');
-                        //Show area
-                        newBlockView.$('.new-block-area .block-list').removeClass('u-hide');
-                        //Fill values
-                        newBlockView.$('.block-list-title').val(block.get('title')).focus();
-                        if(block.get('text')){
-                            var tmp = document.createElement('div');
-                            tmp.innerHTML = block.get('text').replace(/<br\s*[\/]?>/gi, '\n');
-                            var text = tmp.textContent || tmp.innerText || "";
-                            newBlockView.$('.block-list-text').val(text);
-                        }
-                        //Show items
-                        newBlockView.$('.list-new-item').removeClass('u-hide');
-                        newBlockView.$('.js-save-list-item').data('block', block.get('_id'));
-                        if(block.get('items') && block.get('items').length){
-                            for(var i=0; i<block.get('items').length; i++){
-                                var item = block.get('items')[i];
-                                if(item.text){
-                                    var text = item.text;
-                                } else {
-                                    var text = 'List item';
-                                }
-                                newBlockView.$('.list-item-list').append("<div class='one-item one-list-item' data-id='"+item._id+"'><div class='item-title'>"+text+"</div><span class='remove-item u-delete'>Remove</span></div>");
-                            }
-                        }
-                        //Trigger file browser
-                        newBlockView.trigger('open:listFileBrowser');
-                    } else if(type == 'container'){
-                        //Show toolbar-btn
-                        newBlockView.$('.toolbar-btn.btn-container').removeClass('u-hide').addClass('selected');
-                        //Show area
-                        newBlockView.$('.new-block-area .block-container').removeClass('u-hide');
-                        //Fill values
-                        newBlockView.$('.block-container-title').val(block.get('title')).focus();
-                        if(block.get('text')){
-                            var tmp = document.createElement('div');
-                            tmp.innerHTML = block.get('text').replace(/<br\s*[\/]?>/gi, '\n');
-                            var text = tmp.textContent || tmp.innerText || "";
-                            newBlockView.$('.block-container-text').val(text);
-                        }
-                        //Trigger file browser
-                        newBlockView.trigger('open:containerFileBrowser');
-                    } else if(type == 'grid'){
-                        //Show toolbar-btn
-                        newBlockView.$('.toolbar-btn.btn-grid').removeClass('u-hide').addClass('selected');
-                        //Show area
-                        newBlockView.$('.new-block-area .block-grid').removeClass('u-hide');
-                        //Fill values
-                        newBlockView.$('.block-grid-title').val(block.get('title')).focus();
-                        if(block.get('text')){
-                            var tmp = document.createElement('div');
-                            tmp.innerHTML = block.get('text').replace(/<br\s*[\/]?>/gi, '\n');
-                            var text = tmp.textContent || tmp.innerText || "";
-                            newBlockView.$('.block-grid-text').val(text);
-                        }
-                        //Show items
-                        newBlockView.$('.grid-new-item').removeClass('u-hide');
-                        newBlockView.$('.js-save-grid-item').data('block', block.get('_id'));
-                        if(block.get('items') && block.get('items').length){
-                            for(var i=0; i<block.get('items').length; i++){
-                                var item = block.get('items')[i];
-                                if(item.text){
-                                    var text = item.text;
-                                } else {
-                                    var text = 'Image item';
-                                }
-                                newBlockView.$('.grid-item-list').append("<div class='one-item one-grid-item' data-id='"+item._id+"'><div class='item-title'>"+text+"</div><span class='remove-item u-delete'>Remove</span></div>");
-                            }
-                        }
-                        //Trigger file browser
-                        newBlockView.trigger('open:gridFileBrowser');
-                    } else if(type == 'comic'){
-                        //Show toolbar-btn
-                        newBlockView.$('.toolbar-btn.btn-comic').removeClass('u-hide').addClass('selected');
-                        //Show area
-                        newBlockView.$('.new-block-area .block-comic').removeClass('u-hide');
-                        //Fill values
-                        newBlockView.$('.block-comic-text').val(block.get('text')).focus();
-                        newBlockView.$('.comic-upload, .block-comic .overlay-label').addClass('u-hide');
-                    } else if(type == 'embed'){
-                        //Show toolbar-btn
-                        newBlockView.$('.toolbar-btn.btn-embed').removeClass('u-hide').addClass('selected');
-                        //Show area
-                        newBlockView.$('.new-block-area .block-embed').removeClass('u-hide');
-                        //Fill values
-                        newBlockView.$('.block-embed-title').val(block.get('title'));
-                        newBlockView.$('.block-embed-code').val(block.get('embed').code).focus();
-                        if(block.get('embed').width) newBlockView.$('.block-embed-width').val(block.get('embed').width);
-                        if(block.get('embed').height) newBlockView.$('.block-embed-height').val(block.get('embed').height);
-                    }
+                   
                 });
                 //Upload MCQ option image
                 newBlockView.on('open:mcqFileBrowser', function(){

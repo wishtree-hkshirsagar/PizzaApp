@@ -162,12 +162,13 @@ select{
 }
 .logo-main{
     position: absolute;
-    left: 25px;
-    top: 35px;
-    width: 80px;
-    height: 80px;
+    /* left: 25px; */
+    top: -25px;
+    width: 200px;
+    height: 200px;
     background-repeat: no-repeat;
     background-position: 0px 0px;
+    transform: scale(0.5,0.5);
 }
 /* Search */
 .search-btn{
@@ -650,6 +651,7 @@ select{
 /* Blocks */
 .all-blocks{
     position: relative;
+    text-align: center;
 }
 .one-block{
     position: relative;
@@ -658,6 +660,7 @@ select{
     padding: 0px;
     border-radius: 10px;
     margin-bottom: 20px;
+    width: 65%;
 }
 .one-block.is-comic{
     border-radius: 0px;
@@ -3385,4 +3388,8 @@ label[name=wrap-pizzaType]:after{
     font-size: 40px;
     margin-bottom: 5px;
     text-transform: capitalize;
+}
+
+.edit-pizza-btn{
+    width: 100% !important;
 }

@@ -127,7 +127,7 @@ input[type='checkbox'] {
     height: 80px;
 }
 .logo-main img{
-    width: 200%;
+    width: 150%;
 }
 .navBar{
     position: absolute;
@@ -314,12 +314,11 @@ input[type='checkbox'] {
     padding-bottom: 80px;
 }
 .footer-made{
-    display: inline-block;
     float: left;
 }
 .footer-links {
-    display: inline-block;
     float: right;
+    margin-right: 10px;
 }
 .footer a{
     display: inline-block;
@@ -333,11 +332,11 @@ input[type='checkbox'] {
     position: absolute;
     left: 0px;
     top: 25px;
-    width: 200px;
+    width: 110px;
     height: 80px;
 }
 .footer-made span{
-    margin-left: 220px;
+    margin-left: 100px;
 }
 .footer-links a {
     margin-left: 20px;
@@ -512,10 +511,10 @@ input[type='checkbox'] {
     padding: 20px;
 }
 .login-box .overlay-about{
-    background-image: linear-gradient(#9DACA3, #B2C3B9);
+    background-image: linear-gradient(#cdd9e8, #e4f0e9);
 }
 .signup-box .overlay-about{
-    background-image: linear-gradient(#7CA8C7, #9CBAD5);
+    background-image: linear-gradient(#cdd9e8, #e4f0e9);
 }
 .forgot-box .overlay-about{
     background-image: linear-gradient(#C8B0F9, #D9C9F3);
@@ -526,16 +525,16 @@ input[type='checkbox'] {
 .overlay-art{
     position: relative;
     margin-bottom: 20px;
-    width: 400px;
-    height: 445px;
+    width: 420px;
+    height: 410px;
     background-repeat: no-repeat;
     background-size: cover;
 }
 .login-box .overlay-art{
-    background-image: url(../images/site/graphic-login.png);
+    background-image: url(../images/site/login.jpg);
 }
 .signup-box .overlay-art{
-    background-image: url(../images/site/graphic-signup.png);
+    background-image: url(../images/site/signup.jpeg);
 }
 .forgot-box .overlay-art{
     background-image: url(../images/site/graphic-forgot.png);
@@ -896,4 +895,9 @@ input[type='checkbox'] {
     .forgot-box .overlay-art{
         background-image: url(../images/site/graphic-forgot@2x.png);
     }
+}
+
+
+.login-btn{
+    width: 90% !important;
 }

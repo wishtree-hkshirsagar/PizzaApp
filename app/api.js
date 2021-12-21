@@ -9,6 +9,7 @@ var util = require('util'),
     shortid = require('shortid'),
     randomColor = require('randomcolor'),
     multer = require('multer'),
+    fs = require('fs'),
     _ = require('lodash');
 //UUID
 const { v4: uuidv4 } = require('uuid');
@@ -644,12 +645,13 @@ var _getPizza = function(req, res) {
 
 //GET Request function - get one pizza
 var _getOnePizzaByIdOrSlug = function(req, res) {
+    var query;
     if(req.params._id.match(/^[0-9a-fA-F]{24}$/)){
-        var query = {
+        query = {
             _id: req.params._id
         }
     } else {
-        var query = {
+        query = {
             slug: req.params._id
         }
     }
@@ -667,7 +669,40 @@ var _getOnePizzaByIdOrSlug = function(req, res) {
 }
 
 var _updatePizza = function(req, res){
-
+    console.log(req.params._id)
+    console.log('update pizza')
+    var query = { _id: req.params._id };
+    Pizza.findOne(query, function(err, pizza){
+        if(!pizza){
+            console.log('pizza not found...');
+            res.status(404).send(err);
+        }else{
+            try{
+                if(req.body.title){
+                    pizza.title = req.body.title
+                }
+                if(req.body.size){
+                    pizza.size = req.body.size
+                }
+                if(req.body.price){
+                    pizza.price = req.body.price
+                }
+                if(uploadedfile){
+                    fs.unlink(`./static/images/site/${pizza.image}`, function(err){
+                        if(err){
+                            res.status(500).send(err);
+                        }
+                    });
+                    pizza.image = uploadedfile.filename
+                }
+                pizza.save(() => {
+                    res.status(200).json(pizza); 
+                    });
+             } catch(error){
+                 return res.status(501).json(error);
+             }
+        }
+    });
 }
 
 

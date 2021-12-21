@@ -19,7 +19,7 @@ select{
     color: #f00 !important;
 }
 .logo-main{
-    background-image: url('../../images/site/logo-dark.png');
+    background-image: url('../../images/site/logo.png');
 }
 .search-btn{
     background-image: url('../../images/app/main-icons-dark.png');
@@ -393,7 +393,7 @@ select{
 .responses-box .overlay-form,
 .block-ifttt-box .overlay-form,
 .course-badges-box .overlay-form{
-    background-image: linear-gradient(#f7f7f7, #fff);
+    background-image: linear-gradient(#c4b1b6db, #c2e9fb);
 }
 .course-members-box .overlay-form{
     background-image: linear-gradient(90deg, #E3EEFF, #F3E7E9);
