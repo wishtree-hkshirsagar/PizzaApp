@@ -117,7 +117,7 @@ select{
     color: #232323;
 }
 .navMore a:hover{
-    color: #1b07f2;
+    color: #f27307;
 }
 .navMore a.nav-my-insights,
 .navMore a.nav-archived{
@@ -131,7 +131,7 @@ select{
     border-bottom: 1px solid #e9e9ef;
 }
 .add-entity{
-    background-color: #1b07f2;
+    background-color: #f27307;
     color: #f7f7f7;
 }
 .add-entity:hover{

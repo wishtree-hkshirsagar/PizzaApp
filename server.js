@@ -46,7 +46,7 @@ var sessionMiddleware = session({
     name: 'pizza.sid',
     store: sessionStore,
     secret: 'Sa802u5LH67pPASasBPopLxa9618',
-    cookie: {maxAge: 60 * 60 * 1000},
+    cookie: {maxAge: 60 * 60 * 1000}, //1 Hour
     resave: false,
     saveUninitialized: true
 });
@@ -84,30 +84,27 @@ io.use(function(socket, next){
 });
 
 
-//Start server
+
 server.listen(app.get('port'));
 console.log('Express server listening on port: '.green+ app.get('port'));
-//Routes - to define several page routes (webpages)
+
 require('./app/routes.js')(app, passport);
-//API : Defined in app/api.js
+
 require('./app/api.js')(app, passport, io);
-//Realtime code
-require('./app/realtime.js')(app, passport, io);
-//Error handling - catch 404 and forward to error handler
+
 app.use(function(req,res,next){
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
-//Error handlers
-//development error handler - print stack trace
+
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next){
         res.status(err.status || 500);
         res.send(err);
     });
 }
-//production error handler - no stack trace
+
 app.use(function(err, req, res, next){
     res.status(err.status || 500);
     res.send('Error!');

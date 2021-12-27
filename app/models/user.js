@@ -15,26 +15,11 @@ var UserSchema = new Schema({
         type: Number,
         required: true,
     },
-    // username: { type: String, index: { unique: true } },
     password: { type: String },
     prev_password: { type: String },
     name: String,
     initials: String,
-    dp: {
-        s: String,
-        m: String
-    },
-    type: { type: String, enum: ['admin', 'customer', 'editor', 'normal', 'verified', 'blocked', 'invited'], default: 'customer' },
-    city: String,
-    country: String,
-    sex: { type: String, enum: ['M', 'F', 'O'] },
-    phone: Number,
-    about: String,
-    job: {
-        title: String,
-        org: String
-    },
-    age: Number,
+    type: { type: String, enum: ['admin', 'customer'], default: 'customer' },
     theme: { type: String, enum: ['auto', 'light', 'dark'], default: 'auto' },
     layout: { type: String, enum: ['auto', 'grid'], default: 'auto' },
     consent: { type: Boolean, default: false },
@@ -81,5 +66,4 @@ UserSchema.methods.resetLoginAttempts = function (cb) {
         $unset: { lockUntil: 1 }
     }, cb);
 };
-//Create the model for User and expose it to app
 module.exports.User = mongoose.model('User', UserSchema);

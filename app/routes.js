@@ -71,15 +71,17 @@ module.exports = function(app, passport) {
         },
         home: function(req, res){
             if(req.isAuthenticated()){
+                console.log('####')
                 //Render
                 //If invited
                 if(req.user.type == 'admin'){
+                    console.log('inside admin')
                     res.render('app/admin', {
                         userid: req.user.id,
                         email: req.user.email,
                         username: req.user.username,
                         initials: req.user.initials,
-                        dp: req.user.dp.s,
+                        // dp: req.user.dp.s,
                         type: req.user.type,
                         theme: req.user.theme,
                         page_layout: req.user.layout
@@ -139,25 +141,6 @@ module.exports = function(app, passport) {
                 req.session.redirectURL = req.url;
                 res.redirect('/login');
             }
-        },
-        certificate: function(req, res){
-            if(req.isAuthenticated()){
-                Course.findOne({
-                    _id: req.params.id,
-                    learners: { $elemMatch: { user: mongoose.Types.ObjectId(req.user.id), progress: 'certified'}},
-                }, function(err, course){
-                    if(!course){
-                        res.redirect('/');
-                    } else {
-                        res.render('app/certificate', {
-                            name: req.user.name,
-                            course: course.title
-                        });
-                    }
-                });
-            } else {
-                res.redirect('/login');
-            }
         }
     };
     //Site main page
@@ -169,11 +152,9 @@ module.exports = function(app, passport) {
     app.get('/forgot', siteRoute.site);
     app.get('/terms', siteRoute.site);
     app.get('/hello', siteRoute.hello);
-    app.get('/drafts', siteRoute.home);
-    app.get('/archived', siteRoute.home);
     app.get('/course/:slug', siteRoute.home);
     app.get('/course/:slug/:container', siteRoute.home);
-    app.get('/certificate/:id', siteRoute.certificate);
+   
     //process the login form
     app.post('/login',
         passport.authenticate('local-login', { failureRedirect: '/login', failureFlash: true}),
@@ -218,7 +199,6 @@ module.exports = function(app, passport) {
                 req.session.redirectURL = null;
             } else {
                 console.log('inside else')
-                // res.redirect('/hello');
                 res.redirect('/login');
             }
         });

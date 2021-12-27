@@ -42,12 +42,12 @@ time, mark, audio, video {
 }
 body {
     position: relative;
-    color: #fff;
+    color: #1A1A1A;
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: #1A1A1A;
+    background-color: #fff;
     font-family: 'IBM Plex Sans', sans-serif;
     font-weight: normal;
     line-height: 1.5;
@@ -114,6 +114,7 @@ input[type='checkbox'] {
     -webkit-transition: all 0.3s ease;
     -moz-transition: all 0.3s ease;
     transition: all 0.3s ease;
+    background-color: #fff;
 }
 .headerWrap .sectionBox{
     margin-top: 0px;
@@ -145,9 +146,10 @@ input[type='checkbox'] {
 }
 .navBar a:hover{
     box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
+    color: #FE5F1E;
 }
 .navBar .link-signup{
-    background-color: #ffd370;
+    background-color: #fff;
     -webkit-transition: all 0.3s ease;
     -moz-transition: all 0.3s ease;
     transition: all 0.3s ease;
@@ -194,7 +196,7 @@ input[type='checkbox'] {
 /* Feature cards */
 .featuresWrap{
     position: relative;
-    background-color: #1A1A1A;
+    /* background-color: #1A1A1A; */
     margin-top: 0px;
 }
 .feature-card{
@@ -326,7 +328,7 @@ input[type='checkbox'] {
     font-size: 14px;
 }
 .footer a:hover{
-    color: #ffd370;
+    color: #FE5F1E;
 }
 .footer-made img{
     position: absolute;
@@ -337,9 +339,11 @@ input[type='checkbox'] {
 }
 .footer-made span{
     margin-left: 100px;
+    color: #000;
 }
 .footer-links a {
     margin-left: 20px;
+    color: #000;
 }
 /* Overlay */
 .overlay{
@@ -526,7 +530,7 @@ input[type='checkbox'] {
     position: relative;
     margin-bottom: 20px;
     width: 420px;
-    height: 410px;
+    height: 530px;
     background-repeat: no-repeat;
     background-size: cover;
 }
@@ -900,4 +904,18 @@ input[type='checkbox'] {
 
 .login-btn{
     width: 90% !important;
+}
+
+.btn-order{
+    background-color: #FE5F1E;
+    color: #fff;
+    padding: 10px;
+    border-radius: 20px;
+    border: 2px solid #FE5F1E;
+    width: 130px;
+    cursor: pointer;
+}
+
+.btn-order:hover{
+    background-color: #b23301;
 }
