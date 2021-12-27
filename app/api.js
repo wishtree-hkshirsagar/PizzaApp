@@ -55,8 +55,9 @@ module.exports = function(app, passport, io){
 
      app.post('/api/pizza', isLoggedIn, _addPizza); 
      app.get('/api/pizza', isLoggedIn, _getPizza);
-     app.get('/api/pizza/:_id', isLoggedIn, _getOnePizzaByIdOrSlug);
+     app.get('/api/pizza/:_id', isLoggedIn, _getPizzaByIdOrSlug);
      app.put('/api/pizza/:_id', isLoggedIn, _updatePizza);
+     app.delete('/api/pizza/:_id', isLoggedIn, _deletePizza);
 
      // ADD Pizza Image
     function getTime() {
@@ -101,252 +102,10 @@ module.exports = function(app, passport, io){
         });
     });
 
-
-    // /* ----------------- COURSE API ------------------ */
-    // //GET Requests
-    // //Get courses
-    // app.get('/api/courses/:_type', isLoggedIn, function(req, res){
-    //     switch(req.params._type){
-    //         case 'public':
-    //             _getPublicCourses(req, res);
-    //             break;
-    //         case 'drafts':
-    //             _getDraftCourses(req, res);
-    //             break;
-    //         case 'archived':
-    //             _getArchivedCourses(req, res);
-    //             break;
-    //         case 'enrolled':
-    //             _getEnrolledCourses(req, res);
-    //             break;
-    //         default:
-    //             _getPublicCourses(req, res);
-    //     }
-    // });
-    
-    // app.get('/api/course/:_id', isLoggedIn, _getCourseByIdOrSlug);
-    
-    // app.post('/api/course', isLoggedIn, _createCourse);
-
-    // app.put('/api/course/:_id/:_action', isLoggedIn, function(req, res){
-    //     switch(req.params._action){
-    //         case 'edit':
-    //             _editCourse(req, res);
-    //             break;
-    //         case 'archive':
-    //             _archiveCourse(req, res);
-    //             break;
-    //         case 'unarchive':
-    //             _unarchiveCourse(req, res);
-    //             break;
-    //         case 'join':
-    //             _joinCourse(req, res);
-    //             break;
-    //         case 'unjoin':
-    //             _unjoinCourse(req, res);
-    //             break;
-    //         case 'add_member':
-    //             _addMemberToCourse(req, res);
-    //             break;
-    //         case 'edit_member':
-    //             _editMemberPrivilegeInCourse(req, res);
-    //             break;
-    //         case 'remove_member':
-    //             _removeMemberFromCourse(req, res);
-    //             break;
-    //         case 'add_learner':
-    //             _addLearnerToCourse(req, res);
-    //             break;
-    //         case 'edit_learner':
-    //             _editLearnerProgress(req, res);
-    //             break;
-    //         case 'view':
-    //             _viewCourse(req, res);
-    //             break;
-    //         case 'copy':
-    //             _copyCourse(req, res);
-    //             break;
-    //         default:
-    //             _editCourse(req, res);
-    //     }
-    // });
-    //DELETE Requests
-    //Delete a course
-    // app.delete('/api/course/:_id', isLoggedIn, _deleteCourse);
-    /* ----------------- BLOCK API ------------------------- */
-    //Get Requests
-    //Get course blocks
-    // app.get('/api/blocks/:_id', isLoggedIn, _getCourseBlocks);
-    //Get container blocks
-    // app.get('/api/blocks/container/:_id', isLoggedIn, _getContainerBlocks);
-    //Get block by _id or slug
-    // app.get('/api/block/:_id', isLoggedIn, _getBlockByIdOrSlug);
-    //POST Requests
-    //Create a block
-    // app.post('/api/block/:_type', isLoggedIn, function(req, res){
-    //     switch(req.params._type){
-    //         case 'text':
-    //             _createTextBlock(req, res);
-    //             break;
-    //         case 'button':
-    //             _createButtonBlock(req, res);
-    //             break;
-    //         case 'divider':
-    //             _createDividerBlock(req, res);
-    //             break;
-    //         case 'toggle_list':
-    //             _createToggleListBlock(req, res);
-    //             break;
-    //         case 'image':
-    //         case 'video':
-    //         case 'audio':
-    //         case 'file':
-    //             _createFileBlock(req, res);
-    //             break;
-    //         case 'link':
-    //             _createLinkBlock(req, res);
-    //             break;
-    //         case 'gif':
-    //             _createGIFBlock(req, res);
-    //             break;
-    //         case 'mcq':
-    //             _createMCQBlock(req, res);
-    //             break;
-    //         case 'fill':
-    //             _createFillInTheBlanksBlock(req, res);
-    //             break;
-    //         case 'match':
-    //             _createMatchTheFollowingBlock(req, res);
-    //             break;
-    //         case 'response':
-    //             _createResponseBlock(req, res);
-    //             break;
-    //         case 'list':
-    //             _createListBlock(req, res);
-    //             break;
-    //         case 'container':
-    //             _createContainerBlock(req, res);
-    //             break;
-    //         case 'grid':
-    //             _createGridBlock(req, res);
-    //             break;
-    //         case 'comic':
-    //             _createComicBlock(req, res);
-    //             break;
-    //         case 'embed':
-    //             _createEmbedBlock(req, res);
-    //             break;
-    //         default:
-    //             res.status(500).send({error: "Invalid query type"});
-    //     }
-    // });
-    //PUT Requests
-    //Update a block or actions on a block
-    // app.put('/api/block/:_id/:_action', isLoggedIn, function(req, res){
-    //     switch(req.params._action){
-    //         case 'edit':
-    //             _editBlock(req, res);
-    //             break;
-    //         case 'order':
-    //             _editBlockOrder(req, res);
-    //             break;
-    //         case 'move':
-    //             _moveBlock(req, res);
-    //             break;
-    //         case 'edit_text':
-    //             _editTextBlock(req, res);
-    //             break;
-    //         case 'add_item':
-    //             _addToggleListItem(req, res);
-    //             break;
-    //         case 'remove_item':
-    //             _removeToggleListItem(req, res);
-    //             break;
-    //         case 'add_option':
-    //             _addOption(req, res);
-    //             break;
-    //         case 'edit_mcq_option':
-    //             _editMCQOption(req, res);
-    //             break;
-    //         case 'correct_mcq_option':
-    //             _correctMCQOption(req, res);
-    //             break;
-    //         case 'remove_option':
-    //             _removeOption(req, res);
-    //             break;
-    //         case 'select_option':
-    //             _selectOption(req, res);
-    //             break;
-    //         case 'unselect_option':
-    //             _unselectOption(req, res);
-    //             break;
-    //         case 'select_match':
-    //             _selectMatchOption(req, res);
-    //             break;
-    //         case 'unselect_match':
-    //             _unselectMatchOption(req, res);
-    //             break;
-    //         case 'add_fill':
-    //             _addFill(req, res);
-    //             break;
-    //         case 'edit_fill':
-    //             _editFill(req, res);
-    //             break;
-    //         case 'remove_fill':
-    //             _removeFill(req, res);
-    //             break;
-    //         case 'fill_blanks':
-    //             _fillBlanks(req, res);
-    //             break;
-    //         case 'add_response':
-    //             _addUserResponseToBlock(req, res);
-    //             break;
-    //         case 'edit_text_response':
-    //             _editTextResponseBlock(req, res);
-    //             break;
-    //         case 'remove_response':
-    //             _removeUserResponseFromBlock(req, res);
-    //             break;
-    //         case 'add_list_item':
-    //             _addListItem(req, res);
-    //             break;
-    //         case 'remove_list_item':
-    //             _removeListItem(req, res);
-    //             break;
-    //         case 'add_grid_item':
-    //             _addGridItem(req, res);
-    //             break;
-    //         case 'remove_grid_item':
-    //             _removeGridItem(req, res);
-    //             break;
-    //         case 'add_feedback':
-    //             _addFeedback(req, res);
-    //             break;
-    //         case 'remove_feedback':
-    //             _removeFeedback(req, res);
-    //             break;
-    //         case 'view':
-    //             _viewBlock(req, res);
-    //             break;
-    //         default:
-    //             _editBlock(req, res);
-    //     }
-    // });
     //DELETE Requests
     //Delete block
     app.delete('/api/block/:_id', isLoggedIn, _deleteBlock);
-    /* ----------------- BADGES API ------------------------- */
-    //GET Requests
-    //Get all badges of a course
-    // app.get('/api/badges/:_id', isLoggedIn, _getBadges);
-    //Get a badge by id
-    // app.get('/api/badge/:_id', isLoggedIn, _getBadgeById);
-    //POST Requests
-    //Create a badge
-    // app.post('/api/badge', isLoggedIn, _createBadge);
-    //DELETE Requests
-    //Delete a badge
-    // app.delete('/api/badge/:_id', isLoggedIn, _deleteBadge);
+    
     /* ----------------- MESSAGES API ------------------------- */
     //GET Requests
     //Get all messages
@@ -640,7 +399,8 @@ var _getPizza = function(req, res) {
 
 
 //GET Request function - get one pizza
-var _getOnePizzaByIdOrSlug = function(req, res) {
+var _getPizzaByIdOrSlug = function(req, res) {
+    console.log('_getPizzaByIdOrSlug')
     var query;
     if(req.params._id.match(/^[0-9a-fA-F]{24}$/)){
         query = {
@@ -657,7 +417,6 @@ var _getOnePizzaByIdOrSlug = function(req, res) {
             console.log('error')
             res.send(err);
         }
-        console.log('_getOnePizzaByIdOrSlug');
         res.status(200).send(pizza);
     });
     
@@ -665,7 +424,6 @@ var _getOnePizzaByIdOrSlug = function(req, res) {
 }
 
 var _updatePizza = function(req, res){
-    console.log(req.params._id)
     console.log('update pizza')
     var query = { _id: req.params._id };
     Pizza.findOne(query, function(err, pizza){
@@ -684,6 +442,7 @@ var _updatePizza = function(req, res){
                     pizza.price = req.body.price
                 }
                 if(uploadedfile){
+                    console.log('uploadfile')
                     fs.unlink(`./static/images/site/${pizza.image}`, function(err){
                         if(err){
                             res.status(500).send(err);
@@ -699,6 +458,16 @@ var _updatePizza = function(req, res){
              }
         }
     });
+}
+
+var _deletePizza = function(req, res){
+    var id = req.params._id;
+    Pizza.deleteOne({_id: id}, function(err){
+        if(err){
+            console.log(err, 'Error in deleting pizza');
+        }
+    })
+    res.status(200).json({ msg: "Pizza deleted successfully..." })
 }
 
 

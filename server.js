@@ -51,7 +51,7 @@ var sessionMiddleware = session({
     saveUninitialized: true
 });
 
-app.set('port', process.env.PORT || 8000);
+app.set('port', process.env.PORT || 9000);
 
 app.use(express.static(path.join(app_root, 'static')));
 

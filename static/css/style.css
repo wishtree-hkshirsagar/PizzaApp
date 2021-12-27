@@ -126,6 +126,8 @@ select{
     font-weight: normal;
     font-size: 14px;
     cursor: pointer;
+    float: right;
+    margin-top: -36px;
 }
 /* Page wrap */
 .pageWrap{
@@ -3377,6 +3379,19 @@ label[name=wrap-pizzaType]:after{
     transform: scale(1,0.6);
 }
 
+label[name=wrap-pizzaType-edit]:after{
+    content: "\25BE";
+    color: gray;
+    position: absolute;
+    right: -25px;
+    top: 80px;
+    z-index: 1;
+    width: 10%;
+    height: 100%;
+    pointer-events: none;
+    transform: scale(1,0.6);
+}
+
 .pizza-image{
     float: right;
     margin: auto;
@@ -3391,5 +3406,10 @@ label[name=wrap-pizzaType]:after{
 }
 
 .edit-pizza-btn{
-    width: 100% !important;
+    width: 50% !important;
+}
+
+.disable-btn{
+    pointer-events: none;
+    opacity: 0.7;
 }

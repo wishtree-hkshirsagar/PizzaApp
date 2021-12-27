@@ -13,7 +13,7 @@ select{
     color: #f00;
 }
 .u-delete{
-    color: #8c8c8c;
+    color: #000;
 }
 .u-delete:hover{
     color: #f00 !important;
@@ -124,7 +124,7 @@ select{
     border-bottom: 1px solid #e9e9ef;
 }
 .mainHeader .header-back{
-    color: #1b07f2;
+    color: #000;
 }
 .mainHeader .header-title.sticky{
     background-color: #fff;
@@ -385,7 +385,8 @@ select{
 .new-course-box .overlay-form,
 .new-cohort-box .overlay-form,
 .new-pizza-box .overlay-form{
-    background-image: linear-gradient(#a1c4fd, #c2e9fb);
+    background-image: linear-gradient(#fd8153, #fa936d);
+    
 }
 .new-block-box .overlay-form,
 .block-theme-box .overlay-form,
@@ -393,7 +394,7 @@ select{
 .responses-box .overlay-form,
 .block-ifttt-box .overlay-form,
 .course-badges-box .overlay-form{
-    background-image: linear-gradient(#c4b1b6db, #c2e9fb);
+    background-image: linear-gradient(#f4d7d7, #ea845f);
 }
 .course-members-box .overlay-form{
     background-image: linear-gradient(90deg, #E3EEFF, #F3E7E9);
@@ -456,7 +457,7 @@ select{
     color: #1b07f2;
 }
 .entity-btn{
-    background-color: #1b07f2;
+    background-color: #f27307;
     color: #f7f7f7;
 }
 .entity-btn:hover{
@@ -2022,4 +2023,8 @@ select{
             background-image: url('../../images/app/graphic-new@2x.png');
         }
     }
+}
+
+.pizza-content{
+    display: flex;
 }
