@@ -108,6 +108,7 @@ PublicManager.module('PublicApp', function (PublicApp, PublicManager, Backbone, 
     //Triggers to particular views
     //Show login
     PublicManager.vent.on('login:show', function(email){
+        console.log('login trigger')
         API.loginView(email);
     });
     //Show signup
@@ -239,6 +240,9 @@ PublicManager.module('Entities', function (Entities, PublicManager, Backbone, Ma
 PublicManager.module('PublicApp.EntityViews', function (EntityViews, PublicManager, Backbone, Marionette, $, _) {
     EntityViews.Login = Marionette.ItemView.extend({
         template: 'loginTemplate',
+        initialize: function(){
+            console.log('initialize');
+        },
         events: {
             'mousedown .js-close, .js-submit, .show-password, .label': 'doNothing',
             'click .js-close': 'closeOverlay',
@@ -625,6 +629,7 @@ PublicManager.module('PublicApp.EntityController', function (EntityController, P
             loginView.on('show', function(){
                 //Animate overlay box
                 setTimeout(function(){
+                    console.log('login overlay')
                     loginView.$('.overlay-box').addClass('animate');
                 }, 100);
                 //hide scroll on main page

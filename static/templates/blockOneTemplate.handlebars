@@ -1,10 +1,12 @@
 <div class="container-block">
-    <p class="block-title">{{title}}</p>
-    <p class="block-text">{{size}}</p>
-    {{#if image}}
+     {{#if image}}
         <div class="comic-image"><img src="../images/site/{{image}}" alt="pizza-image"></div>
     {{/if}}
-    <p class="block-title">&#8377;{{price}}</p>
+    <p class="block-title">{{title}}</p>
+    <p class="block-text">{{size}}</p>
+   
+    <p class="block-price">&#8377;{{price}}</p>
+    <a class="add-entity add-cart js-add-cart" href="#">+ Add</a>
 </div>
  <div class="block-actions">
         <span class="action-edit-block js-edit-block" title="Edit"></span>

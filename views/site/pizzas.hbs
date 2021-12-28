@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{title}}</title>
+        <link rel="shortcut icon" href="/images/site/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="/images/site/favicon.ico" type="image/x-icon">
+       
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400;1,600&family=IBM+Plex+Serif:ital,wght@0,400;0,700;1,400;1,600&display=swap" rel="stylesheet">
+        <!-- Styles -->
+        <link rel="stylesheet" type="text/css" href="/css/public_style.css">
+        <link rel="stylesheet" type="text/css" href="/css/lib/audioplayer.css">
+        <link rel="stylesheet" type="text/css" href="/css/lib/video-js.min.css">
+        <link rel="stylesheet" type="text/css" href="/css/lib/videojs.record.min.css">
+    </head>
+    <body>
+        <!-- Header -->
+         <div class="headerWrap">
+            <div class="sectionBox">
+                <a href='/' class="logo-main">
+                    <img src="/images/site/logo.png" srcset="/images/site/logo@2x.png 2x">
+                </a>
+                <div class="nav">
+                    <a class="link-login js-login" href="/login">Log In</a>
+                    <a class="link-signup js-signup" href="/signup">Sign Up</a> &nbsp;
+                </div>
+                <div class="navBar">
+                    <a class="link-cart cart js-cart" href="/cart"><img src="../../images/app/cart.png" alt="cart"></a>
+                </div>
+            </div>
+        </div>
+        <!-- Main area -->
+        <div class="mainWrap">
+            <div class="mainHeader">
+            </div>
+            <div class="mainContent">
+            </div>
+        </div>
+        <!-- Overlay window -->
+        <div class="overlay"></div>
+        <!-- Scripts -->
+        <script type="text/javascript" src="/js/lib/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="/js/lib/underscore/underscore.min.js"></script>
+        <script type="text/javascript" src="/js/lib/backbone/backbone.min.js"></script>
+        <script type="text/javascript" src="/js/lib/marionette/backbone.marionette.min.js"></script>
+        <script type="text/javascript" src="/js/lib/handlebars/handlebars.min.js"></script>
+        <script type="text/javascript" src="/js/lib/async/async.min.js"></script>
+        <script type="text/javascript" src="/js/lib/dateformat/jquery.dateFormat.min.js"></script>
+        <script type="text/javascript" src="/js/lib/jqueryui/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="/js/lib/masonry/masonry.pkgd.min.js"></script>
+        <script type="text/javascript" src="/js/loadTemplate.js"></script>
+        <script type="text/javascript" src="/js/lib/swag/swag.min.js"></script>
+        <script type="text/javascript" src="/js/helpers.js"></script>
+        <script type="text/javascript" src="/js/lib/tipsy/jquery.tipsy.min.js"></script>
+        <script type="text/javascript" src="/js/lib/hotkeys/jquery.hotkeys.min.js"></script>
+        <script type="text/javascript" src="/js/lib/validator/validator.min.js"></script>
+        <script type="text/javascript" src="/js/lib/modernizr/modernizr.min.js"></script>
+        <script type="text/javascript" src="/js/lib/jquery-visible/jquery.visible.min.js"></script>
+        <script type="text/javascript" src="/js/lib/audio/audioplayer.min.js"></script>
+        <script type="text/javascript" src="/js/lib/video/video.min.js"></script>
+        <script type="text/javascript" src="/js/lib/video/RecordRTC.min.js"></script>
+        <script type="text/javascript" src="/js/lib/video/adapter.js"></script>
+        <script type="text/javascript" src="/js/lib/video/wavesurfer.min.js"></script>
+        <script type="text/javascript" src="/js/lib/video/wavesurfer.microphone.min.js"></script>
+        <script type="text/javascript" src="/js/lib/video/videojs.wavesurfer.min.js"></script>
+        <script type="text/javascript" src="/js/lib/video/videojs.record.min.js"></script>
+        <script type="text/javascript" src="/js/publicApp.js"></script>
+        <script type="text/javascript">
+            Swag.registerHelpers(window.Handlebars);
+            PublicManager.start();
+        </script>
+    </body>
+</html>

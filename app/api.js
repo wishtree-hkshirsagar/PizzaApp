@@ -34,6 +34,10 @@ module.exports = function(app, passport, io){
      app.put('/api/pizza/:_id', isLoggedIn, _updatePizza);
      app.delete('/api/pizza/:_id', isLoggedIn, _deletePizza);
 
+      /* -----------------Public Pizza Api ------------------ */
+      app.get('/api/public/pizza', _getPublicPizza);
+      app.get('/api/public/pizza/:_id', _getPublicPizzaByIdOrSlug);
+
      // ADD Pizza Image
     function getTime() {
         var today = new Date().toLocaleDateString()
@@ -136,6 +140,40 @@ var _addPizza = function(req, res){
     }
 }
 
+//GET Request function - get all public pizza
+var _getPublicPizza = function(req, res) {
+    console.log('get all public pizza');
+    Pizza.find({}, (err, pizzas) => {
+        // console.log(pizzas)
+        if (err) {
+            res.status(500).json({ errmsg: err })
+        }
+        res.send(pizzas);
+    })
+}
+
+var _getPublicPizzaByIdOrSlug = function(req, res) {
+    console.log('_getPizzaByIdOrSlug public')
+    var query;
+    if(req.params._id.match(/^[0-9a-fA-F]{24}$/)){
+        query = {
+            _id: req.params._id
+        }
+    } else {
+        query = {
+            slug: req.params._id
+        }
+    }
+
+    Pizza.findOne(query, function(err, pizza){
+        if(!pizza){
+            console.log('error')
+            res.send(err);
+        }
+        res.status(200).send(pizza);
+    });
+}
+
 //GET Request function - get all pizza
 var _getPizza = function(req, res) {
     console.log('get pizza');
@@ -171,7 +209,6 @@ var _getPizzaByIdOrSlug = function(req, res) {
         res.status(200).send(pizza);
     });
     
-
 }
 
 var _updatePizza = function(req, res){

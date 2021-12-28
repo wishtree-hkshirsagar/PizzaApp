@@ -130,30 +130,49 @@ input[type='checkbox'] {
 .logo-main img{
     width: 150%;
 }
+.nav{
+    position: absolute;
+    right: 115px;
+    top: 59px;
+}
 .navBar{
     position: absolute;
     right: 25px;
     top: 50px;
 }
-.navBar a{
-    display: inline-block;
+.nav a{
     background-color: #fff;
-    color: #1A1A1A;
+    color: #f27307;
     padding: 9px 30px 8px;
     font-weight: 600;
     font-size: 14px;
-    border-radius: 4px;
 }
-.navBar a:hover{
+.navBar a{
+    display: inline-block;
+    background-color: #f27307;
+    color: #fff;
+    padding: 9px 30px 8px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 10px;
+}
+
+.navBar a:hover, .nav a:hover{
     box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
-    color: #FE5F1E;
+    color: #fff;
+    background-color: #f56009;
 }
 .navBar .link-signup{
-    background-color: #fff;
+    background-color: #f27307;
     -webkit-transition: all 0.3s ease;
     -moz-transition: all 0.3s ease;
     transition: all 0.3s ease;
 }
+
+.navbar .cart{
+    padding: 9px 30px 8px !important;
+}
+
 .navBar .link-about,
 .navBar .link-help{
     background-color: transparent;
@@ -290,7 +309,7 @@ input[type='checkbox'] {
     background-image: url(../images/site/graphic-datacentre.png);
 }
 .feature-contact .card-illustration{
-    background-image: url(../images/site/graphic-contact.png);
+    background-image: url(../images/site/empty-cart.png);
 }
 .card-one .card-title{
     display: inline-block;
@@ -918,4 +937,110 @@ input[type='checkbox'] {
 
 .btn-order:hover{
     background-color: #b23301;
+}
+
+.home-page{
+    position: initial !important;
+    top: 115px !important;
+    right: 0px;
+}
+
+.home-page a{
+    color: #fff !important;
+}
+
+.order-container{
+    text-align: center;
+    background-color: #f8f8f8;
+    width: 90%;
+    margin-left: 60px;
+}
+
+.flex-items{
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    width: 90%;
+    margin: 10px 0px;
+}
+
+.flex-items h1{
+    font-weight: bold;
+    margin-left: 10px;
+    font-size: 20px;
+}
+
+.flex-items .pizza-image{
+    width: 100px;
+    margin-left: 130px;
+}
+
+.flex-items .pizza-detail{
+    margin-left: 15px;
+    flex-grow: 1;
+}
+
+.flex-items .pizza-quantity{
+    flex-grow: 1;
+}
+
+.flex-items .pizza-price{
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.align-right{
+    text-align: right;
+    padding: 15px;
+    margin-right: 103px;
+}
+
+.align-right .one{
+    font-weight: bold;
+}
+
+.align-right .two{
+    font-weight: bold;
+    font-size: 20px;
+    color: #f27307;
+}
+
+.delivery-details{
+    font-size: 16px;
+    margin: 10px 0px 10px 5px;
+    border: 2px solid #000;
+    border-radius: 7px;
+    padding: 5px;
+    width: 25%;
+}
+
+.login-nav{
+    position: relative !important;
+    top: 0px !important;
+    right: 0px !important;
+    margin-top: 10px;
+}
+
+.order-now{
+    padding: 10px 20px !important;
+    font-weight: bold;
+}
+
+.add-cart{
+    float: right;
+    display: block;
+    color: #f27307 !important;
+    background-color: #fff !important;
+    border: 2px solid #f27307 !important;
+    border-radius: 20px;
+    margin-top: -6px;
+
+}
+
+.add-cart:hover{
+    transition: all .3s ease-in-out !important;
+    color: #fff !important;
+    background-color: #f27307 !important;
+    border-color: #fff !important;
+
 }

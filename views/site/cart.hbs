@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pizza Hut</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" href="/images/site/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="/images/site/favicon.ico" type="image/x-icon">
+        <link rel="apple-touch-icon-precomposed" href="/images/site/apple-touch-icon.png">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400;1,600&family=IBM+Plex+Serif:ital,wght@0,400;0,700;1,400;1,600&display=swap" rel="stylesheet">
+       
+        <link rel="stylesheet" type="text/css" href="/css/login_style.css">
+        <link rel="stylesheet" type="text/css" href="/css/lib/intro.min.css">
+    </head>
+    <body>
+    
+        <div class="headerWrap">
+            <div class="sectionBox">
+                <a href='/' class="logo-main">
+                    <img src="/images/site/logo.png" srcset="/images/site/logo@2x.png 2x">
+                </a>
+                <div class="navBar">
+                    <a class="link-login js-login" href="/login">Log In</a>
+                    <a class="link-signup js-signup" href="/signup">Sign Up</a>
+                </div>
+            </div>
+        </div>
+       
+        <div class="aboutWrap">
+            <div class="sectionBox">
+                <p class="about-tagline animate-reveal animate-first">Pizza Hut</span></p>
+                <p class="about-desc animate-reveal animate-second">Explore your taste buds with us.</p>
+            </div>
+        </div>
+ 
+        <div class="featuresWrap aboutPage">
+            <div class="sectionBox">
+                
+                <div class="order-container">
+                   <div class="flex-items">
+                       <img src="/images/site/cart-black.png" alt="cart">
+                       <h1>Order summary</h1>
+                   </div>
+                   <hr>
+                   <div class="pizza-list">
+                       <div class="flex-items">
+                           <img class="pizza-image" src="/images/site/pizza.png" alt="">
+                           <div class="pizza-detail">
+                               <h1>Margharita</h1>
+                               <span>MEDIUM</span>
+                           </div>
+
+                           <span class="pizza-quantity">1 Pcs</span>
+                           <span class="pizza-price">&#8377;300</span>
+                       </div>
+
+                       <div class="flex-items">
+                           <img class="pizza-image" src="/images/site/pizza.png" alt="">
+                           <div class="pizza-detail">
+                               <h1>Margharita</h1>
+                               <span>MEDIUM</span>
+                           </div>
+
+                           <span class="pizza-quantity">1 Pcs</span>
+                           <span class="pizza-price">&#8377;300</span>
+                       </div>
+
+                       <div class="flex-items">
+                           <img class="pizza-image" src="/images/site/pizza.png" alt="">
+                           <div class="pizza-detail">
+                               <h1>Margharita</h1>
+                               <span>MEDIUM</span>
+                           </div>
+
+                           <span class="pizza-quantity">1 Pcs</span>
+                           <span class="pizza-price">&#8377;300</span>
+                       </div>
+                   </div>
+                   <hr>
+                   <div class="align-right">
+                       <div>
+                           <span class="one">Total Amount:</span>
+                           <span class="two">&#8377;900</span>
+                       </div>
+
+                       {{!-- <div>
+                           <form>
+                               <input type="text" name="Phone Number" class="delivery-details" placeholder="Phone number"> <br>
+                               <textarea name="address" cols="30" rows="5" class="delivery-details" placeholder="Address"></textarea> <br>
+                               <button type="submit" class="btn-order">Order Now</button>
+                           </form>
+                       </div> --}}
+
+                       
+                        <div class="navBar login-nav">
+                            <a href="/login">Login to continue</a>
+                        </div>
+                   </div>
+                </div>
+
+                {{!-- <div class="feature-card card-full animate-reveal animate-fifth">
+                    <div class="card-one feature-contact">
+                        <div class="card-content">
+                            <div class="card-title">Empty Cart</div>
+                            <div class="card-text">You probably haven't ordered a pizza yet.
+                                To order a pizza, go to the home page.</div> <br>
+                                <div class="navBar home-page">
+                                    <a href="/">Go To Home Page</a>
+                                </div>
+                        </div>
+                        <div class="card-illustration"></div>
+                    </div>
+                </div> --}}
+
+
+            </div>
+        </div>
+  
+        <div class="footer">
+            <div class="sectionBox">
+                 <p class="footer-made">
+                    <a href="/">
+                        <img src="/images/site/logo.png">
+                        <span>A product by PIZZA HUT</span>
+                    </a>
+                </p>
+                <p class="footer-links">
+                    <a href="/login" class="js-login">Log In</a>
+                    <a href="/signup" class="js-signup">Sign Up</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="overlay"></div>
+
+        <script type="text/javascript" src="/js/lib/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="/js/lib/underscore/underscore.min.js"></script>
+        <script type="text/javascript" src="/js/lib/backbone/backbone.min.js"></script>
+        <script type="text/javascript" src="/js/lib/marionette/backbone.marionette.min.js"></script>
+        <script type="text/javascript" src="/js/lib/handlebars/handlebars.min.js"></script>
+        <script type="text/javascript" src="/js/lib/validator/validator.min.js"></script>
+        <script type="text/javascript" src="/js/lib/intro/intro.min.js"></script>
+        <script type="text/javascript" src="/js/loadTemplate.js"></script>
+        <script type="text/javascript" src="/js/loginApp.js"></script>
+        <script type="text/javascript">
+            AccountManager.start();
+        </script>
+    </body>
+</html>

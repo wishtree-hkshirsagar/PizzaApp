@@ -20,43 +20,28 @@ module.exports = function(app, passport) {
                 });
             }
         },
-        about: function(req, res){
+        pizzas: function(req, res){
             if(req.isAuthenticated()){
                 res.redirect('/');
             } else {
-                res.render('site/about', {
-                    title: 'FramerSpace: Courses',
-                    desc: 'Explore all our popular courses.',
-                    slug: 'courses',
-                    image: 'https://framerspace.com/images/site/share.png',
+                res.render('site/pizzas', {
                     errorMessage: req.flash('errorMessage'),
                     successMessage: req.flash('successMessage')
                 });
             }
         },
-        hello: function(req, res){
+        cart: function(req, res){
             if(req.isAuthenticated()){
-                //Render
-                res.render('app/hello', {
-                    userid: req.user.id,
-                    email: req.user.email,
-                    reset_email: req.user.reset_email,
-                    username: req.user.username,
-                    initials: req.user.initials,
-                    dp: req.user.dp.s,
-                    type: req.user.type,
-                    theme: req.user.theme
-                });
-            } else if(req.url == '/'){
-                req.session.redirectURL = null;
-                //Send
-                res.render('site/index', {
+                res.redirect('/');
+            } else {
+                res.render('site/cart', {
+                    // title: 'FramerSpace: Courses',
+                    // desc: 'Explore all our popular courses.',
+                    // slug: 'courses',
+                    // image: 'https://framerspace.com/images/site/share.png',
                     errorMessage: req.flash('errorMessage'),
                     successMessage: req.flash('successMessage')
                 });
-            } else {
-                req.session.redirectURL = req.url;
-                res.redirect('/login');
             }
         },
         home: function(req, res){
@@ -113,12 +98,12 @@ module.exports = function(app, passport) {
     };
     //Site main page
     app.get('/', siteRoute.home);
-    app.get('/about', siteRoute.about);
+    app.get('/cart', siteRoute.cart);
     app.get('/login', siteRoute.site);
     app.get('/signup', siteRoute.site);
     app.get('/forgot', siteRoute.site);
     app.get('/terms', siteRoute.site);
-    app.get('/hello', siteRoute.hello);
+    app.get('/pizzas', siteRoute.pizzas);
     app.get('/pizza/:slug', siteRoute.home);
    
     //process the login form

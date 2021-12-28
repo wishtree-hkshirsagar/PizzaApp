@@ -3411,3 +3411,28 @@ label[name=wrap-pizzaType-edit]:after{
     pointer-events: none;
     opacity: 0.7;
 }
+
+.block-price{
+    float: left;
+    font-weight: bolder;
+}
+
+
+.add-cart{
+    float: right;
+    display: block;
+    color: #f27307 !important;
+    background-color: #fff !important;
+    border: 2px solid #f27307 !important;
+    border-radius: 20px;
+    margin-top: -6px;
+
+}
+
+.add-cart:hover{
+    transition: all .3s ease-in-out !important;
+    color: #fff !important;
+    background-color: #f27307 !important;
+    border-color: #fff !important;
+
+}
