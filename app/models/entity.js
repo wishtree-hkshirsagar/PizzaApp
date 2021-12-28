@@ -345,43 +345,7 @@ var BlockSchema = new Schema({
 });
 // Optional
 BlockSchema.add({children: [BlockSchema]});
-//Schema: Note
-var NoteSchema = new Schema({
-    text: {type: String, required: true},
-    order: Number,
-    summary: String,
-    /* Reference */
-    block: {type: ObjectId, ref: 'Block'},
-    /* User */
-    creator: {type: ObjectId, ref: 'User'},
-    created_at: {type: Date, default: Date.now},
-    updated_at: Date
-});
-//Schema: Chat
-var ChatSchema = new Schema({
-    text: String,
-    /* Is recent chat */
-    is_recent: Boolean,
-    /* Is system generated */
-    is_system: Boolean,
-    /* User */
-    creator: {type: ObjectId, ref: 'User'},
-    created_at: {type: Date, default: Date.now}
-});
-//Schema: Message
-var MessageSchema = new Schema({
-    user: {type: ObjectId, ref: 'User'},
-    /* Chats */
-    chats: [ChatSchema],
-    /* Chat count */
-    count: Number,
-    /* Archive */
-    is_archived: {type: Boolean, default: false},
-    /* User */
-    creator: {type: ObjectId, ref: 'User'},
-    created_at: {type: Date, default: Date.now},
-    updated_at: Date
-});
+
 
 var PizzaSchema = new Schema({
     title: {type: String, required: true, index: true},
@@ -414,7 +378,4 @@ module.exports.Comment = mongoose.model('Comment', CommentSchema);
 module.exports.FeedbackBadge = mongoose.model('FeedbackBadge', FeedbackBadgeSchema);
 module.exports.Feedback = mongoose.model('Feedback', FeedbackSchema);
 module.exports.Block = mongoose.model('Block', BlockSchema);
-module.exports.Note = mongoose.model('Note', NoteSchema);
-module.exports.Chat = mongoose.model('Chat', ChatSchema);
-module.exports.Message = mongoose.model('Message', MessageSchema);
 module.exports.Pizza = mongoose.model('Pizza', PizzaSchema);
