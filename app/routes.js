@@ -34,16 +34,6 @@ module.exports = function(app, passport) {
                 });
             }
         },
-        courses: function(req, res){
-            if(req.isAuthenticated()){
-                res.redirect('/');
-            } else {
-                res.render('site/courses', {
-                    errorMessage: req.flash('errorMessage'),
-                    successMessage: req.flash('successMessage')
-                });
-            }
-        },
         hello: function(req, res){
             if(req.isAuthenticated()){
                 //Render
@@ -146,14 +136,11 @@ module.exports = function(app, passport) {
     //Site main page
     app.get('/', siteRoute.home);
     app.get('/about', siteRoute.about);
-    app.get('/courses', siteRoute.courses);
     app.get('/login', siteRoute.site);
     app.get('/signup', siteRoute.site);
     app.get('/forgot', siteRoute.site);
     app.get('/terms', siteRoute.site);
     app.get('/hello', siteRoute.hello);
-    app.get('/course/:slug', siteRoute.home);
-    app.get('/course/:slug/:container', siteRoute.home);
    
     //process the login form
     app.post('/login',

@@ -57,7 +57,6 @@
         "passport-local": "1.0.0",
         "passport-oauth2-client-password": "0.1.2",
         "passport-remember-me": "0.0.1",
-        "randomcolor": "0.5.4",
         "request": "2.88.2",
         "rss": "1.2.2",
         "sanitize-html": "1.23.0",
