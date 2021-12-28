@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "Pizza Ordering website",
     "author": "Pizza Hut",
-    "homepage": "localhost:8000",
+    "homepage": "localhost:9000",
     "keywords": [],
     "scripts": {
         "start": "node server",
@@ -44,7 +44,6 @@
         "lodash": "4.17.15",
         "method-override": "3.0.0",
         "mime": "2.4.5",
-        "mixpanel": "0.11.0",
         "moment": "2.25.3",
         "mongoose": "5.9.11",
         "morgan": "1.10.0",
@@ -73,20 +72,6 @@
     },
     "devDependencies": {
         "bower": "~1.3.12",
-        "grunt": "~0.4.5",
-        "grunt-autoprefixer": "~2.0.0",
-        "grunt-cli": "~0.1.13",
-        "grunt-concat-sourcemap": "~0.4.3",
-        "grunt-contrib-clean": "~0.6.0",
-        "grunt-contrib-compress": "~0.12.0",
-        "grunt-contrib-concat": "~0.5.0",
-        "grunt-contrib-copy": "~0.7.0",
-        "grunt-contrib-handlebars": "~0.9.1",
-        "grunt-contrib-jshint": "~0.10.0",
-        "grunt-contrib-uglify": "~0.6.0",
-        "grunt-contrib-watch": "~0.6.1",
-        "grunt-express-server": "~0.4.19",
-        "matchdep": "~0.3.0",
         "nodemon": "^2.0.15"
     }
 }

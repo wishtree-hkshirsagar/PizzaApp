@@ -1,7 +1,0 @@
-{{#isNotCurrentUser user._id}}
-    <p class="name">{{user.name}}</p>
-{{else}}
-    <p class="name">{{creator.name}}</p>
-{{/isNotCurrentUser}}
-<p class="chat">{{{chats.0.text}}}</p>
-<span class="date">{{prettyDate chats.0.created_at}}</span>

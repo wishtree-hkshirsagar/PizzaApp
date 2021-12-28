@@ -385,7 +385,7 @@ select{
 .new-course-box .overlay-form,
 .new-cohort-box .overlay-form,
 .new-pizza-box .overlay-form{
-    background-image: linear-gradient(#fd8153, #fa936d);
+    background-image: linear-gradient(#f4d7d7, #ea845f);
     
 }
 .new-block-box .overlay-form,
