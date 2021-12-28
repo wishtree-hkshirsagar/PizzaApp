@@ -1,27 +1,4 @@
-//jQuery pretty date
-Handlebars.registerHelper('prettyDate', function(date){
-    return $.format.prettyDate(date);
-});
-//jQuery activity date
-Handlebars.registerHelper('commentDate', function(date){
-    if(!date) return new Handlebars.SafeString('');
-    if(date == 'Today' || date == 'Yesterday'){
-        return new Handlebars.SafeString(date);
-    } else {
-        var monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
-        ];
-        var p = date.split('-');
-        //Get current year
-        var currentYear = new Date().getFullYear();
-        if(currentYear != p[2]){
-            var string = monthNames[p[1] - 1] + ' ' + p[0] + ', ' + p[2];
-        } else {
-            var string = monthNames[p[1] - 1] + ' ' + p[0];
-        }
-        return new Handlebars.SafeString(string);
-    }
-});
+
 //Check if the user passed is current user
 Handlebars.registerHelper('isCurrentUser', function(userId, options){
     var currentUser = $('.pageWrap').data('user');
@@ -50,68 +27,7 @@ Handlebars.registerHelper('hasCurrentUser', function(arr, options){
         return options.inverse(this);
     }
 });
-//Get file icon
-Handlebars.registerHelper('getFileIcon', function(extension){
-    var icon;
-    switch(extension){
-        case 'pdf':
-            icon = 'file-pdf';
-            break;
-        case 'docx':
-        case 'doc':
-        case 'pages':
-            icon = 'file-doc';
-            break;
-        case 'pptx':
-        case 'ppt':
-        case 'posx':
-        case 'key':
-            icon = 'file-ppt';
-            break;
-        case 'xlsx':
-        case 'xls':
-        case 'sheet':
-        case 'csv':
-            icon = 'file-xls';
-            break;
-        case 'zip':
-        case 'tar':
-        case 'tar.gz':
-        case 'gz':
-        case 'rar':
-            icon = 'file-zip';
-            break;
-        case 'mp3':
-        case 'mp4':
-            icon = 'file-song';
-            break;
-        case 'mov':
-        case 'mpeg':
-        case 'avi':
-            icon = 'file-video';
-            break;
-        case 'ai':
-            icon = 'file-ai';
-            break;
-        case 'sketch':
-            icon = 'file-sketch';
-            break;
-        case 'psd':
-            icon = 'file-psd';
-            break;
-        case 'html':
-        case 'php':
-            icon = 'file-code';
-            break;
-        case 'js':
-        case 'css':
-            icon = 'file-css';
-            break;
-        default:
-            icon = 'file-normal';
-    }
-    return new Handlebars.SafeString(icon);
-});
+
 //Handlebars get file size
 Handlebars.registerHelper('getFileSize', function(bytes){
     if(bytes == 0) return '0 Bytes';

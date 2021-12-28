@@ -61,7 +61,6 @@ module.exports = function(app, passport) {
         },
         home: function(req, res){
             if(req.isAuthenticated()){
-                console.log('####')
                 //Render
                 //If invited
                 if(req.user.type == 'admin'){
@@ -96,35 +95,14 @@ module.exports = function(app, passport) {
                     errorMessage: req.flash('errorMessage'),
                     successMessage: req.flash('successMessage')
                 });
-            } else if((req.url == '/course/' + req.params.slug) || req.url == '/course/' + req.params.slug + '/' + req.params.container){
-                Course.findOne({
+            } else if((req.url == '/pizza/' + req.params.slug)){
+                Pizza.findOne({
                     slug: req.params.slug,
-                    is_active: true,
-                    privacy: 'public'
-                }, function(err, course){
-                    if(!course){
+                }, function(err, pizza){
+                    if(!pizza){
                         res.redirect('/');
                     } else {
                         req.session.redirectURL = req.url;
-                        //Tagline
-                        if(course.tagline){
-                            var tagline = course.tagline;
-                        } else {
-                            var tagline = 'Explore all our popular courses.';
-                        }
-                        //Image
-                        if(course.image && course.image.l){
-                            var image = course.image.l;
-                        } else {
-                            var image = 'https://framerspace.com/images/site/share.png';
-                        }
-                        //Send
-                        res.render('site/courses', {
-                            title: course.title,
-                            desc: tagline,
-                            slug: 'course/' + course.slug,
-                            image: image
-                        });
                     }
                 });
             } else {
@@ -141,6 +119,7 @@ module.exports = function(app, passport) {
     app.get('/forgot', siteRoute.site);
     app.get('/terms', siteRoute.site);
     app.get('/hello', siteRoute.hello);
+    app.get('/pizza/:slug', siteRoute.home);
    
     //process the login form
     app.post('/login',
