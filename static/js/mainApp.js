@@ -241,8 +241,8 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
         courseContainerView: function(slug, container){
             ProjectManager.ProjectApp.EntityController.Controller.showOneCourse(slug, container);
         },
-        blocksView: function(course_id, container_id, container_title){
-            ProjectManager.ProjectApp.EntityController.Controller.showBlocks(course_id, container_id, container_title);
+        blocksView: function(course_id){
+            ProjectManager.ProjectApp.EntityController.Controller.showBlocks(course_id);
         },
         settingsView: function(){
             ProjectManager.ProjectApp.EntityController.Controller.showSettings();
@@ -892,15 +892,12 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
             //         this.trigger('save:course', value);
             //     }
             // }
-        },
-        deleteCourse: function(ev){
-
         }
     });
     //Pizza header view
     EntityViews.PizzaHeaderView = Marionette.ItemView.extend({
         className: 'sectionBox',
-        template: 'pizzaHeaderTemplate',
+        template: 'pizzasHeaderTemplate',
         events: {
             'click .js-add-pizza': 'openNewPizzaOverlay'
         },
@@ -1920,25 +1917,13 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
     //Blocks collection view
     EntityViews.BlocksView = Marionette.CompositeView.extend({
         className: 'sectionBox',
-        template: 'courseBlocksTemplate',
+        template: 'pizzaBlocksTemplate',
         childView: EntityViews.BlockItemView,
         childViewContainer: 'div.all-blocks',
         emptyView: EntityViews.EmptyBlocksView,
         events: {
-            'click .js-start-course': 'addLearner',
-            'click .js-mark-done': 'editLearnerProgress'
+            
         },
-        addLearner: function(ev){
-            this.trigger('add:learner');
-        },
-        editLearnerProgress: function(ev){
-            var $target = $(ev.currentTarget);
-            if($target.hasClass('js-certified')){
-                this.trigger('download:certificate');
-            } else {
-                this.trigger('edit:learnerProgress');
-            }
-        }
     });
     //Settings View
     EntityViews.SettingsView = Marionette.ItemView.extend({
@@ -3676,7 +3661,7 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                 ProjectManager.overlayRegion.show(newBlockView);
             });
         },
-        showBlocks: function(course_id, container_id, container_title){
+        showBlocks: function(course_id, container_id){
             //Show loading page
             console.log(course_id);
             var loadingView = new ProjectManager.Common.Views.Loading();
@@ -3718,317 +3703,8 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                 } else {
                     blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
                 }
-                //Show typeform
-                if(blocksView.$('.typeform-embed').length){
-                    blocksView.$('iframe.typeform-embed').each(function(index){
-                        var source = $('iframe.typeform-embed').eq(index).attr('src');
-                        source = source + '#uniqueid=' + $('.pageWrap').data('uniqueid');
-                        $('iframe.typeform-embed').eq(index).attr('src', source).attr('height', 600);
-                    });
-                }
-                    //Show video player
-                    if(blocksView.$('.view-video').length){
-                        blocksView.$('.view-video').each(function(index){
-                            videojs(document.getElementsByClassName('view-video')[index], {}, function(){});
-                        });
-                    }
-                    //Show audio player
-                    blocksView.$('.audio-block audio').audioPlayer();
-                    //Show audio player
-                    if(blocksView.$('.view-audio').length){
-                        var audioPlayerOptions = {
-                            controls: true,
-                            width: 600,
-                            height: 300,
-                            fluid: false,
-                            plugins: {
-                                wavesurfer: {
-                                    src: "live",
-                                    waveColor: "#ffffff",
-                                    progressColor: "#ffffff",
-                                    debug: false,
-                                    cursorWidth: 1,
-                                    msDisplayMax: 20,
-                                    hideScrollbar: true
-                                }
-                            }
-                        };
-                        blocksView.$('.view-audio').each(function(index){
-                            videojs(document.getElementsByClassName('view-audio')[index], audioPlayerOptions, function(){});
-                        });
-                    }
-                    //Show audio response
-                    var audioJournalOptions = {
-                        controls: true,
-                        width: 600,
-                        height: 300,
-                        fluid: false,
-                        plugins: {
-                            wavesurfer: {
-                                src: "live",
-                                waveColor: "#ffffff",
-                                progressColor: "#ffffff",
-                                debug: false,
-                                cursorWidth: 1,
-                                msDisplayMax: 20,
-                                hideScrollbar: true
-                            },
-                            record: {
-                                audio: true,
-                                video: false,
-                                maxLength: 20,
-                                debug: false
-                            }
-                        }
-                    };
-                    var audioJournalPlayers = [];
-                    var audioPlayerIds = [];
-                    blocksView.$('.response-audio').each(function(){
-                        audioPlayerIds.push(this.id);
-                        audioJournalPlayers.push(videojs(this.id, audioJournalOptions));
-                    });
-                    audioJournalPlayers.forEach(function(player, i){
-                        //data is available
-                        player.on('finishRecord', function(){
-                            //Upload file
-                            var element = $('#' + audioPlayerIds[i]).next().next();
-                            element.each(function(){
-                                //For each file selected, process and upload
-                                var form = $(this);
-                                $(this).fileupload({
-                                    url: form.attr('action'), //Grab form's action src
-                                    type: 'POST',
-                                    autoUpload: true,
-                                    dataType: 'xml', //S3's XML response,
-                                    add: function(event, data){
-                                        //Upload through CORS
-                                        $.ajax({
-                                            url: '/api/signed',
-                                            type: 'GET',
-                                            dataType: 'json',
-                                            data: {title: data.files[0].name}, // Send filename to /signed for the signed response
-                                            async: false,
-                                            success: function(data){
-                                                // Now that we have our data, we update the form so it contains all
-                                                // the needed data to sign the request
-                                                form.find('input[name=key]').val(data.key);
-                                                form.find('input[name=policy]').val(data.policy);
-                                                form.find('input[name=signature]').val(data.signature);
-                                                form.find('input[name=Content-Type]').val(data.contentType);
-                                            }
-                                        });
-                                        data.files[0].s3Url = form.find('input[name=key]').val();
-                                        data.submit();
-                                    },
-                                    start: function(e){
-                                        form.prev().html('Uploaded <b></b>');
-                                    },
-                                    progressall: function(e, data){
-                                        var progress = parseInt(data.loaded / data.total * 100, 10);
-                                        form.prev().find('b').text(progress + '%'); // Update progress bar percentage
-                                    },
-                                    fail: function(e, data){
-                                        form.prev().html('Click microphone above to record your audio');
-                                    },
-                                    done: function(e, data){
-                                        var file_name = data.files[0].name;
-                                        //Url
-                                        var url = 'https://d1u3z33x3g234l.cloudfront.net/' +  encodeURIComponent(data.files[0].s3Url).replace(/'/g,"%27").replace(/"/g,"%22");
-                                        //Add video response
-                                        var edit_block = new ProjectManager.Entities.Block({
-                                            _id: form.parent().parent().data('id'),
-                                            _action: 'add_response'
-                                        });
-                                        edit_block.set({
-                                            provider: {
-                                                name: 'FramerSpace',
-                                                url: url
-                                            },
-                                            file: {
-                                                size: data.files[0].size,
-                                                ext: 'webm'
-                                            }
-                                        });
-                                        edit_block.save({}, {success: function(){
-                                            location.reload();
-                                        }});
-                                    }
-                                });
-                                //upload data to server
-                                var filesList = [player.recordedData];
-                                $(this).fileupload('add', {files: filesList});
-                            });
-                        });
-                    });
-                    //Show video response
-                    var videoJournalOptions = {
-                        controls: true,
-                        width: 480,
-                        height: 360,
-                        fluid: false,
-                        plugins: {
-                            record: {
-                                audio: true,
-                                video: true,
-                                maxLength: 10,
-                                debug: false
-                            }
-                        }
-                    };
-                    var videoJournalPlayers = [];
-                    var videoPlayerIds = [];
-                    blocksView.$('.response-video').each(function(){
-                        videoPlayerIds.push(this.id);
-                        videoJournalPlayers.push(videojs(this.id, videoJournalOptions));
-                    });
-                    videoJournalPlayers.forEach(function(player, i){
-                        //data is available
-                        player.on('finishRecord', function(){
-                            //Upload file
-                            var element = $('#' + videoPlayerIds[i]).next().next();
-                            element.each(function(){
-                                //For each file selected, process and upload
-                                var form = $(this);
-                                $(this).fileupload({
-                                    url: form.attr('action'), //Grab form's action src
-                                    type: 'POST',
-                                    autoUpload: true,
-                                    dataType: 'xml', //S3's XML response,
-                                    add: function(event, data){
-                                        //Upload through CORS
-                                        $.ajax({
-                                            url: '/api/signed',
-                                            type: 'GET',
-                                            dataType: 'json',
-                                            data: {title: data.files[0].name}, // Send filename to /signed for the signed response
-                                            async: false,
-                                            success: function(data){
-                                                // Now that we have our data, we update the form so it contains all
-                                                // the needed data to sign the request
-                                                form.find('input[name=key]').val(data.key);
-                                                form.find('input[name=policy]').val(data.policy);
-                                                form.find('input[name=signature]').val(data.signature);
-                                                form.find('input[name=Content-Type]').val(data.contentType);
-                                            }
-                                        });
-                                        data.files[0].s3Url = form.find('input[name=key]').val();
-                                        data.submit();
-                                    },
-                                    start: function(e){
-                                        form.prev().html('Uploaded <b></b>');
-                                    },
-                                    progressall: function(e, data){
-                                        var progress = parseInt(data.loaded / data.total * 100, 10);
-                                        form.prev().find('b').text(progress + '%'); // Update progress bar percentage
-                                    },
-                                    fail: function(e, data){
-                                        form.prev().html('Click microphone above to record your video');
-                                    },
-                                    done: function(e, data){
-                                        var file_name = data.files[0].name;
-                                        //Url
-                                        var url = 'https://d1u3z33x3g234l.cloudfront.net/' +  encodeURIComponent(data.files[0].s3Url).replace(/'/g,"%27").replace(/"/g,"%22");
-                                        //Add video response
-                                        var edit_block = new ProjectManager.Entities.Block({
-                                            _id: form.parent().parent().data('id'),
-                                            _action: 'add_response'
-                                        });
-                                        edit_block.set({
-                                            provider: {
-                                                name: 'FramerSpace',
-                                                url: url
-                                            },
-                                            file: {
-                                                size: data.files[0].size,
-                                                ext: 'webm'
-                                            }
-                                        });
-                                        edit_block.save({}, {success: function(){
-                                            location.reload();
-                                        }});
-                                    }
-                                });
-                                //upload data to server
-                                var filesList = [player.recordedData.video];
-                                $(this).fileupload('add', {files: filesList});
-                            });
-                        });
-                    });
-                    //Upload file response
-                    blocksView.$('.file-response').each(function(){
-                        //For each file selected, process and upload
-                        var form = $(this);
-                        var fileCount = 0;
-                        var uploadCount = 0;
-                        var response_id = $(this).find('div.file-response-drop').attr('id');
-                        $(this).fileupload({
-                            dropZone: $('#' + response_id),
-                            url: form.attr('action'), //Grab form's action src
-                            type: 'POST',
-                            autoUpload: true,
-                            dataType: 'xml', //S3's XML response,
-                            add: function(event, data){
-                                if(data.files[0].size >= MAX_FILE_SIZE) return;
-                                fileCount += 1;
-                                //Upload through CORS
-                                $.ajax({
-                                    url: '/api/signed',
-                                    type: 'GET',
-                                    dataType: 'json',
-                                    data: {title: data.files[0].name}, // Send filename to /signed for the signed response
-                                    async: false,
-                                    success: function(data){
-                                        // Now that we have our data, we update the form so it contains all
-                                        // the needed data to sign the request
-                                        form.find('input[name=key]').val(data.key);
-                                        form.find('input[name=policy]').val(data.policy);
-                                        form.find('input[name=signature]').val(data.signature);
-                                        form.find('input[name=Content-Type]').val(data.contentType);
-                                    }
-                                });
-                                data.files[0].s3Url = form.find('input[name=key]').val();
-                                data.submit();
-                            },
-                            start: function(e){
-                                $('#' + response_id + ' span').html('Uploaded <b></b>');
-                            },
-                            progressall: function(e, data){
-                                var progress = parseInt(data.loaded / data.total * 100, 10);
-                                $('#' + response_id + ' span b').text(progress + '%'); // Update progress bar percentage
-                            },
-                            fail: function(e, data){
-                                $('#' + response_id + ' span').html('Choose files or drag and drop them here');
-                            },
-                            done: function(e, data){
-                                var file_name = data.files[0].name;
-                                //Get extension of the file
-                                var index = file_name.lastIndexOf('.');
-                                var file_ext = file_name.substring(index+1, file_name.length);
-                                //Url
-                                var url = 'https://d1u3z33x3g234l.cloudfront.net/' +  encodeURIComponent(data.files[0].s3Url).replace(/'/g,"%27").replace(/"/g,"%22");
-                                //Add video response
-                                var edit_block = new ProjectManager.Entities.Block({
-                                    _id: response_id.split('-')[1],
-                                    _action: 'add_response'
-                                });
-                                edit_block.set({
-                                    provider: {
-                                        name: 'FramerSpace',
-                                        url: url
-                                    },
-                                    file: {
-                                        size: data.files[0].size,
-                                        ext: file_ext
-                                    }
-                                });
-                                edit_block.save({}, {success: function(){
-                                    location.reload();
-                                }});
-                            }
-                        });
-                    });
-                    //Sortable grid
-                    blocksView.$('.grid-block .block-options').sortable();
+
+
                 });
                 //Add block
                 ProjectManager.vent.off('add:block');
@@ -4037,195 +3713,6 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                     blocks.add(block, {at: order});
                     //Remove transparency
                     $(".all-blocks .one-block[data-id='" + block.get('_id') + "']").removeClass('u-transparent');
-                });
-                //Add learner
-                blocksView.on('add:learner', function(){
-                    var course = new ProjectManager.Entities.Course({
-                        _id: course_id,
-                        _action: 'add_learner'
-                    });
-                    course.set({});
-                    course.save({}, {
-                        dataType:"text",
-                        success: function(){
-                            //Update learner progress
-                            learnerProgress = 'started';
-                            blocksView.$('.js-start-course').addClass('u-hide');
-                            blocksView.$('.all-blocks').removeClass('u-hide');
-                            blocksView.$('.js-mark-done').removeClass('u-hide');
-                        }
-                    });
-                });
-                //Edit learner progress
-                blocksView.on('edit:learnerProgress', function(){
-                    var course = new ProjectManager.Entities.Course({
-                        _id: course_id,
-                        _action: 'edit_learner'
-                    });
-                    if(container_id){
-                        course.set({
-                            container: container_id
-                        });
-                    } else {
-                        course.set({});
-                    }
-                    course.save({}, {success: function(){
-                        var progress = course.get('progress');
-                        if(container_id){
-                            //Update learner progress
-                            learnerProgress = progress;
-                            //Add to containers
-                            learnerContainers.push(container_id);
-                            //Check if certified
-                            if(learnerProgress == 'certified'){
-                                blocksView.$('.js-mark-done').addClass('js-certified').text('Download certificate');
-                            } else {
-                                //Go back to course
-                                $('.mainHeader .header-back.header-course').click();
-                            }
-                        } else {
-                            //Update learner progress
-                            learnerProgress = progress;
-                            //Check if certified
-                            if(learnerProgress == 'certified'){
-                                blocksView.$('.js-mark-done').addClass('js-certified').text('Download certificate');
-                            } else if(learnerProgress == 'uncertified'){
-                                alert('Please attempt all questions to get certified.');
-                                blocksView.$('.js-mark-done').addClass('js-uncertified').text('Check for certificate');
-                            } else {
-                                //Show all courses
-                                ProjectManager.vent.trigger('courses:show', 'public');
-                            }
-                        }
-                    }});
-                });
-                //Download certificate
-                blocksView.on('download:certificate', function(){
-                    window.location.href = '/certificate/' + course_id;
-                });
-                //Select MCQ Option
-                blocksView.on('childview:select:mcqOption', function(childView, model){
-                    var edit_block = new ProjectManager.Entities.Block({
-                        _id: model.block_id,
-                        _action: 'select_option'
-                    });
-                    edit_block.set({
-                        option: model.option_id
-                    });
-                    edit_block.save({}, {
-                        dataType: 'text',
-                        success: function(){
-                        }
-                    });
-                });
-                //Unselect MCQ Option
-                blocksView.on('childview:unselect:mcqOption', function(childView, model){
-                    var edit_block = new ProjectManager.Entities.Block({
-                        _id: model.block_id,
-                        _action: 'unselect_option'
-                    });
-                    edit_block.set({
-                        option: model.option_id
-                    });
-                    edit_block.save({}, {
-                        dataType: 'text',
-                        success: function(){
-                        }
-                    });
-                });
-                //Unselect match option
-                blocksView.on('childview:select:matchOption', function(childView, model){
-                    var edit_block = new ProjectManager.Entities.Block({
-                        _id: model.block_id,
-                        _action: 'select_match'
-                    });
-                    edit_block.set({
-                        option: model.option_id,
-                        matched_to: model.matched_to
-                    });
-                    edit_block.save({}, {success: function(data){
-                        if(data.get('color')){
-                            childView.$(".match-block .block-option[data-id='" + model.option_id + "']").prepend("<p class='match-colors'><span class='one-color' style='background-color: "+data.get('color')+";'></span></p>");
-                        } else {
-                            var color = $(".match-block .block-option[data-id='" + model.matched_to + "'] .one-color").css('backgroundColor');
-                            if(childView.$(".match-block .block-option[data-id='" + model.option_id + "'] .match-colors").length){
-                                childView.$(".match-block .block-option[data-id='" + model.option_id + "'] .match-colors").append("<span class='one-color' style='background-color: "+color+";' data-id='"+model.matched_to+"'></span>");
-                            } else {
-                                childView.$(".match-block .block-option[data-id='" + model.option_id + "']").prepend("<p class='match-colors'><span class='one-color' style='background-color: "+color+";' data-id='"+model.matched_to+"'></span></p>");
-                            }
-                        }
-                    }});
-                });
-                //Unselect match option
-                blocksView.on('childview:unselect:matchOption', function(childView, model){
-                    var edit_block = new ProjectManager.Entities.Block({
-                        _id: model.block_id,
-                        _action: 'unselect_match'
-                    });
-                    edit_block.set({
-                        option: model.option_id,
-                        matched_to: model.matched_to
-                    });
-                    edit_block.save();
-                });
-                //Fill blanks
-                blocksView.on('childview:fill:Blanks', function(childView, model){
-                    var edit_block = new ProjectManager.Entities.Block({
-                        _id: model.block_id,
-                        _action: 'fill_blanks'
-                    });
-                    edit_block.set({
-                        fills: model.fills
-                    });
-                    edit_block.save({}, {
-                        dataType: 'text',
-                        success: function(){
-                            childView.$('.js-fill-blanks').text('Update');
-                        }
-                    });
-                });
-                //Add text response
-                blocksView.on('childview:add:textResponse', function(childView, model){
-                    var edit_block = new ProjectManager.Entities.Block({
-                        _id: model.block_id,
-                        _action: 'add_response'
-                    });
-                    edit_block.set({
-                        text: model.text
-                    });
-                    edit_block.save({}, {success: function(){
-                        childView.$('.js-submit-response').text('Update').addClass('js-update-response');
-                        childView.$('.js-update-response').after("<span class='remove-response u-delete'>Remove</span>");
-                    }});
-                });
-                //Update text response
-                blocksView.on('childview:update:textResponse', function(childView, model){
-                    var edit_block = new ProjectManager.Entities.Block({
-                        _id: model.block_id,
-                        _action: 'edit_text_response'
-                    });
-                    edit_block.set({
-                        text: model.text
-                    });
-                    edit_block.save({}, {success: function(){
-
-                    }});
-                });
-                //Remove response
-                blocksView.on('childview:remove:response', function(childView, model){
-                    var edit_block = new ProjectManager.Entities.Block({
-                        _id: model.block_id,
-                        _action: 'remove_response'
-                    });
-                    edit_block.set({});
-                    edit_block.save({}, {
-                        dataType: 'text',
-                        success: function(){
-                            childView.$('.text-response').val('');
-                            childView.$('.js-update-response').text('Save').removeClass('js-update-response');
-                            childView.$('.remove-response').remove();
-                        }
-                    });
                 });
                 ProjectManager.contentRegion.show(blocksView);
             });

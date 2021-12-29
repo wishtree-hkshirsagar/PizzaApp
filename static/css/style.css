@@ -2993,6 +2993,7 @@ select{
 .loading-text {
     display: block;
     position: absolute;
+    color: #e8712d;
     top: 50%;
     left: 50%;
     font-weight: 600;
@@ -3415,6 +3416,7 @@ label[name=wrap-pizzaType-edit]:after{
 .block-price{
     float: left;
     font-weight: bolder;
+    margin-top: 4px;
 }
 
 

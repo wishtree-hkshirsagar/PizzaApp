@@ -153,7 +153,7 @@ var _getPublicPizza = function(req, res) {
 }
 
 var _getPublicPizzaByIdOrSlug = function(req, res) {
-    console.log('_getPizzaByIdOrSlug public')
+    console.log('_getPublicPizzaByIdOrSlug')
     var query;
     if(req.params._id.match(/^[0-9a-fA-F]{24}$/)){
         query = {

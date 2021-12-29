@@ -75,9 +75,8 @@ PublicManager.commands.setHandler('close:overlay', function(view){
 PublicManager.module('PublicApp', function (PublicApp, PublicManager, Backbone, Marionette, $, _) {
     PublicApp.Router = Marionette.AppRouter.extend({
         appRoutes: {
-            'courses': 'coursesView',
-            'course/:slug': 'courseView',
-            'course/:slug/:container': 'courseContainerView'
+            'pizzas': 'publicPizzaView',
+            'pizza/:slug': 'pizzaView',
         }
     });
     //API functions for each route
@@ -91,18 +90,19 @@ PublicManager.module('PublicApp', function (PublicApp, PublicManager, Backbone, 
         termsView: function(){
             PublicManager.PublicApp.EntityController.Controller.showTerms();
         },
-        coursesView: function(){
-            PublicManager.PublicApp.EntityController.Controller.showCoursesHeader();
-            PublicManager.PublicApp.EntityController.Controller.showCourses();
+ 
+        publicPizzaView: function(){
+            console.log('publicPizzaView');
+            PublicManager.PublicApp.EntityController.Controller.showPizzasHeader();
+            PublicManager.PublicApp.EntityController.Controller.showPizzas();
         },
-        courseView: function(slug){
-            PublicManager.PublicApp.EntityController.Controller.showOneCourse(slug, '');
+        pizzaView: function(slug){
+            console.log('pizzaView');
+            PublicManager.PublicApp.EntityController.Controller.showOnePizza(slug);
         },
-        courseContainerView: function(slug, container){
-            PublicManager.PublicApp.EntityController.Controller.showOneCourse(slug, container);
-        },
-        blocksView: function(course_id, container_id, container_title){
-            PublicManager.PublicApp.EntityController.Controller.showBlocks(course_id, container_id, container_title);
+ 
+        blocksView: function(pizza_id){
+            PublicManager.PublicApp.EntityController.Controller.showBlocks(pizza_id);
         }
     };
     //Triggers to particular views
@@ -119,27 +119,27 @@ PublicManager.module('PublicApp', function (PublicApp, PublicManager, Backbone, 
     PublicManager.vent.on('terms:show', function(email){
         API.termsView();
     });
-    //Show courses
-    PublicManager.vent.on('courses:show', function(){
-        PublicManager.navigate('courses');
-        API.coursesView();
-    });
-    //Show course and course modules
-    PublicManager.vent.on('course:show', function(slug){
+
+    //Show pizza and pizza modules
+    PublicManager.vent.on('pizza:show', function(slug){
         //Show course modules
-        PublicManager.navigate('course/' + slug);
-        API.courseView(slug);
+        PublicManager.navigate('pizza/' + slug);
+        API.pizzaView(slug);
     });
+
     //Show course blocks
-    PublicManager.vent.on('blocks:show', function(course_id, container_id, container_title){
-        var course_slug = $('.mainHeader .header-title').data('slug');
-        if(container_id){
-            PublicManager.navigate('course/' + course_slug + '/' + container_id);
-            API.blocksView(course_id, container_id, container_title);
-        } else {
-            PublicManager.navigate('course/' + course_slug);
-            API.blocksView(course_id);
-        }
+    PublicManager.vent.on('blocks:show', function(pizza_id){
+        var pizza_slug = $('.mainHeader .header-title').data('slug');
+        PublicManager.navigate('pizza/' + pizza_slug);
+        API.blocksView(pizza_id);
+    });
+    //Show pizza details
+    PublicManager.vent.on('pizzaDetail:show', function(pizza_id){
+        // console.log(pizza_id);
+        var pizza_slug = $('.mainHeader .header-title').data('slug');
+        // console.log(pizza_slug);
+        PublicManager.navigate('pizza/' + pizza_slug);
+        API.blocksView(pizza_id);
     });
     //Initialize router with API
     PublicManager.addInitializer(function(){
@@ -156,61 +156,60 @@ PublicManager.module('Entities', function (Entities, PublicManager, Backbone, Ma
     Entities.Signup = Backbone.Model.extend({
         urlRoot: '/signup'
     });
-    //Course Models and Collection
-    Entities.Course = Backbone.Model.extend({
+    //Pizza Models and Collection
+    Entities.Pizza = Backbone.Model.extend({
         initialize: function(options){
             this._id = options._id;
         },
         url: function(){
             if(this._id) {
-                return '/api/public/course/' + this._id
+                console.log('/api/public/pizza/' + this._id);
+                return '/api/public/pizza/' + this._id
             }
         },
         idAttribute: '_id'
     });
-    Entities.CourseCollection = Backbone.Collection.extend({
-        url: '/api/public/courses',
-        model: Entities.Course
+    Entities.PizzaCollection = Backbone.Collection.extend({
+        url: '/api/public/pizza',
+        model: Entities.Pizza
     });
+  
     //Block Collection
     Entities.BlockCollection = Backbone.Collection.extend({
         initialize: function(models, options){
             //_id is course id
             this._id = options._id;
-            this._container = options._container;
         },
         url: function(){
-            if(this._container){
-                return '/api/public/blocks/container/' + this._container
-            } else {
-                return '/api/public/blocks/' + this._id
-            }
+            return '/api/public/pizza/' + this._id;
         }
     });
     //Functions to get data
     var API = {
-        getCourses: function(){
-            var courses = new Entities.CourseCollection();
+        getPizzas: function(){
+            var pizzas = new Entities.PizzaCollection();
             var defer = $.Deferred();
-            courses.fetch({
+            pizzas.fetch({
                 success: function(data){
                     defer.resolve(data);
                 }
             });
             return defer.promise();
         },
-        getOneCourse: function(_id){
-            var course = new Entities.Course({
+
+        getOnePizza: function(_id){
+            var pizza = new Entities.Pizza({
                 _id: _id
             });
             var defer = $.Deferred();
-            course.fetch({
+            pizza.fetch({
                 success: function(data){
                     defer.resolve(data);
                 }
             });
             return defer.promise();
         },
+
         getBlocks: function(_id, _container){
             var blocks = new Entities.BlockCollection([], {
                 _id: _id,
@@ -226,12 +225,14 @@ PublicManager.module('Entities', function (Entities, PublicManager, Backbone, Ma
         }
     };
     //Request Response Callbacks
-    PublicManager.reqres.setHandler('course:entities', function(){
-        return API.getCourses();
+    PublicManager.reqres.setHandler('pizza:entities', function(){
+        return API.getPizzas();
     });
-    PublicManager.reqres.setHandler('course:entity', function(_id){
-        return API.getOneCourse(_id);
+
+    PublicManager.reqres.setHandler('pizza:entity', function(_id){
+        return API.getOnePizza(_id);
     });
+
     PublicManager.reqres.setHandler('block:entities', function(_id, _container){
         return API.getBlocks(_id, _container);
     });
@@ -459,76 +460,51 @@ PublicManager.module('PublicApp.EntityViews', function (EntityViews, PublicManag
             PublicManager.vent.trigger('signup:show');
         }
     });
-    //Courses header view
-    EntityViews.CoursesHeaderView = Marionette.ItemView.extend({
+    //Pizzas header view
+    EntityViews.PizzasHeaderView = Marionette.ItemView.extend({
         className: 'sectionBox',
-        template: 'coursesHeaderTemplate'
+        template: 'pizzasHeaderTemplate'
     });
-    //Course item view
-    EntityViews.CourseItemView = Marionette.ItemView.extend({
+
+    //Pizza item view
+    EntityViews.PizzaItemView = Marionette.ItemView.extend({
         tagName: 'a',
-        className: 'one-course',
-        template: 'courseOneTemplate',
+        className: 'one-pizza',
+        template: 'pizzaOneTemplate',
         initialize: function(){
-            this.$el.attr('href', '/courses/' + this.model.get('slug'));
+            this.$el.attr('href', '/pizza/' + this.model.get('slug'));
             this.$el.attr('data-slug', this.model.get('slug'));
         },
         events: {
-            'click': 'getOneCourse'
+            'click': 'getOnePizza'
         },
-        getOneCourse: function(ev){
+        getOnePizza: function(ev){
             if(ev.metaKey || ev.ctrlKey) return;
             ev.preventDefault();
-            PublicManager.vent.trigger('course:show', this.model.get('slug'));
+            PublicManager.vent.trigger('pizza:show', this.model.get('slug'));
         }
     });
-    //Courses collection view
-    EntityViews.CoursesView = Marionette.CollectionView.extend({
-        className: 'all-courses sectionBox',
-        childView: EntityViews.CourseItemView
+
+    //Pizzas collection view
+    EntityViews.PizzasView = Marionette.CollectionView.extend({
+        className: 'all-pizzas sectionBox',
+        childView: EntityViews.PizzaItemView
     });
-    //Course header view
-    EntityViews.CourseHeaderView = Marionette.ItemView.extend({
+
+    // Pizza details header view
+    EntityViews.PizzaDetailHeaderView = Marionette.ItemView.extend({
         className: 'sectionBox',
-        template: 'courseHeaderTemplate',
+        template: 'pizzaDetailHeaderTemplate',
         events: {
-            'click .header-now': 'doNothing',
-            'click .header-back.header-home': 'showPublicCourses',
-            'click .header-back.header-course': 'showCourseBlocks',
-            'click .header-back.header-container': 'showContainerBlocks'
-        },
-        doNothing: function(ev){
-            ev.preventDefault();
-            ev.stopPropagation();
-        },
-        showPublicCourses: function(ev){
-            ev.preventDefault();
-            ev.stopPropagation();
-            PublicManager.vent.trigger('courses:show');
-        },
-        showCourseBlocks: function(ev){
-            ev.preventDefault();
-            ev.stopPropagation();
-            var $target = $(ev.currentTarget);
-            $target.nextAll().remove();
-            $target.removeClass('header-back').addClass('header-now');
-            //Show blocks
-            PublicManager.vent.trigger('blocks:show', this.model.get('_id'));
-        },
-        showContainerBlocks: function(ev){
-            ev.preventDefault();
-            ev.stopPropagation();
-            var $target = $(ev.currentTarget);
-            var container_id = $target.data('id');
-            var container_title = $target.html();
-            $target.nextAll().remove();
-            $target.prev().prev().removeClass('header-back').addClass('header-now');
-            $target.prev().remove();
-            $target.remove();
-            //Show blocks
-            PublicManager.vent.trigger('blocks:show', this.model.get('_id'), container_id, container_title);
+
         }
     });
+    EntityViews.PizzaHeaderView = Marionette.ItemView.extend({
+        className: 'sectionBox',
+        template: 'pizzaHeaderTemplate',
+        events: {}
+    });
+
     //One Block view
     EntityViews.BlockItemView = Marionette.ItemView.extend({
         className: 'one-block',
@@ -605,7 +581,7 @@ PublicManager.module('PublicApp.EntityViews', function (EntityViews, PublicManag
     //Blocks collection view
     EntityViews.BlocksView = Marionette.CompositeView.extend({
         className: 'sectionBox',
-        template: 'courseBlocksTemplate',
+        template: 'pizzaBlocksTemplate',
         childView: EntityViews.BlockItemView,
         childViewContainer: 'div.all-blocks',
         emptyView: EntityViews.EmptyBlocksView
@@ -668,176 +644,97 @@ PublicManager.module('PublicApp.EntityController', function (EntityController, P
             });
             PublicManager.overlayRegion.show(termsView);
         },
-        showCoursesHeader: function(){
-            var coursesHeaderView = new PublicManager.PublicApp.EntityViews.CoursesHeaderView();
-            //Show
-            coursesHeaderView.on('show', function(){
-                coursesHeaderView.$('.public-courses').removeClass('u-hide');
-                coursesHeaderView.$('.js-add-course').addClass('u-hide');
+        showPizzasHeader: function(){
+            console.log('showPizzasHeader');
+            var pizzasHeaderView = new PublicManager.PublicApp.EntityViews.PizzasHeaderView();
+
+            pizzasHeaderView.on('show', function(){
+                pizzasHeaderView.$('.public-view').removeClass('u-hide');
+                pizzasHeaderView.$('.js-add-pizza').addClass('u-hide');
             });
-            PublicManager.headerRegion.show(coursesHeaderView);
+            PublicManager.headerRegion.show(pizzasHeaderView);
         },
-        showCourses: function(){
+
+        showPizzas: function(){
+            console.log('showPizzas');
             //Show loading page
             var loadingView = new PublicManager.Common.Views.Loading();
             PublicManager.contentRegion.show(loadingView);
-            //Fetch courses
-            var fetchingCourses = PublicManager.request('course:entities');
-            $.when(fetchingCourses).done(function(courses){
-                var coursesView = new PublicManager.PublicApp.EntityViews.CoursesView({
-                    collection: courses
+
+            var fetchingPizzas = PublicManager.request('pizza:entities');
+            $.when(fetchingPizzas).done(function(pizzas){
+                var pizzasView = new PublicManager.PublicApp.EntityViews.PizzasView({
+                    collection: pizzas
                 });
-                PublicManager.contentRegion.show(coursesView);
+                console.log(pizzas)
+                PublicManager.contentRegion.show(pizzasView);
             });
         },
-        showOneCourse: function(slug, container){
+        showOnePizza: function(slug){
+            console.log('showOnePizza')
             //Fetch course
-            var fetchingCourse = PublicManager.request('course:entity', slug);
-            $.when(fetchingCourse).done(function(course){
-                var courseHeaderView = new PublicManager.PublicApp.EntityViews.CourseHeaderView({
-                    model: course
+            var fetchingPizza = PublicManager.request('pizza:entity', slug);
+            $.when(fetchingPizza).done(function(pizza){
+                var pizzaHeaderView = new PublicManager.PublicApp.EntityViews.PizzaHeaderView({
+                    model: pizza
                 });
+                console.log(pizza);
                 //Show
-                courseHeaderView.on('show', function(){
-                    //Hide action buttons
-                    courseHeaderView.$('.action-btns').addClass('u-hide');
-                    //Add course id to header
-                    courseHeaderView.$('.header-title').data('id', course.get('_id'));
-                    courseHeaderView.$('.header-title').data('slug', course.get('slug'));
-                    //Show course blocks
-                    if(container){
-                        PublicManager.vent.trigger('blocks:show', course.get('_id'), container);
-                    } else {
-                        PublicManager.vent.trigger('blocks:show', course.get('_id'));
-                    }
+                pizzaHeaderView.on('show', function(){
+                    
+                    pizzaHeaderView.$('.header-title').data('id', pizza.get('_id'));
+                    pizzaHeaderView.$('.header-title').data('slug', pizza.get('slug'));
+
+                    PublicManager.vent.trigger('blocks:show', pizza.get('_id'));
+
                     //Show header title
-                    $('.mainHeader .header-title').append("<a href='/' class='header-back header-home'>Courses</a>");
+                    $('.mainHeader .header-title').append("<a href='/' class='header-back header-home'>Pizza</a>");
                     $('.mainHeader .header-title').append("<span class='header-seperator'>/</span>");
-                    $('.mainHeader .header-title').append("<a href='/course/"+course.get('slug')+"' class='header-course header-now' data-id='"+course.get('_id')+"'>"+course.get('title')+"</a>");
+                    $('.mainHeader .header-title').append("<a href='/pizza/"+pizza.get('slug')+"' class='header-course header-now' data-id='"+pizza.get('_id')+"'>"+pizza.get('title')+"</a>");
                 });
-                PublicManager.headerRegion.show(courseHeaderView);
+                PublicManager.headerRegion.show(pizzaHeaderView);
             });
         },
-        showBlocks: function(course_id, container_id, container_title){
+        showBlocks: function(pizza_id){
             //Show loading page
+            console.log(pizza_id);
             var loadingView = new PublicManager.Common.Views.Loading();
             PublicManager.contentRegion.show(loadingView);
             //Fetch blocks
-            var fetchingBlocks = PublicManager.request('block:entities', course_id, container_id);
-            $.when(fetchingBlocks).done(function(blocks){
+            var fetchingPizzaDetails = PublicManager.request('block:entities', pizza_id);
+            $.when(fetchingPizzaDetails).done(function(details){
                 var blocksView = new PublicManager.PublicApp.EntityViews.BlocksView({
-                    collection: blocks
+                    collection: details
                 });
+                console.log(details);
                 //Show
                 blocksView.on('show', function(){
                     //Show all blocks
                     blocksView.$('.all-blocks').removeClass('u-hide');
-                    //Update header title
-                    if(container_id){
-                        if(container_title){
-                            var title = container_title;
-                        } else if(blocks && blocks.length){
-                            var title = blocks.first().get('container').title;
-                        } else {
-                            var title = '...';
-                        }
-                        var course_slug = $('.mainHeader .header-title').data('slug');
-                        $('.mainHeader .header-now').addClass('header-back').removeClass('header-now');
-                        $('.mainHeader .header-title').append("<span class='header-seperator'>/</span>");
-                        $('.mainHeader .header-title').append("<a href='/course/" + course_slug + "/"+ container_id +"' class='header-container header-now' data-id='"+container_id+"'>"+title+"</a>");
-                    }
-                    //Show video player
-                    if(blocksView.$('.view-video').length){
-                        blocksView.$('.view-video').each(function(index){
-                            videojs(document.getElementsByClassName('view-video')[index], {}, function(){});
-                        });
-                    }
-                    //Show audio player
-                    blocksView.$('.audio-block audio').audioPlayer();
-                    //Show audio player
-                    if(blocksView.$('.view-audio').length){
-                        var audioPlayerOptions = {
-                            controls: true,
-                            width: 600,
-                            height: 300,
-                            fluid: false,
-                            plugins: {
-                                wavesurfer: {
-                                    src: "live",
-                                    waveColor: "#ffffff",
-                                    progressColor: "#ffffff",
-                                    debug: false,
-                                    cursorWidth: 1,
-                                    msDisplayMax: 20,
-                                    hideScrollbar: true
-                                }
+                    blocksView.$('.action-edit-block').addClass('u-hide');
+
+                //Show blocks
+                if($('.pageWrap').data('layout') == 'grid' && $('body').width() > 1100){
+                    var totalWidth = parseInt(blocksView.$('.all-blocks').css('width'));
+                    var start_index;
+                    var heights = [];
+                    blocksView.$('.all-blocks .one-block').each(function(i, obj) {
+                        if(parseInt($(this).css('width')) != totalWidth){
+                            if(!start_index) start_index = i;
+                            heights.push(parseInt($(this).css('height')));
+                        } else if(heights.length) {
+                            var max_height = Math.max(...heights);
+                            for(var j=start_index; j<i; j++){
+                                blocksView.$('.all-blocks .one-block').eq(j).css('height', max_height + 'px');
                             }
-                        };
-                        blocksView.$('.view-audio').each(function(index){
-                            videojs(document.getElementsByClassName('view-audio')[index], audioPlayerOptions, function(){});
-                        });
-                    }
-                    //Show audio response
-                    var audioJournalOptions = {
-                        controls: true,
-                        width: 600,
-                        height: 300,
-                        fluid: false,
-                        plugins: {
-                            wavesurfer: {
-                                src: "live",
-                                waveColor: "#ffffff",
-                                progressColor: "#ffffff",
-                                debug: false,
-                                cursorWidth: 1,
-                                msDisplayMax: 20,
-                                hideScrollbar: true
-                            },
-                            record: {
-                                audio: true,
-                                video: false,
-                                maxLength: 20,
-                                debug: false
-                            }
+                            start_index = '';
+                            heights = [];
                         }
-                    };
-                    var audioJournalPlayers = [];
-                    var audioPlayerIds = [];
-                    blocksView.$('.response-audio').each(function(){
-                        audioPlayerIds.push(this.id);
-                        audioJournalPlayers.push(videojs(this.id, audioJournalOptions));
                     });
-                    audioJournalPlayers.forEach(function(player, i){
-                        player.on('startRecord', function(){
-                            PublicManager.vent.trigger('login:show');
-                        });
-                    });
-                    //Show video response
-                    var videoJournalOptions = {
-                        controls: true,
-                        width: 480,
-                        height: 360,
-                        fluid: false,
-                        plugins: {
-                            record: {
-                                audio: true,
-                                video: true,
-                                maxLength: 10,
-                                debug: false
-                            }
-                        }
-                    };
-                    var videoJournalPlayers = [];
-                    var videoPlayerIds = [];
-                    blocksView.$('.response-video').each(function(){
-                        videoPlayerIds.push(this.id);
-                        videoJournalPlayers.push(videojs(this.id, videoJournalOptions));
-                    });
-                    videoJournalPlayers.forEach(function(player, i){
-                        player.on('startRecord', function(){
-                            PublicManager.vent.trigger('login:show');
-                        });
-                    });
+                    blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
+                } else {
+                    blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
+                }
                 });
                 PublicManager.contentRegion.show(blocksView);
             });

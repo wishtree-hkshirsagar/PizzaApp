@@ -50,12 +50,12 @@ time, mark, audio, video {
 }
 body {
     position: relative;
-    color: #fff;
+    color: #1A1A1A;
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: #1A1A1A;
+    background-color: #fff;
     font-family: 'IBM Plex Sans', sans-serif;
     font-weight: normal;
     line-height: 1.5;
@@ -63,7 +63,7 @@ body {
 }
 a{
     text-decoration: none;
-    color: #fff;
+    color: #1A1A1A;
 }
 input, a, textarea{
     font-family: 'IBM Plex Sans', sans-serif;
@@ -137,29 +137,49 @@ input[type='checkbox'] {
 .logo-main img{
     width: 100%;
 }
+.nav{
+    position: absolute;
+    right: 115px;
+    top: 59px;
+}
 .navBar{
     position: absolute;
     right: 25px;
     top: 50px;
 }
-.navBar a{
-    display: inline-block;
+.nav a{
     background-color: #fff;
-    color: #1A1A1A;
+    color: #f27307;
     padding: 9px 30px 8px;
     font-weight: 600;
     font-size: 14px;
-    border-radius: 4px;
 }
-.navBar a:hover{
+.navBar a{
+    display: inline-block;
+    background-color: #f27307;
+    color: #fff;
+    padding: 9px 30px 8px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 10px;
+}
+
+.navBar a:hover, .nav a:hover{
     box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
+    color: #fff;
+    background-color: #f56009;
 }
 .navBar .link-signup{
-    background-color: #ffd370;
+    background-color: #f27307;
     -webkit-transition: all 0.3s ease;
     -moz-transition: all 0.3s ease;
     transition: all 0.3s ease;
 }
+
+.navbar .cart{
+    padding: 9px 30px 8px !important;
+}
+
 .navBar .link-login{
     margin-right: 10px;
 }
@@ -191,7 +211,7 @@ input[type='checkbox'] {
     margin: 0px 5px;
 }
 .mainHeader .header-back{
-    color: #ffd370;
+    color: #f27307;
 }
 .mainHeader .header-title.sticky{
     position: fixed;
@@ -202,7 +222,7 @@ input[type='checkbox'] {
     padding: 0px 50px;
     font-size: 20px;
     line-height: 60px;
-    background-color: #151515;
+    background-color: #fff;
     overflow-y: hidden;
     z-index: 5;
 }
@@ -216,16 +236,18 @@ input[type='checkbox'] {
     font-size: 18px;
     max-width: 600px;
 }
-/* Courses */
-.one-course{
+.one-pizza{
     position: relative;
     display: block;
     width: 100%;
     height: 400px;
-    background-color: #232323;
+    background-color: #fff;
     padding: 50px;
     border-radius: 20px;
     margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid #e9e9ef;
+    box-shadow: 0px 0px 20px #e9e9ef;
 }
 .one-course .course-content,
 .one-block .container-content{
@@ -291,15 +313,21 @@ input[type='checkbox'] {
 /* Blocks */
 .all-blocks{
     position: relative;
+    text-align: center;
+}
+.all-blocks .one-block:not(.is-divider) {
+    background-color: #fff;
+    border: 1px solid #e9e9ef;
+    box-shadow: 0px 0px 20px #e9e9ef;
 }
 .one-block{
     position: relative;
     display: inline-block;
     vertical-align: top;
-    background-color: #232323;
     padding: 0px;
     border-radius: 10px;
     margin-bottom: 20px;
+    width: 65%;
 }
 .one-block.is-comic{
     border-radius: 0px;
@@ -1439,10 +1467,11 @@ input[type='checkbox'] {
     background-color: #232323;
     padding: 50px;
     border-radius: 20px;
+    text-align: center;
 }
 .zero-items .zero-content{
     position: relative;
-    width: 400px;
+    /* width: 400px; */
 }
 .zero-content .title{
     display: inline-block;
@@ -1465,7 +1494,7 @@ input[type='checkbox'] {
     height: 400px;
     background-repeat: no-repeat;
     background-size: cover;
-    background-image: url(../images/app/graphic-new.png);
+    /* background-image: url(../images/app/graphic-new.png); */
 }
 .zero-messages{
     display: flex;
@@ -1498,7 +1527,7 @@ input[type='checkbox'] {
     position: absolute;
     top: 50%;
     left: 50%;
-    color: #fff;
+    color: #e8712d;
     font-weight: 600;
     font-size: 14px;
     width: 100px;
@@ -1773,4 +1802,160 @@ input[type='checkbox'] {
     .zero-items .zero-image{
         background-image: url(../images/app/graphic-new@2x.png);
     }
+}
+
+
+
+
+.login-btn{
+    width: 90% !important;
+}
+
+.btn-order{
+    background-color: #FE5F1E;
+    color: #fff;
+    padding: 10px;
+    border-radius: 20px;
+    border: 2px solid #FE5F1E;
+    width: 130px;
+    cursor: pointer;
+}
+
+.btn-order:hover{
+    background-color: #b23301;
+}
+
+.home-page{
+    position: initial !important;
+    top: 115px !important;
+    right: 0px;
+}
+
+.home-page a{
+    color: #fff !important;
+}
+
+.order-container{
+    text-align: center;
+    background-color: #f8f8f8;
+    width: 90%;
+    margin-left: 60px;
+}
+
+.flex-items{
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    width: 90%;
+    margin: 10px 0px;
+}
+
+.flex-items h1{
+    font-weight: bold;
+    margin-left: 10px;
+    font-size: 20px;
+}
+
+.flex-items .pizza-image{
+    width: 100px;
+    margin-left: 130px;
+}
+
+.flex-items .pizza-detail{
+    margin-left: 15px;
+    flex-grow: 1;
+}
+
+.flex-items .pizza-quantity{
+    flex-grow: 1;
+}
+
+.flex-items .pizza-price{
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.align-right{
+    text-align: right;
+    padding: 15px;
+    margin-right: 103px;
+}
+
+.align-right .one{
+    font-weight: bold;
+}
+
+.align-right .two{
+    font-weight: bold;
+    font-size: 20px;
+    color: #f27307;
+}
+
+.delivery-details{
+    font-size: 16px;
+    margin: 10px 0px 10px 5px;
+    border: 2px solid #000;
+    border-radius: 7px;
+    padding: 5px;
+    width: 25%;
+}
+
+.login-nav{
+    position: relative !important;
+    top: 0px !important;
+    right: 0px !important;
+    margin-top: 10px;
+}
+
+.order-now{
+    padding: 10px 20px !important;
+    font-weight: bold;
+}
+
+.add-entity{
+    display: inline-block;
+    padding: 9px 30px 8px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 4px;
+    margin-right: 2px;
+    vertical-align: top;
+}
+
+.add-cart{
+    float: right;
+    display: block;
+    color: #f27307 !important;
+    background-color: #fff !important;
+    border: 2px solid #f27307 !important;
+    border-radius: 20px;
+    margin-top: -6px;
+
+}
+
+.add-cart:hover{
+    transition: all .3s ease-in-out !important;
+    color: #fff !important;
+    background-color: #f27307 !important;
+    border-color: #fff !important;
+
+}
+
+.pizza-title-name{
+    font-family: 'IBM Plex Serif', serif;
+    font-weight: 600;
+    font-size: 40px;
+    margin-bottom: 5px;
+    text-transform: capitalize;
+}
+
+.pizza-image {
+    float: right;
+    margin: auto;
+}
+
+.block-price {
+    float: left;
+    font-weight: bolder;
+    margin-top: 4px;
 }

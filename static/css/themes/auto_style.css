@@ -124,7 +124,7 @@ select{
     border-bottom: 1px solid #e9e9ef;
 }
 .mainHeader .header-back{
-    color: #000;
+    color: #f27307;
 }
 .mainHeader .header-title.sticky{
     background-color: #fff;
@@ -958,7 +958,7 @@ select{
     color: #00ccff;
 }
 .loading-text {
-    color: #232323;
+    color: #e8712d;
 }
 .loading-content {
     border: 3px solid #F00;
@@ -1964,7 +1964,7 @@ select{
         color: #00ccff;
     }
     .loading-text {
-        color: #fff;
+        color: #e8712d;
     }
     .loading-content {
         border: 3px solid #F00;

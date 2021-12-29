@@ -3,8 +3,8 @@ var crypto = require('crypto'),
     mongoose = require('mongoose'),
     User = require('../app/models/user').User,
     LoginToken = require('../app/models/logintoken').LoginToken,
-    Course = require('../app/models/entity').Course,
-    Email = require('../config/mail.js');
+    Email = require('../config/mail.js'),
+    Pizza = require('../app/models/entity').Pizza;
 //UUID
 const { v4: uuidv4 } = require('uuid');
 //Routes
@@ -35,16 +35,13 @@ module.exports = function(app, passport) {
                 res.redirect('/');
             } else {
                 res.render('site/cart', {
-                    // title: 'FramerSpace: Courses',
-                    // desc: 'Explore all our popular courses.',
-                    // slug: 'courses',
-                    // image: 'https://framerspace.com/images/site/share.png',
                     errorMessage: req.flash('errorMessage'),
                     successMessage: req.flash('successMessage')
                 });
             }
         },
         home: function(req, res){
+            console.log('home')
             if(req.isAuthenticated()){
                 //Render
                 //If invited
@@ -67,7 +64,7 @@ module.exports = function(app, passport) {
                         email: req.user.email,
                         username: req.user.username,
                         initials: req.user.initials,
-                        dp: req.user.dp.s,
+                        // dp: req.user.dp.s,
                         type: req.user.type,
                         theme: req.user.theme,
                         page_layout: req.user.layout
@@ -81,6 +78,8 @@ module.exports = function(app, passport) {
                     successMessage: req.flash('successMessage')
                 });
             } else if((req.url == '/pizza/' + req.params.slug)){
+                console.log(req.url)
+                console.log('findOnePizza', req.params.slug);
                 Pizza.findOne({
                     slug: req.params.slug,
                 }, function(err, pizza){
@@ -88,6 +87,11 @@ module.exports = function(app, passport) {
                         res.redirect('/');
                     } else {
                         req.session.redirectURL = req.url;
+                        //Send
+                        res.render('site/pizzas', {
+                            title: pizza.title,
+                            slug: 'pizza/' + pizza.slug,
+                        });
                     }
                 });
             } else {
