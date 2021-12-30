@@ -1,13 +1,22 @@
-<div class="container-block">
-     {{#if image}}
-        <div class="comic-image"><img src="../images/site/{{image}}" alt="pizza-image"></div>
-    {{/if}}
-    <p class="block-title">{{title}}</p>
-    <p class="block-text">{{size}}</p>
-   
-    <p class="block-price">&#8377;{{price}}</p>
-    <a class="add-entity add-cart js-add-cart" href="#">+ Add</a>
-</div>
- <div class="block-actions">
-        <span class="action-edit-block js-edit-block" title="Edit"></span>
-</div>
+{{#if qty}}
+    <div class="container-block">
+        <div>
+           <p class="block-title">{{qty}}</p>
+        </div>
+    </div>
+
+{{else}}
+    <div class="container-block">
+            {{#if image}}
+                <div class="comic-image"><img src="../images/site/{{image}}" alt="pizza-image"></div>
+            {{/if}}
+            <p class="block-title">{{title}}</p>
+            <p class="block-text">{{size}}</p>
+        
+            <p class="block-price">&#8377;{{price}}</p>
+            <a class="add-entity add-cart js-add-cart" href="#">+ Add</a>
+    </div>
+    <div class="block-actions">
+            <span class="action-edit-block js-edit-block" title="Edit"></span>
+    </div>
+{{/if}}

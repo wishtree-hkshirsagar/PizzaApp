@@ -10,6 +10,8 @@ var util = require('util'),
     // randomColor = require('randomcolor'),
     multer = require('multer'),
     fs = require('fs'),
+    express = require('express'),
+    session = require('express-session'),
     _ = require('lodash');
 //UUID
 const { v4: uuidv4 } = require('uuid');
@@ -21,7 +23,7 @@ var Utility = require('../app/utility');
 
 var IO;
 var uploadedfile;
-
+var application = express();
 //Export all API functions
 module.exports = function(app, passport, io){
     IO = io;
@@ -33,10 +35,13 @@ module.exports = function(app, passport, io){
      app.get('/api/pizza/:_id', isLoggedIn, _getPizzaByIdOrSlug);
      app.put('/api/pizza/:_id', isLoggedIn, _updatePizza);
      app.delete('/api/pizza/:_id', isLoggedIn, _deletePizza);
+     
 
       /* -----------------Public Pizza Api ------------------ */
       app.get('/api/public/pizza', _getPublicPizza);
       app.get('/api/public/pizza/:_id', _getPublicPizzaByIdOrSlug);
+      app.post('/api/cart', _addToCart);
+      app.get('/api/cart', _getCartItems);
 
      // ADD Pizza Image
     function getTime() {
@@ -102,9 +107,69 @@ module.exports = function(app, passport, io){
 
 };
 
+var _addToCart = function(req, res) {
 
+    console.log(req.body);
+    if(!req.session.cart) {
+        req.session.cart = {
+            items: {},
+            totalQty: 0,
+            totalPrice: 0
+        }
 
+    }
 
+    let cart = req.session.cart;
+    
+    if(!cart.items[req.body._id]) {
+        // console.log('inside if', req.body._id);
+        cart.items[req.body._id] = {
+            item: req.body,
+            qty: 1
+        }
+
+        cart.totalQty = cart.totalQty + 1;
+        cart.totalPrice = cart.totalPrice + req.body.price;
+        // console.log(cart);
+    } else {
+        // console.log('inside else', req.body._id);
+        cart.items[req.body._id].qty = cart.items[req.body._id].qty + 1;
+        cart.totalQty = cart.totalQty + 1;
+        cart.totalPrice = cart.totalPrice + req.body.price; 
+        // console.log(cart)
+    }
+    return res.json({
+        totalQty: req.session.cart.totalQty,
+        totalPrice: req.session.cart.totalPrice,
+        items: cart.items
+    });
+}
+
+var _getCartItems = function(req, res) {
+    console.log('get cart items')
+    let obj = [];
+    let obj1 = {};
+    console.log('session cart', req.session.cart.items);
+    // let p2 = Object.assign({}, Object.values(req.session.cart.items));
+    // console.log('p2',p2)
+    for(let i of Object.values(req.session.cart.items)){
+        console.log('for',i.item);
+        obj1.item = i.item;
+        obj1.item.qty = i.qty;
+        obj.push(obj1);
+        // obj.push(i.qty);
+    }
+    console.log('obj1', obj)
+    return res.json({
+        // title: req.session.cart.items.undefined.item.title,
+        // size: req.session.cart.items.undefined.item.size,
+        // price: req.session.cart.items.undefined.item.price,
+        // image: req.session.cart.items.undefined.item.image,
+        items: obj,
+        totalQty: req.session.cart.totalQty,
+        totalPrice: req.session.cart.totalPrice
+    });
+}
 
 
 

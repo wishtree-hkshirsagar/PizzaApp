@@ -1044,3 +1044,8 @@ input[type='checkbox'] {
     border-color: #fff !important;
 
 }
+
+#cart-counter{
+    font-size: 18px;
+    font-weight: bold;
+}

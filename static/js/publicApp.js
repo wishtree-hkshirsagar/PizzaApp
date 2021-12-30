@@ -77,6 +77,7 @@ PublicManager.module('PublicApp', function (PublicApp, PublicManager, Backbone, 
         appRoutes: {
             'pizzas': 'publicPizzaView',
             'pizza/:slug': 'pizzaView',
+            'cart': 'cartView'
         }
     });
     //API functions for each route
@@ -103,6 +104,12 @@ PublicManager.module('PublicApp', function (PublicApp, PublicManager, Backbone, 
  
         blocksView: function(pizza_id){
             PublicManager.PublicApp.EntityController.Controller.showBlocks(pizza_id);
+        },
+
+        cartView: function(){
+            console.log('cart view')
+            PublicManager.PublicApp.EntityController.Controller.showPizzasHeader();
+            PublicManager.PublicApp.EntityController.Controller.showCart();
         }
     };
     //Triggers to particular views
@@ -163,7 +170,6 @@ PublicManager.module('Entities', function (Entities, PublicManager, Backbone, Ma
         },
         url: function(){
             if(this._id) {
-                console.log('/api/public/pizza/' + this._id);
                 return '/api/public/pizza/' + this._id
             }
         },
@@ -177,11 +183,14 @@ PublicManager.module('Entities', function (Entities, PublicManager, Backbone, Ma
     //Block Collection
     Entities.BlockCollection = Backbone.Collection.extend({
         initialize: function(models, options){
-            //_id is course id
             this._id = options._id;
         },
         url: function(){
-            return '/api/public/pizza/' + this._id;
+            if(this._id) {
+                return '/api/public/pizza/' + this._id;
+            } else {
+                return '/api/cart'
+            }
         }
     });
     //Functions to get data
@@ -222,6 +231,17 @@ PublicManager.module('Entities', function (Entities, PublicManager, Backbone, Ma
                 }
             });
             return defer.promise();
+        },
+
+        getCartItems: function(){
+            var blocks = new Entities.BlockCollection([], {});
+            var defer = $.Deferred();
+            blocks.fetch({
+                success: function(data){
+                    defer.resolve(data);
+                }
+            });
+            return defer.promise();
         }
     };
     //Request Response Callbacks
@@ -235,6 +255,9 @@ PublicManager.module('Entities', function (Entities, PublicManager, Backbone, Ma
 
     PublicManager.reqres.setHandler('block:entities', function(_id, _container){
         return API.getBlocks(_id, _container);
+    });
+    PublicManager.reqres.setHandler('cart:entities', function(){
+        return API.getCartItems();
     });
 });
 //Views of the application
@@ -495,9 +518,7 @@ PublicManager.module('PublicApp.EntityViews', function (EntityViews, PublicManag
     EntityViews.PizzaDetailHeaderView = Marionette.ItemView.extend({
         className: 'sectionBox',
         template: 'pizzaDetailHeaderTemplate',
-        events: {
-
-        }
+        events: {}
     });
     EntityViews.PizzaHeaderView = Marionette.ItemView.extend({
         className: 'sectionBox',
@@ -510,8 +531,8 @@ PublicManager.module('PublicApp.EntityViews', function (EntityViews, PublicManag
         className: 'one-block',
         template: 'blockOneTemplate',
         initialize: function(){
+            console.log(this.model.get('item'));
             this.$el.attr('data-id', this.model.get('_id'));
-            this.$el.attr('data-order', this.model.get('order'));
             //Theme and Size
             if(this.model.get('size')){
                 var width = this.model.get('size').width;
@@ -538,38 +559,41 @@ PublicManager.module('PublicApp.EntityViews', function (EntityViews, PublicManag
         },
         events: {
             'click .container-item-block': 'showContainerBlocks',
-            'click .one-toggle-item .item-title': 'toggleItem',
-            'click .js-discuss, .block-comment': 'loginBox',
-            'click .divider-btn': 'loginBox',
-            'click .mcq-block .block-option': 'loginBox',
-            'click .match-block .block-option': 'loginBox',
-            'click .match-block .block-options-right .one-color': 'loginBox',
-            'click .js-fill-blanks': 'loginBox',
-            'click .js-submit-response': 'loginBox',
-            'click .file-response-drop': 'loginBox',
-            'click .file-input': 'doNothing'
+            'click .js-add-cart': 'addToCart'
+        },
+        addToCart: function(ev){
+            ev.preventDefault();
+            console.log(this.model.get('_id'));
+            var fetchingPizza = PublicManager.request('pizza:entity', this.model.get('slug'));
+            $.when(fetchingPizza).done(function(pizza){
+                var pizzaHeaderView = new PublicManager.PublicApp.EntityViews.PizzaHeaderView({
+                    model: pizza
+                });
+
+                $.ajax({
+                    url: '/api/cart',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        _id: pizza.get('_id'),
+                        title: pizza.get('title'),
+                        size: pizza.get('size'),
+                        price: pizza.get('price'),
+                        image: pizza.get('image')
+                    }),
+                    success: function(result){
+                        console.log(result);
+                        $('#cart-counter').text(result.totalQty)
+                        alert('Pizza has been added to the cart');
+                    }
+                });
+            });
         },
         showContainerBlocks: function(ev){
             ev.preventDefault();
             ev.stopPropagation();
             PublicManager.vent.trigger('blocks:show', this.model.get('course'), this.model.get('_id'), this.model.get('title'));
-        },
-        toggleItem: function(ev){
-            ev.preventDefault();
-            var $target = $(ev.currentTarget);
-            if($target.parent().hasClass('selected')){
-                $target.parent().removeClass('selected');
-            } else {
-                this.$('.one-toggle-item').removeClass('selected');
-                $target.parent().addClass('selected');
-            }
-        },
-        loginBox: function(ev){
-            ev.preventDefault();
-            PublicManager.vent.trigger('login:show');
-        },
-        doNothing: function(ev){
-            ev.stopPropagation();
         }
     });
     //Empty blocks view
@@ -738,6 +762,51 @@ PublicManager.module('PublicApp.EntityController', function (EntityController, P
                 });
                 PublicManager.contentRegion.show(blocksView);
             });
+        },
+        showCart: function(){
+            console.log('showCart');
+            var loadingView = new PublicManager.Common.Views.Loading();
+            PublicManager.contentRegion.show(loadingView);
+
+            var fetchingPizzaDetails = PublicManager.request('cart:entities');
+            $.when(fetchingPizzaDetails).done(function(items){
+                var blocksView = new PublicManager.PublicApp.EntityViews.BlocksView({
+
+                    collection: new Backbone.Collection(items.models[0].get('items'))
+                });
+                console.log(items.models[0].get('items'));
+        
+                blocksView.on('show', function(){
+                    //Show all blocks
+                    blocksView.$('.all-blocks').removeClass('u-hide');
+                    blocksView.$('.action-edit-block').addClass('u-hide');
+
+                //Show blocks
+                if($('.pageWrap').data('layout') == 'grid' && $('body').width() > 1100){
+                    var totalWidth = parseInt(blocksView.$('.all-blocks').css('width'));
+                    var start_index;
+                    var heights = [];
+                    blocksView.$('.all-blocks .one-block').each(function(i, obj) {
+                        if(parseInt($(this).css('width')) != totalWidth){
+                            if(!start_index) start_index = i;
+                            heights.push(parseInt($(this).css('height')));
+                        } else if(heights.length) {
+                            var max_height = Math.max(...heights);
+                            for(var j=start_index; j<i; j++){
+                                blocksView.$('.all-blocks .one-block').eq(j).css('height', max_height + 'px');
+                            }
+                            start_index = '';
+                            heights = [];
+                        }
+                    });
+                    blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
+                } else {
+                    blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
+                }
+                });
+                PublicManager.contentRegion.show(blocksView);
+            });
+           
         }
     };
 });

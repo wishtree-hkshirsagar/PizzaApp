@@ -17,11 +17,11 @@ var app_root = __dirname,
     mongoStore = require('connect-mongo')(session),
     dotenv = require('dotenv'),
     configDB = require('./config/database');
-// var dotenv = require('dotenv');
+var dotenv = require('dotenv');
 dotenv.config();
 
 var app = express();
-// var configDB = require('./config/database');
+var configDB = require('./config/database');
 var urlDB = configDB.url;
 if (app.get('env') === 'development') {
     urlDB = configDB.urlDev;
@@ -96,6 +96,11 @@ app.use(function(req,res,next){
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
+});
+
+app.use(function(req, res, next){
+    res.locals.session = req.session;
+    next();
 });
 
 if (app.get('env') === 'development') {

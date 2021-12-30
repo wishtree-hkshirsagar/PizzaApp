@@ -139,7 +139,7 @@ input[type='checkbox'] {
 }
 .nav{
     position: absolute;
-    right: 115px;
+    right: 135px;
     top: 59px;
 }
 .navBar{
@@ -1958,4 +1958,9 @@ input[type='checkbox'] {
     float: left;
     font-weight: bolder;
     margin-top: 4px;
+}
+
+#cart-counter{
+    font-size: 18px;
+    font-weight: bold;
 }

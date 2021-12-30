@@ -1720,7 +1720,35 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
             'click .remove-response': 'removeResponse',
             'click .file-response-drop': 'openFileBrowser',
             'click .file-input': 'doNothing',
-            // 'click .js-edit-pizza': 'openEditPizzaOverlay'
+            'click .js-add-cart': 'addToCart'
+        },
+        addToCart: function(ev){
+            ev.preventDefault();
+            console.log('add');
+            console.log(this.model.get('_id'));
+            var fetchingPizza = ProjectManager.request('pizza:entity', this.model.get('slug'));
+            $.when(fetchingPizza).done(function(pizza){
+                var pizzaDetailHeaderView = new ProjectManager.ProjectApp.EntityViews.PizzaDetailHeaderView({
+                    model: pizza
+                });
+                console.log(pizza);
+            
+                $.ajax({
+                    url: '/api/cart',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        title: pizza.get('title'),
+                        size: pizza.get('size'),
+                        price: pizza.get('price'),
+                        image: pizza.get('image')
+                    }),
+                    success: function(result){
+                        console.log(result);
+                    }
+                });
+            });
         },
         openEditPizzaOverlay: function(ev){
             console.log('editPizzaOverlay')
