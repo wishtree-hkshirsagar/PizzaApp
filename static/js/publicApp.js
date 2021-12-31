@@ -1,5 +1,7 @@
 //Client side of FramerSpace
 var PublicManager = new Backbone.Marionette.Application();
+
+var totalQty;
 //Add regions of the application
 PublicManager.addRegions({
     headerRegion: '.mainHeader',
@@ -108,7 +110,7 @@ PublicManager.module('PublicApp', function (PublicApp, PublicManager, Backbone, 
 
         cartView: function(){
             console.log('cart view')
-            PublicManager.PublicApp.EntityController.Controller.showPizzasHeader();
+            PublicManager.PublicApp.EntityController.Controller.showPizzasHeader('cart');
             PublicManager.PublicApp.EntityController.Controller.showCart();
         }
     };
@@ -486,7 +488,18 @@ PublicManager.module('PublicApp.EntityViews', function (EntityViews, PublicManag
     //Pizzas header view
     EntityViews.PizzasHeaderView = Marionette.ItemView.extend({
         className: 'sectionBox',
-        template: 'pizzasHeaderTemplate'
+        template: 'pizzasHeaderTemplate',
+        initialize: function(){
+            var fetchingCartDetails = PublicManager.request('cart:entities');
+            $.when(fetchingCartDetails).done(function(items){
+                var pizzasHeaderView = new PublicManager.PublicApp.EntityViews.PizzasHeaderView({
+
+                    collection: new Backbone.Collection(items.models[0].get('items'))
+                });
+                totalQty = items.models[0].get('totalQty');
+            });
+            $('#cart-counter').text(totalQty);
+        },
     });
 
     //Pizza item view
@@ -523,7 +536,16 @@ PublicManager.module('PublicApp.EntityViews', function (EntityViews, PublicManag
     EntityViews.PizzaHeaderView = Marionette.ItemView.extend({
         className: 'sectionBox',
         template: 'pizzaHeaderTemplate',
-        events: {}
+        initialize: function(){
+            var fetchingCartDetails = PublicManager.request('cart:entities');
+            $.when(fetchingCartDetails).done(function(items){
+                var pizzasHeaderView = new PublicManager.PublicApp.EntityViews.PizzasHeaderView({
+
+                    collection: new Backbone.Collection(items.models[0].get('items'))
+                });
+                totalQty = items.models[0].get('totalQty');
+            });
+        }
     });
 
     //One Block view
@@ -531,7 +553,10 @@ PublicManager.module('PublicApp.EntityViews', function (EntityViews, PublicManag
         className: 'one-block',
         template: 'blockOneTemplate',
         initialize: function(){
-            console.log(this.model.get('item'));
+            $('#cart-counter').text(totalQty);
+            if(this.model.get('item')){
+                console.log(this.model.get('item'))
+            }
             this.$el.attr('data-id', this.model.get('_id'));
             //Theme and Size
             if(this.model.get('size')){
@@ -585,16 +610,17 @@ PublicManager.module('PublicApp.EntityViews', function (EntityViews, PublicManag
                     success: function(result){
                         console.log(result);
                         $('#cart-counter').text(result.totalQty)
+                        totalQty = result.totalQty;
                         alert('Pizza has been added to the cart');
                     }
                 });
             });
         },
-        showContainerBlocks: function(ev){
-            ev.preventDefault();
-            ev.stopPropagation();
-            PublicManager.vent.trigger('blocks:show', this.model.get('course'), this.model.get('_id'), this.model.get('title'));
-        }
+        // showContainerBlocks: function(ev){
+        //     ev.preventDefault();
+        //     ev.stopPropagation();
+        //     PublicManager.vent.trigger('blocks:show', this.model.get('course'), this.model.get('_id'), this.model.get('title'));
+        // }
     });
     //Empty blocks view
     EntityViews.EmptyBlocksView = Marionette.ItemView.extend({
@@ -668,15 +694,33 @@ PublicManager.module('PublicApp.EntityController', function (EntityController, P
             });
             PublicManager.overlayRegion.show(termsView);
         },
-        showPizzasHeader: function(){
+        showPizzasHeader: function(type){
             console.log('showPizzasHeader');
-            var pizzasHeaderView = new PublicManager.PublicApp.EntityViews.PizzasHeaderView();
+            
+            var fetchingCartDetails = PublicManager.request('cart:entities');
+            $.when(fetchingCartDetails).done(function(items){
+                var pizzasHeaderView = new PublicManager.PublicApp.EntityViews.PizzasHeaderView({
+
+                    collection: new Backbone.Collection(items.models[0].get('items'))
+                });
+                // console.log(items)
+                totalQty = items.models[0].get('totalQty');
+                // console.log(totalQty)
 
             pizzasHeaderView.on('show', function(){
+                if(type == 'cart'){
+                    pizzasHeaderView.$('.flex-items').removeClass('u-hide');
+                    pizzasHeaderView.$('.align-right').removeClass('u-hide');
+                    pizzasHeaderView.$('.login-cart').removeClass('u-hide');
+                    pizzasHeaderView.$('.total-amount').text(items.models[0].get('totalPrice'));
+                    pizzasHeaderView.$('.total-items').text(items.models[0].get('totalQty'))
+                }
                 pizzasHeaderView.$('.public-view').removeClass('u-hide');
                 pizzasHeaderView.$('.js-add-pizza').addClass('u-hide');
             });
+       
             PublicManager.headerRegion.show(pizzasHeaderView);
+        });
         },
 
         showPizzas: function(){
@@ -696,6 +740,7 @@ PublicManager.module('PublicApp.EntityController', function (EntityController, P
         },
         showOnePizza: function(slug){
             console.log('showOnePizza')
+            console.log(totalQty)
             //Fetch course
             var fetchingPizza = PublicManager.request('pizza:entity', slug);
             $.when(fetchingPizza).done(function(pizza){
@@ -774,13 +819,14 @@ PublicManager.module('PublicApp.EntityController', function (EntityController, P
 
                     collection: new Backbone.Collection(items.models[0].get('items'))
                 });
-                console.log(items.models[0].get('items'));
-        
+                // totalAmount = items.models[0].get('totalPrice');
+                // console.log(items.models[0].get('totalPrice'));
+                // console.log(items.models[0].get('items'))
                 blocksView.on('show', function(){
                     //Show all blocks
                     blocksView.$('.all-blocks').removeClass('u-hide');
                     blocksView.$('.action-edit-block').addClass('u-hide');
-
+                    // blocksView.$('.total-price')
                 //Show blocks
                 if($('.pageWrap').data('layout') == 'grid' && $('body').width() > 1100){
                     var totalWidth = parseInt(blocksView.$('.all-blocks').css('width'));
@@ -806,7 +852,6 @@ PublicManager.module('PublicApp.EntityController', function (EntityController, P
                 });
                 PublicManager.contentRegion.show(blocksView);
             });
-           
         }
     };
 });

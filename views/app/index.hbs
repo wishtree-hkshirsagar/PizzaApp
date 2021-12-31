@@ -27,20 +27,21 @@
         <link rel="stylesheet" type="text/css" href="/js/lib/alloy-editor/assets/alloy-editor-ocean.css">
     </head>
     <body>
-        <div class="pageWrap" data-user="{{userid}}" data-username="{{username}}" data-type="{{type}}" data-uniqueid="{{email}}" data-theme="{{theme}}" data-layout="{{page_layout}}">
+        <div class="pageWrap" data-user="{{userid}}" data-type="{{type}}" data-uniqueid="{{email}}" data-theme="{{theme}}" data-layout="{{page_layout}}">
             <!-- Header area -->
             <div class="headerWrap">
                 <div class="sectionBox">
                     <a href='/' class="logo-main"></a>
-                   
+                    
                     <!-- Profile Btn -->
-                    <div class="navProfile">
+                    <div class="navProfile user-profile">
                         {{#if dp}}
                             <span class="profile-btn profile-image js-more" style="background-image:url({{dp}})"></span>
                         {{else}}
                             <span class="profile-btn profile-initials js-more">{{initials}}</span>
                         {{/if}}
                     </div>
+                
                     <!-- Settings -->
                     <div class="navMore">
                         <div class="triangle">
@@ -51,6 +52,12 @@
                         <a class="js-settings" href='#'>Settings</a>
                         <a class="js-logout" href='/site/logout'>Logout</a>
                     </div>
+
+                        <div class="navBar profile-cart">
+                            <a class="link-cart cart js-cart" href="/cart">
+                            <span id="cart-counter">0</span>
+                            <img src="../../images/app/cart.png" alt="cart"></a>
+                        </div>
                 </div>
             </div>
             <!-- Main area -->
@@ -107,8 +114,8 @@
         <script type="text/javascript" src="/js/lib/drive/filepicker.js"></script>
         <script src="https://www.google.com/jsapi?key=AIzaSyCdH3z4TdSdnZ632ID2O4YySMNZm9isHFI"></script>
         <script src="https://apis.google.com/js/client.js"></script>
-        <script type="text/javascript" src="/js/editor.js"></script>
-        <script type="text/javascript" src="/js/global.js"></script>
+        {{!-- <script type="text/javascript" src="/js/editor.js"></script> --}}
+        {{!-- <script type="text/javascript" src="/js/global.js"></script> --}}
         <script type="text/javascript" src="/js/mainApp.js"></script>
         <script type="text/javascript">
             Swag.registerHelpers(window.Handlebars);

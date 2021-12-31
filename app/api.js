@@ -122,7 +122,6 @@ var _addToCart = function(req, res) {
     let cart = req.session.cart;
     
     if(!cart.items[req.body._id]) {
-        // console.log('inside if', req.body._id);
         cart.items[req.body._id] = {
             item: req.body,
             qty: 1
@@ -130,13 +129,13 @@ var _addToCart = function(req, res) {
 
         cart.totalQty = cart.totalQty + 1;
         cart.totalPrice = cart.totalPrice + req.body.price;
-        // console.log(cart);
+
     } else {
-        // console.log('inside else', req.body._id);
+       
         cart.items[req.body._id].qty = cart.items[req.body._id].qty + 1;
         cart.totalQty = cart.totalQty + 1;
         cart.totalPrice = cart.totalPrice + req.body.price; 
-        // console.log(cart)
+
     }
     return res.json({
         totalQty: req.session.cart.totalQty,
@@ -146,20 +145,22 @@ var _addToCart = function(req, res) {
 }
 
 var _getCartItems = function(req, res) {
-    console.log('get cart items')
+    // console.log('get cart items')
     let obj = [];
-    let obj1 = {};
-    console.log('session cart', req.session.cart.items);
-    // let p2 = Object.assign({}, Object.values(req.session.cart.items));
-    // console.log('p2',p2)
+    
+    // console.log('session cart', req.session.cart);
+    
     for(let i of Object.values(req.session.cart.items)){
-        console.log('for',i.item);
+        let obj1 = {};
+        // console.log('for*******',i.item);
         obj1.item = i.item;
         obj1.item.qty = i.qty;
+        
         obj.push(obj1);
+        // console.log('obj1', obj)
         // obj.push(i.qty);
     }
-    console.log('obj1', obj)
+    // console.log('obj1', obj)
     return res.json({
         // title: req.session.cart.items.undefined.item.title,
         // size: req.session.cart.items.undefined.item.size,
@@ -329,6 +330,7 @@ var _deletePizza = function(req, res){
 //GET Request functions - User
 //Get details of current user
 var _getCurrentUser = function(req, res){
+    console.log('getCurrentUser')
     User.findOne({_id: req.user.id}).select('-reset_email -prev_password -loginAttempts -lockUntil -requestToken -resetPasswordToken -resetPasswordExpires')
     .exec(function(err, user){
         user.password = '';

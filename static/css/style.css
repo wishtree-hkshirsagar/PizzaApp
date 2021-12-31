@@ -422,6 +422,9 @@ select{
     top: 50px;
     right: 25px;
 }
+.user-profile{
+    right: 120px !important;
+}
 .profile-image,
 .user-image{
     display: inline-block;
@@ -3437,4 +3440,113 @@ label[name=wrap-pizzaType-edit]:after{
     background-color: #f27307 !important;
     border-color: #fff !important;
 
+}
+
+.navBar a{
+    display: inline-block;
+    background-color: #f27307;
+    color: #fff;
+    padding: 9px 30px 8px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 10px;
+}
+
+.profile-cart{
+    float: right !important;
+    margin: -5px 8px !important;
+}
+
+.pizza-title-name{
+    font-family: 'IBM Plex Serif', serif;
+    font-weight: 600;
+    font-size: 40px;
+    margin-bottom: 5px;
+    text-transform: capitalize;
+}
+
+.pizza-image {
+    float: right;
+    margin: auto;
+}
+
+.block-price {
+    float: left;
+    font-weight: bolder;
+    margin-top: 4px;
+}
+
+#cart-counter{
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.cart-block{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.item-image{
+    width: 100px;
+    float: left;
+    margin-left: 50px;
+}
+
+.align-right{
+    text-align: right;
+    padding: 15px;
+    margin-right: 103px;
+}
+
+.align-right .one{
+    font-weight: bold;
+}
+
+.align-right .two{
+    font-weight: bold;
+    font-size: 20px;
+    color: #f27307;
+}
+
+.delivery-details{
+    font-size: 16px;
+    margin: 10px 0px 10px 5px;
+    border: 2px solid #000;
+    border-radius: 7px;
+    padding: 5px;
+    width: 25%;
+}
+
+.flex-items{
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    width: 90%;
+    margin: 10px 0px;
+}
+
+.flex-items h1{
+    font-weight: bold;
+    margin-left: 10px;
+    font-size: 20px;
+}
+
+.flex-grow{
+    flex-grow: 0.5;
+    font-weight: bold;
+}
+
+.order-now{
+    background: #f27307;
+    color: #fff;
+    padding: 10px;
+    font-weight: bold;
+    border: 2px solid #f27307;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.order-now:hover{
+    background-color: #b23301;
 }

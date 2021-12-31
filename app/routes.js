@@ -32,7 +32,16 @@ module.exports = function(app, passport) {
         },
         cart: function(req, res){
             if(req.isAuthenticated()){
-                res.redirect('/');
+                res.render('app/cart', {
+                        userid: req.user.id,
+                        email: req.user.email,
+                        username: req.user.username,
+                        initials: req.user.initials,
+                        // dp: req.user.dp.s,
+                        type: req.user.type,
+                        theme: req.user.theme,
+                        page_layout: req.user.layout
+                });
             } else {
                 res.render('site/cart', {
                     errorMessage: req.flash('errorMessage'),

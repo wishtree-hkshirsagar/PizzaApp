@@ -1964,3 +1964,20 @@ input[type='checkbox'] {
     font-size: 18px;
     font-weight: bold;
 }
+
+.cart-block{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.item-image{
+    width: 100px;
+    float: left;
+    margin-left: 50px;
+}
+
+.flex-grow{
+    flex-grow: 0.5;
+    font-weight: bold;
+}

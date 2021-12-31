@@ -1,10 +1,12 @@
-{{#if qty}}
-    <div class="container-block">
-        <div>
-           <p class="block-title">{{qty}}</p>
-        </div>
+{{#if item}}
+    <div class="container-block cart-block">
+           <img src="../images/site/{{item.image}}" alt="pizza-image" class="item-image">
+           <p class="item-title flex-grow">{{item.title}}</p>
+           <p class="item-size flex-grow">{{item.size}}</p>
+           <p class="item-qty flex-grow">{{item.qty}}&nbsp;Pcs</p>
+           <p class="item-price flex-grow">&#8377;{{item.price}}</p>
     </div>
-
+   
 {{else}}
     <div class="container-block">
             {{#if image}}

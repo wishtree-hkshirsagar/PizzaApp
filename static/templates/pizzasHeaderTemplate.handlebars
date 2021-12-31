@@ -1,11 +1,58 @@
 <div class="admin-view u-hide">
     <p class="header-title">Pizza Hut</p>
-    <p class="header-desc">Explore your taste buds with us.Admin</p>
+    <p class="header-desc">Explore your taste buds with us.</p>
     <!-- Add pizza -->
     <a class="add-entity js-add-pizza" href="#">+ Add Pizza</a>
 </div>
 <div class="public-view u-hide">
     <p class="header-title">Pizza Hut</p>
     <p class="header-desc">Explore your taste buds with us.</p>
-    <a class="add-entity js-add-pizza" href="#">+ Add Pizza</a>
+    
+     {{!-- <div class="align-right u-hide">
+            <div>
+                <span class="one">Total Items:</span>
+                <span class="two"><span class="total-items two"></span>Pcs</span> <br>
+                <span class="one">Total Amount:</span>
+                <span class="two">&#8377; <span class="total-amount two"></span></span>
+            </div> --}}
+
+            {{!-- <div>
+                <form>
+                    <input type="text" name="Phone Number" class="delivery-details" placeholder="Phone number"> <br>
+                    <textarea name="address" cols="30" rows="5" class="delivery-details" placeholder="Address"></textarea> <br>
+                    <button type="submit" class="btn-order">Order Now</button>
+                </form>
+            </div> --}}
+
+            
+            {{!-- <div class="navBar login-nav">
+                <a href="/login">Login to continue</a>
+            </div>
+    </div> --}}
+</div>
+<div class="flex-items u-hide">
+        <img src="/images/site/cart-black.png" alt="cart">
+        <h1>Order summary</h1>
+</div>
+<div class="align-right u-hide">
+    <div>
+        <span class="one">Total Items:</span>
+        <span class="two"><span class="total-items two"></span>Pcs</span> <br>
+        <span class="one">Total Amount:</span>
+        <span class="two">&#8377; <span class="total-amount two"></span></span>
+    </div>
+
+    <div class="delivery-form u-hide">
+        <form>
+            <input type="text" name="Phone Number" class="delivery-details" placeholder="Phone number"> <br>
+            <textarea name="address" cols="30" rows="5" class="delivery-details" placeholder="Address"></textarea> <br>
+           <button class="navBar order-now js-save">Order Now</button>
+        </form>
+    </div>
+
+    
+    <div class="navBar login-nav">
+        <a href="/login" class="login-cart u-hide">Login to continue</a>
+        <a href="/" class="order-cart u-hide">Place an order</a>
+    </div>
 </div>

@@ -1049,3 +1049,7 @@ input[type='checkbox'] {
     font-size: 18px;
     font-weight: bold;
 }
+
+.index-page{
+    right: 5px !important;
+}

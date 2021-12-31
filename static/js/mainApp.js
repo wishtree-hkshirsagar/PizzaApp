@@ -11,11 +11,12 @@ var ENTER_KEY = 13,
     feedbackCollection,
     myChart,
     learnerProgress,
-    learnerContainers = [];
+    learnerContainers = [],
+    totalQty;
 //Variable to check if inside discussion
 var pathInDiscussion = false;
 //Default font family for ChartJS
-Chart.defaults.global.defaultFontFamily = "'IBM Plex Sans', sans-serif";
+// Chart.defaults.global.defaultFontFamily = "'IBM Plex Sans', sans-serif";
 //Get global font color
 if($('.pageWrap').data('theme') == 'light'){
     var globalFontColor = '#232323';
@@ -222,8 +223,8 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
             ProjectManager.ProjectApp.EntityController.Controller.showEditPizzaOverlay(pizza_id);
         },
         publicPizzaView: function(){
-            console.log('publicPizzaView');
-            ProjectManager.ProjectApp.EntityController.Controller.showPizzaHeader();
+            console.log($('.pageWrap').data('type'));
+            ProjectManager.ProjectApp.EntityController.Controller.showPizzaHeader($('.pageWrap').data('type'));
             ProjectManager.ProjectApp.EntityController.Controller.showPizzas();
         },
         coursesView: function(type){
@@ -428,8 +429,10 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
         url: function(){
             if(this._container){
                 return '/api/blocks/container/' + this._container
-            } else {
+            } else if(this._id){
                 return '/api/blocks/' + this._id
+            } else {
+                return '/api/cart'
             }
         },
         model: Entities.Block
@@ -638,6 +641,16 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
             });
             return defer.promise();
         },
+        getCartItems: function(){
+            var blocks = new Entities.BlockCollection([], {});
+            var defer = $.Deferred();
+            blocks.fetch({
+                success: function(data){
+                    defer.resolve(data);
+                }
+            });
+            return defer.promise();
+        },
         getOneBlock: function(_id){
             var block = new Entities.Block({
                 _id: _id
@@ -773,6 +786,9 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
     ProjectManager.reqres.setHandler('block:entities', function(_id, _container){
         return API.getBlocks(_id, _container);
     });
+    ProjectManager.reqres.setHandler('cart:entities', function(){
+        return API.getCartItems();
+    });
     ProjectManager.reqres.setHandler('block:entity', function(_id){
         return API.getOneBlock(_id);
     });
@@ -898,6 +914,18 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
     EntityViews.PizzaHeaderView = Marionette.ItemView.extend({
         className: 'sectionBox',
         template: 'pizzasHeaderTemplate',
+        initialize: function(){
+            // console.log('pizzasHeaderTemplate')
+            var fetchingCartDetails = ProjectManager.request('cart:entities');
+            $.when(fetchingCartDetails).done(function(items){
+                var pizzaHeaderView = new ProjectManager.ProjectApp.EntityViews.PizzaHeaderView({
+
+                    collection: new Backbone.Collection(items.models[0].get('items'))
+                });
+                totalQty = items.models[0].get('totalQty');
+            });
+            $('#cart-counter').text(totalQty);
+        },
         events: {
             'click .js-add-pizza': 'openNewPizzaOverlay'
         },
@@ -978,6 +1006,16 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
     EntityViews.PizzaDetailHeaderView = Marionette.ItemView.extend({
         className: 'sectionBox',
         template: 'pizzaDetailHeaderTemplate',
+        initialize: function(){
+            var fetchingCartDetails = ProjectManager.request('cart:entities');
+            $.when(fetchingCartDetails).done(function(items){
+                var pizzaDetailHeaderView = new ProjectManager.ProjectApp.EntityViews.PizzaDetailHeaderView({
+
+                    collection: new Backbone.Collection(items.models[0].get('items'))
+                });
+                totalQty = items.models[0].get('totalQty');
+            });
+        },
         events: {
 
         }
@@ -1671,7 +1709,7 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
         template: 'blockOneTemplate',
         initialize: function(){
             console.log('block one template')
-            // console.log(this.model)
+            $('#cart-counter').text(totalQty);
             this.$el.attr('data-id', this.model.get('_id'));
             // this.$el.attr('data-order', this.model.get('order'));
             //Theme and Size
@@ -1746,6 +1784,9 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
                     }),
                     success: function(result){
                         console.log(result);
+                        $('#cart-counter').text(result.totalQty)
+                        totalQty = result.totalQty;
+                        alert('Pizza has been added to the cart');
                     }
                 });
             });
@@ -2269,6 +2310,7 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
         },
 
         showPizzaHeader: function(type){
+            console.log(type)
             var pizzaHeaderView = new ProjectManager.ProjectApp.EntityViews.PizzaHeaderView();
             //show
             pizzaHeaderView.on('show', function(){
@@ -3691,7 +3733,7 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
         },
         showBlocks: function(course_id, container_id){
             //Show loading page
-            console.log(course_id);
+        
             var loadingView = new ProjectManager.Common.Views.Loading();
             ProjectManager.contentRegion.show(loadingView);
             
@@ -3705,7 +3747,10 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                 //Show
                 blocksView.on('show', function(){
                    
-         
+                    if($('.pageWrap').data('type') == 'customer'){
+                        blocksView.$('.action-edit-block').addClass('u-hide');
+                    }
+                        
                 //Show all blocks
                 blocksView.$('.all-blocks').removeClass('u-hide');
                     
