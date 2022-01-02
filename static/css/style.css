@@ -3550,3 +3550,26 @@ label[name=wrap-pizzaType-edit]:after{
 .order-now:hover{
     background-color: #b23301;
 }
+
+.all-orders{
+    text-align: center;
+}
+
+.all-orders h1 {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.ordered-items{
+    display: flex;
+}
+
+.float-left{
+    float: left;
+    margin-left: 20px;
+}
+
+.float-right{
+    float: right;
+    margin-right: 20px;
+}

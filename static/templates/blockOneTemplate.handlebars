@@ -6,7 +6,17 @@
            <p class="item-qty flex-grow">{{item.qty}}&nbsp;Pcs</p>
            <p class="item-price flex-grow">&#8377;{{item.price}}</p>
     </div>
-   
+{{else if status}}
+    <div class="container-block">
+        <div class="float-left">
+            <p class="block-title">Order ID: </p>
+            <p class="block-title ">{{_id}}</p>
+        </div>
+        <div class="float-right">
+            <p class="block-title">Address: </p>
+            <p class="block-title ">{{address}}</p>
+        </div>
+    </div>
 {{else}}
     <div class="container-block">
             {{#if image}}

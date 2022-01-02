@@ -106,16 +106,6 @@ CartManager.module('Entities', function (Entities, CartManager, Backbone, Marion
             }
         });
 
-        Entities.Order = Backbone.Model.extend({
-            initialize: function(options){
-                this._action = options._action;
-                this._id = options._id;
-            },
-            url: function(){
-               return '/api/order'
-            },
-            idAttribute: '_id'
-        });
 
         var API = {
 
@@ -129,10 +119,6 @@ CartManager.module('Entities', function (Entities, CartManager, Backbone, Marion
                 });
                 return defer.promise();
             },
-
-            // placeOrder: function(){
-            //     var order = new Entities.Order()
-            // }
         };
 
         CartManager.reqres.setHandler('cart:entities', function(){
