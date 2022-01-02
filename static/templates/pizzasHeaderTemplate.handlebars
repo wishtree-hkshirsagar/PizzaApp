@@ -44,8 +44,16 @@
 
     <div class="delivery-form u-hide">
         <form>
-            <input type="text" name="Phone Number" class="delivery-details" placeholder="Phone number"> <br>
-            <textarea name="address" cols="30" rows="5" class="delivery-details" placeholder="Address"></textarea> <br>
+            <div class="js-delivery-contact">
+                <p class='u-formError'></p>
+                <input type="text" name="Phone Number" class="delivery-details delivery-contact" placeholder="Phone number">
+            </div>
+            <div class="js-delivery-address">
+                <p class='u-formError'></p>
+                <textarea name="address" cols="30" rows="5" class="delivery-details delivery-address" placeholder="Address"></textarea>
+            </div>
+             
+            
            <button class="navBar order-now js-save">Order Now</button>
         </form>
     </div>

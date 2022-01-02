@@ -386,11 +386,10 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
         },
         model: Entities.Course
     });
-    //Block Models and Collection
+    
     Entities.Block = Backbone.Model.extend({
         initialize: function(options){
-            //type of block: text, audio etc.
-            //_action are block actions - edit, add_connector etc.
+            
             this._type = options.type;
             this._action = options._action;
             this._id = options._id;
@@ -824,23 +823,23 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
 ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectManager, Backbone, Marionette, $, _) {
 
     //New pizza view
-    EntityViews.NewPizzaView = Marionette.ItemView.extend({
-        template: 'newPizzaTemplate',
-        events: {
-            'click .js-close': 'closeOverlay',
-            'click .js-save:not(.u-disabled)': 'savePizza'
-        },
-        initialize: function(){
-            console.log('initialize')
-        },
-        closeOverlay: function(ev){
-            ev.preventDefault();
-            ProjectManager.commands.execute('close:overlay');
-        },
-        savePizza: function(ev){
-            console.log('save pizza');
-        }
-    });
+    // EntityViews.NewPizzaView = Marionette.ItemView.extend({
+    //     template: 'newPizzaTemplate',
+    //     events: {
+    //         'click .js-close': 'closeOverlay',
+    //         'click .js-save:not(.u-disabled)': 'savePizza'
+    //     },
+    //     initialize: function(){
+    //         console.log('initialize')
+    //     },
+    //     closeOverlay: function(ev){
+    //         ev.preventDefault();
+    //         ProjectManager.commands.execute('close:overlay');
+    //     },
+    //     savePizza: function(ev){
+    //         console.log('save pizza');
+    //     }
+    // });
     //New course view
     EntityViews.NewPizzaView = Marionette.ItemView.extend({
         template: 'newPizzaTemplate',
@@ -992,10 +991,17 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
             }
         }
     });
+    //Empty blocks view
+    EntityViews.EmptyBlocksView = Marionette.ItemView.extend({
+        tagName: 'div',
+        className: 'zero-items',
+        template: 'emptyBlocksTemplate'
+    });
     //Pizza collection view
     EntityViews.PizzaView = Marionette.CollectionView.extend({
         className: 'all-pizza sectionBox',
-        childView: EntityViews.PizzaItemView
+        childView: EntityViews.PizzaItemView,
+        emptyView: EntityViews.EmptyBlocksView,
     });
     //Courses collection view
     EntityViews.CoursesView = Marionette.CollectionView.extend({
@@ -1777,6 +1783,7 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
                     contentType: 'application/json',
                     dataType: 'json',
                     data: JSON.stringify({
+                        _id: pizza.get('_id'),
                         title: pizza.get('title'),
                         size: pizza.get('size'),
                         price: pizza.get('price'),
@@ -3724,7 +3731,7 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                     block.destroy({
                         dataType: 'text',
                         success: function(model, response){
-                            location.reload();
+                            location.assign('/')
                         }
                     });
                 });
@@ -3733,7 +3740,7 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
         },
         showBlocks: function(course_id, container_id){
             //Show loading page
-        
+            console.log('showBlocks')
             var loadingView = new ProjectManager.Common.Views.Loading();
             ProjectManager.contentRegion.show(loadingView);
             

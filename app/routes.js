@@ -49,6 +49,21 @@ module.exports = function(app, passport) {
                 });
             }
         },
+        order: function(req, res) {
+            if(req.isAuthenticated()){
+                res.render('app/order', {
+                        userid: req.user.id,
+                        email: req.user.email,
+                        username: req.user.username,
+                        initials: req.user.initials,
+                        type: req.user.type,
+                        theme: req.user.theme,
+                        page_layout: req.user.layout
+                });
+            } else {
+                res.redirect('/');
+            }
+        },
         home: function(req, res){
             console.log('home')
             if(req.isAuthenticated()){
@@ -118,6 +133,7 @@ module.exports = function(app, passport) {
     app.get('/terms', siteRoute.site);
     app.get('/pizzas', siteRoute.pizzas);
     app.get('/pizza/:slug', siteRoute.home);
+    app.get('/customer/orders', siteRoute.order);
    
     //process the login form
     app.post('/login',

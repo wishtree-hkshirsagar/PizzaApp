@@ -21,5 +21,16 @@ var PizzaSchema = new Schema({
     updated_at: Date,
 });
 
+var orderSchema = new Schema({
+    customerId: {type: ObjectId, ref: 'User', require: true},
+    items: {type: Object, require: true},
+    contactNumber: {type: String, require: true},
+    address: {type: String, required: true},
+    paymentType: {type: String, default: 'COD'},
+    status: {type: String, default: 'order_placed'},
+    createdAt: {type: Date, default: Date.now},
+});
+
 
 module.exports.Pizza = mongoose.model('Pizza', PizzaSchema);
+module.exports.Order = mongoose.model('Order', orderSchema);

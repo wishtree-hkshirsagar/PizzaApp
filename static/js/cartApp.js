@@ -106,6 +106,17 @@ CartManager.module('Entities', function (Entities, CartManager, Backbone, Marion
             }
         });
 
+        Entities.Order = Backbone.Model.extend({
+            initialize: function(options){
+                this._action = options._action;
+                this._id = options._id;
+            },
+            url: function(){
+               return '/api/order'
+            },
+            idAttribute: '_id'
+        });
+
         var API = {
 
             getCartItems: function(){
@@ -117,11 +128,19 @@ CartManager.module('Entities', function (Entities, CartManager, Backbone, Marion
                     }
                 });
                 return defer.promise();
-            }
+            },
+
+            // placeOrder: function(){
+            //     var order = new Entities.Order()
+            // }
         };
 
         CartManager.reqres.setHandler('cart:entities', function(){
             return API.getCartItems();
+        });
+
+        CartManager.reqres.setHandler('place:order', function(){
+            return API.placeOrder();
         });
 });
 
@@ -153,6 +172,73 @@ CartManager.module('CartApp.EntityViews', function (EntityViews, CartManager, Ba
             });
             $('#cart-counter').text(totalQty);
         },
+        events: {
+            'click .js-save': 'orderPizza',
+        },
+        orderPizza: function(ev){
+            ev.preventDefault();
+            console.log('orderPizza');
+             let contactNumberRegex = /^[7-9]{1}[0-9]{9}$/;
+            let contactVal = this.$('.js-delivery-contact input').val();
+            if(!$('.delivery-contact').val() && !$('.delivery-address').val()){
+                this.$('.js-delivery-contact .u-formError').text('Please enter your contact number:').show();
+                this.$('.js-delivery-contact input').addClass('hasError');
+                this.$('.js-delivery-contact input').css({'border': '2px solid red'})
+                this.$('.js-delivery-address .u-formError').text('Please enter your delivery address:').show();
+                this.$('.js-delivery-address textarea').addClass('hasError');
+                this.$('.js-delivery-address textarea').css({'border': '2px solid red'})
+                return;
+            }else{
+                this.$('.js-delivery-contact .u-formError').text('').show();
+                this.$('.js-delivery-contact input').removeClass('hasError');
+                this.$('.js-delivery-contact input').css({'border': '2px solid #000'})
+                this.$('.js-delivery-address .u-formError').text('').show();
+                this.$('.js-delivery-address textarea').removeClass('hasError');
+                this.$('.js-delivery-address textarea').css({'border': '2px solid #000'})
+            }
+
+            if(!$('.delivery-contact').val()){
+                this.$('.js-delivery-contact .u-formError').text('Please enter your contact number:').show();
+                this.$('.js-delivery-contact input').addClass('hasError');
+                this.$('.js-delivery-contact input').css({'border': '2px solid red'});
+                return;
+            } else if(!contactNumberRegex.test(contactVal)){
+                this.$('.js-delivery-contact .u-formError').text('Please enter a valid contact number:').show();
+                this.$('.js-delivery-contact input').addClass('hasError');
+                this.$('.js-delivery-contact input').css({'border': '2px solid red'});
+                return;
+            } else {
+                this.$('.js-delivery-contact .u-formError').text('').show();
+                this.$('.js-delivery-contact input').removeClass('hasError');
+                this.$('.js-delivery-contact input').css({'border': '2px solid #000'})
+            }
+
+            if(!$('.delivery-address').val()){
+                this.$('.js-delivery-address .u-formError').text('Please enter your delivery address:').show();
+                this.$('.js-delivery-address textarea').addClass('hasError');
+                this.$('.js-delivery-address textarea').css({'border': '2px solid red'})
+                return;
+            } else {
+                this.$('.js-delivery-address .u-formError').text('').show();
+                this.$('.js-delivery-address textarea').removeClass('hasError');
+                this.$('.js-delivery-address textarea').css({'border': '2px solid #000'})
+            }
+           
+            $.ajax({
+                url: '/api/order',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify({
+                    'contactNumber': this.$('.delivery-contact').val(),
+                    'address': this.$('.delivery-address').val()
+                }),
+                success: function(result){
+                    console.log(result);
+                }
+            })
+           
+        }
     });
 
     //Empty blocks view
@@ -224,7 +310,6 @@ CartManager.module('CartApp.EntityController', function (EntityController, CartM
                 } else {
                     cartHeaderView.$('.public-view').removeClass('u-hide');
                 }
-
                 cartHeaderView.$('.flex-items').removeClass('u-hide');
                 cartHeaderView.$('.align-right').removeClass('u-hide');
                 cartHeaderView.$('.login-cart').addClass('u-hide');

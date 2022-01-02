@@ -819,6 +819,7 @@ PublicManager.module('PublicApp.EntityController', function (EntityController, P
 
                     collection: new Backbone.Collection(items.models[0].get('items'))
                 });
+                console.log(items);
                 // totalAmount = items.models[0].get('totalPrice');
                 // console.log(items.models[0].get('totalPrice'));
                 // console.log(items.models[0].get('items'))

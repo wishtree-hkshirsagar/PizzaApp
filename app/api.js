@@ -17,7 +17,8 @@ var util = require('util'),
 const { v4: uuidv4 } = require('uuid');
 //Models
 var User = require('../app/models/user').User,
-    Pizza = require('../app/models/entity').Pizza;
+    Pizza = require('../app/models/entity').Pizza,
+    Order = require('../app/models/entity').Order;
 //Utilities
 var Utility = require('../app/utility');
 
@@ -35,6 +36,7 @@ module.exports = function(app, passport, io){
      app.get('/api/pizza/:_id', isLoggedIn, _getPizzaByIdOrSlug);
      app.put('/api/pizza/:_id', isLoggedIn, _updatePizza);
      app.delete('/api/pizza/:_id', isLoggedIn, _deletePizza);
+     app.post('/api/order', isLoggedIn, _orderPizza);
      
 
       /* -----------------Public Pizza Api ------------------ */
@@ -42,6 +44,7 @@ module.exports = function(app, passport, io){
       app.get('/api/public/pizza/:_id', _getPublicPizzaByIdOrSlug);
       app.post('/api/cart', _addToCart);
       app.get('/api/cart', _getCartItems);
+      app.get('/api/customer/orders', isLoggedIn, _getCustomerOrders)
 
      // ADD Pizza Image
     function getTime() {
@@ -172,7 +175,19 @@ var _getCartItems = function(req, res) {
     });
 }
 
-
+var _getCustomerOrders = async function(req, res) {
+    try{
+        const orders = await Order.find({
+            customerId: req.user._id
+        });
+        res.status(200).send(orders);
+    } catch(error){
+        res.status(500).json({
+            msg: 'Error, No Data Found'
+        })
+    }
+    // console.log('orders',orders);
+}
 
 
 
@@ -322,6 +337,30 @@ var _deletePizza = function(req, res){
         }
     })
     res.status(200).json({ msg: "Pizza deleted successfully..." })
+}
+
+var _orderPizza = function(req, res){
+    console.log('orderPizza')
+    console.log('cart', req.session.cart.items)
+    const { contactNumber, address } = req.body;
+    if(!contactNumber || !address){
+        res.json({msg : "Error, All fields are required"});
+    }
+
+    var new_order = new Order({
+        customerId: req.user._id,
+        items: req.session.cart.items,
+        contactNumber: contactNumber,
+        address: address
+    });
+
+    try{
+        new_order.save(() => {
+           res.status(200).json(new_order); 
+        });
+     } catch(error){
+         return res.status(501).json(error);
+     }
 }
 
 
