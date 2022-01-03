@@ -48,7 +48,6 @@ module.exports = function(app, passport, io){
       app.get('/api/cart', _getCartItems);
       app.get('/api/customer/orders', isLoggedIn, _getCustomerOrders);
 
-
       app.post('/api/sendEmail', _sendEmail);
       app.post('/api/updatePassword', _updatePassword);
 
@@ -185,7 +184,9 @@ var _getCustomerOrders = async function(req, res) {
     try{
         const orders = await Order.find({
             customerId: req.user._id
-        });
+        }, 
+        null,
+        { sort: {'createdAt': -1 }});
         res.status(200).send(orders);
     } catch(error){
         res.status(500).json({
@@ -420,7 +421,9 @@ var _orderPizza = function(req, res){
 
     try{
         new_order.save(() => {
+            delete req.session.cart;
            res.status(200).json(new_order); 
+
         });
      } catch(error){
          return res.status(501).json(error);

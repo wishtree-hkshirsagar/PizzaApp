@@ -221,6 +221,7 @@ CartManager.module('CartApp.EntityViews', function (EntityViews, CartManager, Ba
                 }),
                 success: function(result){
                     console.log(result);
+                    location.assign('/')
                 }
             })
            

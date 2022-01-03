@@ -2707,8 +2707,7 @@ select{
     border-radius: 20px;
 }
 .zero-items .zero-content{
-    position: relative;
-    width: 400px;
+    text-align: center;
 }
 .zero-content .title{
     display: inline-block;

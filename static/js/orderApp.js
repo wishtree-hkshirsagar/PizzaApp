@@ -231,7 +231,10 @@ OrderManager.module('OrderApp.EntityController', function (EntityController, Ord
                     //Show all blocks
                     blocksView.$('.all-blocks').removeClass('u-hide');
                     blocksView.$('.action-edit-block').addClass('u-hide');
-
+                    let time = items.models[0].get('createdAt');
+                    // console.log(time)
+                    let now = new Date(time);
+                    blocksView.$('.order-date').text(moment.utc(now).format('DD-MMM-YYYY HH:mm:ss'));
                 //Show blocks
                 if($('.pageWrap').data('layout') == 'grid' && $('body').width() > 1100){
                     var totalWidth = parseInt(blocksView.$('.all-blocks').css('width'));

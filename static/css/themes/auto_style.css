@@ -896,7 +896,7 @@ select{
     color: #232323;
 }
 .zero-items .zero-image{
-    background-image: url(../images/app/graphic-new.png);
+    background-image: url(../images/app/empty-cart.png);
 }
 .zero-messages p{
     background-color: #fff;

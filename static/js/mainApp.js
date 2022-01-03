@@ -1,4 +1,3 @@
-
 var ProjectManager = new Backbone.Marionette.Application();
 //Initialize Variables and Functions
 var totalQty;
@@ -809,25 +808,6 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
 //Views of the application
 ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectManager, Backbone, Marionette, $, _) {
 
-    //New pizza view
-    // EntityViews.NewPizzaView = Marionette.ItemView.extend({
-    //     template: 'newPizzaTemplate',
-    //     events: {
-    //         'click .js-close': 'closeOverlay',
-    //         'click .js-save:not(.u-disabled)': 'savePizza'
-    //     },
-    //     initialize: function(){
-    //         console.log('initialize')
-    //     },
-    //     closeOverlay: function(ev){
-    //         ev.preventDefault();
-    //         ProjectManager.commands.execute('close:overlay');
-    //     },
-    //     savePizza: function(ev){
-    //         console.log('save pizza');
-    //     }
-    // });
-    //New course view
     EntityViews.NewPizzaView = Marionette.ItemView.extend({
         template: 'newPizzaTemplate',
         events: {
@@ -865,35 +845,7 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
                 console.log(value);
                 this.trigger('save:pizza', value);
             }
-            // else {
-            //     var value = {
-            //         title: this.$('.course-title').val().trim(),
-            //         tagline: this.$('.course-tagline').val().trim(),
-            //         core: this.$('.course-core').val().trim(),
-            //         sel: this.$('.course-sel').val().trim(),
-            //         sdg: this.$('.course-sdg').val().trim()
-            //     }
-            //     //Check privacy
-            //     if(this.$('.privacy-label #public-radio').is(':checked')){
-            //         value.privacy = 'public';
-            //     } else if(this.$('.privacy-label #unlisted-radio').is(':checked')){
-            //         value.privacy = 'unlisted';
-            //     } else {
-            //         value.privacy = 'private';
-            //     }
-            //     //Check certification
-            //     if(this.$('.certification-label input').is(':checked')){
-            //         value.certification = true;
-            //     } else {
-            //         value.certification = false;
-            //     }
-            //     //Create - Edit course
-            //     if(this.$('.overlay-box').hasClass('edit-box')){
-            //         this.trigger('update:course', value);
-            //     } else {
-            //         this.trigger('save:course', value);
-            //     }
-            // }
+            
         }
     });
     //Pizza header view
@@ -1702,9 +1654,10 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
         template: 'blockOneTemplate',
         initialize: function(){
             console.log('block one template')
-            $('#cart-counter').text(totalQty);
+            if(this.model.get('item')){
+                $('#cart-counter').text(totalQty);
+            }
             this.$el.attr('data-id', this.model.get('_id'));
-            // this.$el.attr('data-order', this.model.get('order'));
             //Theme and Size
             if(this.model.get('size')){
                 var width = this.model.get('size').width;
