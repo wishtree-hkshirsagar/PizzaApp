@@ -20,8 +20,6 @@ var UserSchema = new Schema({
     name: String,
     initials: String,
     type: { type: String, enum: ['admin', 'customer'], default: 'customer' },
-    theme: { type: String, enum: ['auto', 'light', 'dark'], default: 'auto' },
-    layout: { type: String, enum: ['auto', 'grid'], default: 'auto' },
     consent: { type: Boolean, default: false },
     accountCreated: { type: Date, default: Date.now },
     // loginAttempts: { type: Number, required: true, default: 0 },

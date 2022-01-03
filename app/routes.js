@@ -37,10 +37,9 @@ module.exports = function(app, passport) {
                         email: req.user.email,
                         username: req.user.username,
                         initials: req.user.initials,
-                        // dp: req.user.dp.s,
                         type: req.user.type,
-                        theme: req.user.theme,
-                        page_layout: req.user.layout
+                        // theme: req.user.theme,
+                        // page_layout: req.user.layout
                 });
             } else {
                 res.render('site/cart', {
@@ -57,8 +56,8 @@ module.exports = function(app, passport) {
                         username: req.user.username,
                         initials: req.user.initials,
                         type: req.user.type,
-                        theme: req.user.theme,
-                        page_layout: req.user.layout
+                        // theme: req.user.theme,
+                        // page_layout: req.user.layout
                 });
             } else {
                 res.redirect('/');
