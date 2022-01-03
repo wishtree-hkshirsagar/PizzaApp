@@ -47,7 +47,7 @@ module.exports = function(app, passport, io){
       app.post('/api/cart', _addToCart);
       app.get('/api/cart', _getCartItems);
       app.get('/api/customer/orders', isLoggedIn, _getCustomerOrders);
-
+      app.get('/api/admin/orders', _getAdminOrders);
       app.post('/api/sendEmail', _sendEmail);
       app.post('/api/updatePassword', _updatePassword);
 
@@ -194,6 +194,21 @@ var _getCustomerOrders = async function(req, res) {
         })
     }
     // console.log('orders',orders);
+}
+
+var _getAdminOrders = async function(req, res) {
+    console.log('getAdminOrders')
+    try{
+        Order.find({ status: {$ne: 'completed'}}, 
+        null,
+        {sort: { 'createdAt': -1}}).populate('customerId','-password').exec((error, orders)=> {
+            res.status(200).json(orders);
+        });
+    }catch(error){
+        res.status(500).json({
+            msg: 'Error, No Data Found'
+        })
+    }
 }
 
 var _sendEmail = async function(req, res) {

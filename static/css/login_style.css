@@ -560,7 +560,7 @@ input[type='checkbox'] {
     background-image: url(../images/site/signup.jpeg);
 }
 .forgot-box .overlay-art{
-    background-image: url(../images/site/graphic-forgot.png);
+    background-image: url(../images/site/signup.jpeg);
 }
 .overlay-about .message{
     margin-bottom: 10px;
