@@ -211,7 +211,7 @@ var _sendEmail = async function(req, res) {
         
         responseType.statusText = 'Success'
         Email.mailer(req.body.email, otpcode);
-        responseType.message = 'Otp has been sent to the registered email ID'
+        responseType.message = `Otp has been sent to the ${req.body.email}`
         otpData.save(()=> {
             res.status(200).json(responseType);
         });

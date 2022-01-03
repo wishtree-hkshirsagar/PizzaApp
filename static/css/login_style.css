@@ -1053,3 +1053,11 @@ input[type='checkbox'] {
 .index-page{
     right: 5px !important;
 }
+
+.show-new-password{
+    float: right !important;
+    margin-top: 16px !important;
+    right: 32px !important;
+    bottom: unset !important;
+
+}

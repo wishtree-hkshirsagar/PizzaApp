@@ -42,35 +42,6 @@ AccountManager.on('start', function(){
         e.preventDefault();
         AccountManager.vent.trigger('signup:show');
     });
-    //Show help intro
-    $('.js-help').click(function(e){
-        e.preventDefault();
-        $('.js-help').addClass('active');
-        var intro = introJs();
-        intro.setOptions({
-            showProgress: false,
-            steps: [
-                {
-                    title: "Welcome to FramerSpace!",
-                    intro: "FramerSpace is a co-creation platform that provides building blocks to support the creation of online courses and connects learners to peers and creators through Artificial Intelligence.<br><br>If this is your first time, we can help you get started.",
-                    tooltipClass: 'intro-start'
-                },
-                {
-                    element: document.querySelector('.js-signup'),
-                    intro: "Click here to signup!",
-                    position: "left"
-                }
-            ]
-        });
-        intro.oncomplete(function(){
-            $('.navBar .js-signup').click();
-            return false;
-        });
-        intro.onexit(function(){
-            return false;
-        });
-        intro.start();
-    });
 });
 //Application wide commands
 AccountManager.commands.setHandler('close:overlay', function(view){
@@ -102,12 +73,14 @@ AccountManager.module('AccountApp', function(AccountApp, AccountManager, Backbon
             AccountManager.AccountApp.EntityController.Controller.showMain();
         },
         loginView: function(email){
+            console.log('loginView')
             AccountManager.AccountApp.EntityController.Controller.showLogin(email);
         },
         signupView: function(){
             AccountManager.AccountApp.EntityController.Controller.showSignup();
         },
         forgotView: function(email){
+            console.log('forgotView')
             AccountManager.AccountApp.EntityController.Controller.showForgot(email);
         },
         termsView: function(){
@@ -122,9 +95,9 @@ AccountManager.module('AccountApp', function(AccountApp, AccountManager, Backbon
         AccountManager.navigate('signup');
         API.signupView();
     });
-    AccountManager.vent.on('forgot:show', function(email){
+    AccountManager.vent.on('forgot:show', function(){
         AccountManager.navigate('forgot');
-        API.forgotView(email);
+        API.forgotView();
     });
     AccountManager.vent.on('terms:show', function(email){
         AccountManager.navigate('terms');
@@ -142,9 +115,17 @@ AccountManager.module('Entities', function(Entities, AccountManager, Backbone, M
     Entities.Signup = Backbone.Model.extend({
         urlRoot: '/signup'
     });
-    Entities.Forgot = Backbone.Model.extend({
-        urlRoot: '/forgot'
-    });
+    // // Entities.Forgot = Backbone.Model.extend({
+    // //     urlRoot: '/forgot'
+    // // });
+    // Entities.Auth = Backbone.Model.extend({
+    //     initialize: function(options){
+    //         this._action = options._action;
+    //     },
+    //     url: function(){
+    //         return '/api/sendEmail'
+    //     }
+    // });
 });
 //View of the Application
 AccountManager.module('AccountApp.EntityViews', function(EntityViews, AccountManager, Backbone, Marionette, $, _){
@@ -174,8 +155,7 @@ AccountManager.module('AccountApp.EntityViews', function(EntityViews, AccountMan
         //show forgot password window
         forgotBox: function(e){
             e.preventDefault();
-            var email = this.$( '.js-email input').val() || '';
-            AccountManager.vent.trigger('forgot:show', email);
+            AccountManager.vent.trigger('forgot:show');
         },
         //show signup window
         signUpBox: function(e){
@@ -431,12 +411,16 @@ AccountManager.module('AccountApp.EntityViews', function(EntityViews, AccountMan
     EntityViews.Forgot = Marionette.ItemView.extend({
         template: 'forgotTemplate',
         events: {
-            'mousedown .js-close, .js-login, .js-submit': 'doNothing',
+            'mousedown .js-close, .js-login, .show-password': 'doNothing',
             'click .js-close': 'closeOverlay',
             'click .js-login': 'loginBox',
             'blur .js-email input': 'checkEmail',
+            'blur .js-otp': 'checkOtp',
+            'blur .js-new-password': 'checkPassword',
             'focus .input': 'showError',
-            'submit .js-form': 'submitForm'
+            'click .show-password': 'togglePassword',
+            'click .js-submit': 'submitForm',
+            'click .js-change-password': 'changePassword'
         },
         //stop stealing focus from input boxes and buttons
         doNothing: function(e){
@@ -447,6 +431,14 @@ AccountManager.module('AccountApp.EntityViews', function(EntityViews, AccountMan
         closeOverlay: function(e){
             e.preventDefault();
             AccountManager.commands.execute('close:overlay');
+        },
+        togglePassword: function(){
+            if (this.$('.show-password').hasClass('active')){
+                this.$('.js-new-password input').attr('type', 'password');
+            } else {
+                this.$('.js-new-password input').attr('type', 'text');
+            }
+            this.$('.show-password').toggleClass('active');
         },
         //show login window
         loginBox: function(e){
@@ -459,14 +451,48 @@ AccountManager.module('AccountApp.EntityViews', function(EntityViews, AccountMan
             var emailRegex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
             var emailVal = this.$('.js-email input').val();
             if(!emailVal){
-                this.$('.js-email .u-formError').text('Please enter an email address:').hide();
+                this.$('.js-email .u-formError').text('Please enter an email address:').show();
                 this.$('.js-email input').addClass('hasError');
+                return;
             } else if(!emailRegex.test(emailVal)){
-                this.$('.js-email .u-formError').text('Please enter a valid email address:').hide();
+                this.$('.js-email .u-formError').text('Please enter a valid email address:').show();
                 this.$('.js-email input').addClass('hasError');
+                return;
             } else {
                 this.$('.js-email .u-formError').text('').hide();
                 this.$('.js-email input').removeClass('hasError');
+            }
+        },
+        checkOtp: function(){
+            var otpRegex = /^([0-9]{4})+$/;
+            var otpVal = this.$('.input-otp').val();
+            if(!otpVal){
+                this.$('.js-otp .u-formError').text('Please enter an otp:').show();
+                this.$('.js-otp input').addClass('hasError');
+                return;
+            } else if(!otpRegex.test(otpVal)){
+                this.$('.js-otp .u-formError').text('OTP must be of 4 digits:').show();
+                this.$('.js-otp input').addClass('hasError');
+                return;
+            } else {
+                this.$('.js-otp .u-formError').text('').hide();
+                this.$('.js-otp input').removeClass('hasError');
+            }
+        },
+        checkPassword: function(){
+            var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])([A-Za-z\d@$!%*?&]{8,})+$/;
+            var passwordVal = this.$('.input-new-password').val();
+            if(!passwordVal){
+                this.$('.js-new-password .u-formError').text('Please enter new password:').show();
+                this.$('.js-email input').addClass('hasError');
+                return;
+            } else if(!passwordRegex.test(passwordVal)){
+                this.$('.js-new-password .u-formError').text('Password should be of minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:').show();
+                this.$('.js-new-password input').addClass('hasError');
+                return;
+            } else {
+                this.$('.js-new-password .u-formError').text('').hide();
+                this.$('.js-new-password input').removeClass('hasError');
             }
         },
         //show Error message on focus
@@ -479,14 +505,21 @@ AccountManager.module('AccountApp.EntityViews', function(EntityViews, AccountMan
         },
         //check validation errors before submitting form
         submitForm: function(e){
-            this.checkEmail();
-            if (!this.$('.input.hasError').length) {
-                return true;
-            } else {
-                e.preventDefault();
-                this.$('.input.hasError').eq(0).focus();
-                return false;
+           console.log('submit')
+           let value = {
+               email: this.$('.js-email input').val()
+           }
+            this.trigger('send:otp', value);
+        },
+        changePassword: function(ev){
+            let value = {
+                email: this.$('.js-email input').val(),
+                otp: this.$('.input-otp').val(),
+                newPassword: this.$('.input-new-password').val()
             }
+            console.log(value)
+            console.log('change password');
+            this.trigger('change:password', value);
         }
     });
     EntityViews.Terms = Marionette.ItemView.extend({
@@ -538,37 +571,6 @@ AccountManager.module('AccountApp.EntityController', function(EntityController, 
                 }, 100);
                 $('body').css('overflow', 'hidden');
                 signupView.$( '.js-email input').focus();
-                //Show intro
-                setTimeout(function(){
-                    if($('.js-help').hasClass('active')){
-                        var intro = introJs();
-                        intro.setOptions({
-                            showProgress: false,
-                            steps: [
-                                {
-                                    element: document.querySelector('.js-age'),
-                                    intro: "Enter your age and a strong password.",
-                                    position: "left"
-                                },
-                                {
-                                    element: document.querySelector('.action-consent'),
-                                    intro: "Select the Terms and Data Policy checkbox after reading the terms.",
-                                    position: "left"
-                                },
-                                {
-                                    element: document.querySelector('.btn-submit'),
-                                    intro: "Click the Sign up button.",
-                                    position: "left"
-                                }
-                            ]
-                        });
-                        intro.onexit(function(){
-                            $('.js-help').removeClass('active');
-                            return false;
-                        });
-                        intro.start();
-                    }
-                }, 600);
             });
             AccountManager.overlayRegion.show(signupView);
         },
@@ -581,6 +583,63 @@ AccountManager.module('AccountApp.EntityController', function(EntityController, 
                 }, 100);
                 $('body').css('overflow', 'hidden');
                 forgotView.$( '.js-email input').val(email).focus();
+                forgotView.$('.js-submit').removeClass('u-hide');
+                forgotView.on('send:otp', function(value){
+                    console.log(value);
+                    $.ajax({
+                        url:'/api/sendEmail',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify({
+                            'email': value.email
+                        }),
+                        success: function(res){
+                            console.log(res)
+                            forgotView.$('.js-email .u-formError').text(res.message).show().css({'color':'#fff'});
+                            forgotView.$('.reset-message').addClass('u-hide');
+                            forgotView.$('.input-otp').removeClass('u-hide');
+                            forgotView.$('.js-submit').addClass('u-hide');
+                            forgotView.$('.js-new-password').removeClass('u-hide');
+                            forgotView.$('.js-change-password').removeClass('u-hide');
+                            forgotView.$('.js-email input').prop('disabled', true);
+                        },
+                        error: function (error) {
+                            forgotView.$('.js-email .u-formError').text(error.responseJSON.message).show();
+                            forgotView.$('.reset-message').addClass('u-hide');
+                        }
+                    });
+                });
+
+                forgotView.on('change:password', function(value){
+                    console.log(value);
+                    $.ajax({
+                        url:'/api/updatePassword',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify({
+                            'email': value.email,
+                            'otp': value.otp,
+                            'password': value.newPassword
+                        }),
+                        success: function(res){
+                            console.log(res)
+                            AccountManager.vent.trigger('login:show');
+                            // forgotView.$('.js-email .u-formError').text(res.message).show().css({'color':'#fff'});
+                            // forgotView.$('.reset-message').addClass('u-hide');
+                            // forgotView.$('.input-otp').removeClass('u-hide');
+                            // forgotView.$('.js-submit').addClass('u-hide');
+                            // forgotView.$('.input-new-password').removeClass('u-hide');
+                            // forgotView.$('.js-change-password').removeClass('u-hide');
+                            // forgotView.$('.js-email input').prop('disabled', true);
+                        },
+                        error: function (error) {
+                            forgotView.$('.js-email .u-formError').text(error.responseJSON.message).show();
+                            forgotView.$('.reset-message').addClass('u-hide');
+                        }
+                    });
+                })
             });
             AccountManager.overlayRegion.show(forgotView);
         },

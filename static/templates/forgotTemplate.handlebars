@@ -1,18 +1,26 @@
 <div class="overlay-box forgot-box">
     <div class="overlay-form">
         <h2 class="message">Reset password</h2>
-        <form method="post" action="/forgot" class="form form--modal js-form">
             <div class="js-email">
                 <p class='u-formError'></p>
                 <input class="input" name="email" value="" placeholder="Email address" autocomplete="off" spellcheck="false">
             </div>
-            <input name="submit" value="Reset" class="btn-submit js-submit" type="submit">
-        </form>
-        <p class="reset-message">If an account exists, we will send you an email that will allow you to reset your password. You may need to check your spam folder or wait for few minutes.</p>
+            <div class="btn-submit js-submit u-hide">Send Otp</div>
+        <p class="reset-message">An OTP will be sent to the registered email account.</p>
+        <div class="js-otp">
+            <p class='u-formError'></p>
+            <input class="input input-otp u-hide" type="text" name="otp" value="" placeholder="Enter Otp" autocomplete="off">
+        </div>
+        <div class="js-new-password u-hide">
+            <p class='u-formError'></p>
+            <input class="input input-new-password" type="password" name="new-password" value="" placeholder="Enter New Password" autocomplete="off">
+            <span class="show-password show-new-password u-noSelect">show</span>
+        </div>
+        <div class="btn-submit js-change-password u-hide">Change Password</div>
     </div>
     <div class="overlay-about">
         <div class="overlay-art"></div>
-        <p class="message">Remembered your password?</p>
+        <p class="message">Remember your password?</p>
         <a href="/login" class="overlay-btn js-login">Log in</a>
     </div>
     <a class="overlay-close js-close" href="#"></a>

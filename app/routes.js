@@ -6,6 +6,7 @@ var crypto = require('crypto'),
     Pizza = require('../app/models/entity').Pizza;
 //UUID
 const { v4: uuidv4 } = require('uuid');
+
 //Routes
 module.exports = function(app, passport) {
     var siteRoute = {
@@ -181,7 +182,6 @@ module.exports = function(app, passport) {
                 res.redirect('/login');
             }
         });
-
 
     //Logout handler by passport
     app.get('/site/logout', function(req, res){

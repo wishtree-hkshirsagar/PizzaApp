@@ -186,8 +186,6 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
         appRoutes: {
             '': 'publicPizzaView',
             'pizza/:slug': 'pizzaView',
-            // 'course/:slug': 'courseView',
-            // 'course/:slug/:container': 'courseContainerView'
         }
     });
     //API functions for each route
