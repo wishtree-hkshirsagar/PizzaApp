@@ -1,18 +1,7 @@
-//Client side of FramerSpace
+
 var ProjectManager = new Backbone.Marionette.Application();
 //Initialize Variables and Functions
-var ENTER_KEY = 13,
-    MAX_FILE_SIZE = 31457280,
-    PAGE_SIZE = 20,
-    prevScroll, scrollHandler,
-    linkEmbedData,
-    findTimer,
-    searchTimer,
-    feedbackCollection,
-    myChart,
-    learnerProgress,
-    learnerContainers = [],
-    totalQty;
+var totalQty;
 //Variable to check if inside discussion
 var pathInDiscussion = false;
 //Default font family for ChartJS

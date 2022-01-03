@@ -10,7 +10,6 @@ var app_root = __dirname,
     session = require('express-session'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
-    colors = require('colors'),
     mongoose = require('mongoose'),
     passport = require('passport'),
     flash = require('connect-flash'),
@@ -86,7 +85,6 @@ io.use(function(socket, next){
 
 
 server.listen(app.get('port'));
-console.log('Express server listening on port: '.green+ app.get('port'));
 
 require('./app/routes.js')(app, passport);
 

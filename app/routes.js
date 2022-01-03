@@ -3,7 +3,6 @@ var crypto = require('crypto'),
     mongoose = require('mongoose'),
     User = require('../app/models/user').User,
     LoginToken = require('../app/models/logintoken').LoginToken,
-    Email = require('../config/mail.js'),
     Pizza = require('../app/models/entity').Pizza;
 //UUID
 const { v4: uuidv4 } = require('uuid');

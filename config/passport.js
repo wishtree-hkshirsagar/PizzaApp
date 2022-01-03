@@ -7,10 +7,7 @@ var async = require('async');
 var User = require('../app/models/user').User;
 var LoginToken = require('../app/models/logintoken').LoginToken;
 var validator = require('validator');
-//Course
-var Course = require('../app/models/entity').Course;
-//Email
-var Email = require('../config/mail.js');
+
 //UUID
 const { v4: uuidv4 } = require('uuid');
 //Load crypto for hashing

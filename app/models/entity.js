@@ -21,7 +21,7 @@ var PizzaSchema = new Schema({
     updated_at: Date,
 });
 
-var orderSchema = new Schema({
+var OrderSchema = new Schema({
     customerId: {type: ObjectId, ref: 'User', require: true},
     items: {type: Object, require: true},
     contactNumber: {type: String, require: true},
@@ -31,6 +31,14 @@ var orderSchema = new Schema({
     createdAt: {type: Date, default: Date.now},
 });
 
+var OtpSchema = new Schema({
+    email: {type: String, require: true},
+    otp: {type: String},
+    expireIn: {type: Number},
+    createdAt: {type: Date, default: Date.now}
+});
+
 
 module.exports.Pizza = mongoose.model('Pizza', PizzaSchema);
-module.exports.Order = mongoose.model('Order', orderSchema);
+module.exports.Order = mongoose.model('Order', OrderSchema);
+module.exports.Otp = mongoose.model('Otp', OtpSchema, 'otp');

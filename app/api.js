@@ -18,9 +18,11 @@ const { v4: uuidv4 } = require('uuid');
 //Models
 var User = require('../app/models/user').User,
     Pizza = require('../app/models/entity').Pizza,
-    Order = require('../app/models/entity').Order;
+    Order = require('../app/models/entity').Order,
+    Otp = require('../app/models/entity').Otp,
+    Email = require('../config/mail');
 //Utilities
-var Utility = require('../app/utility');
+// var Utility = require('../app/utility');
 
 var IO;
 var uploadedfile;
@@ -44,7 +46,11 @@ module.exports = function(app, passport, io){
       app.get('/api/public/pizza/:_id', _getPublicPizzaByIdOrSlug);
       app.post('/api/cart', _addToCart);
       app.get('/api/cart', _getCartItems);
-      app.get('/api/customer/orders', isLoggedIn, _getCustomerOrders)
+      app.get('/api/customer/orders', isLoggedIn, _getCustomerOrders);
+
+
+      app.post('/api/sendEmail', _sendEmail);
+      app.post('/api/updatePassword', _updatePassword);
 
      // ADD Pizza Image
     function getTime() {
@@ -187,6 +193,64 @@ var _getCustomerOrders = async function(req, res) {
         })
     }
     // console.log('orders',orders);
+}
+
+var _sendEmail = async function(req, res) {
+    let data = await User.findOne({email: req.body.email});
+    const responseType = {};
+    console.log('data', data)
+    if(data){
+        let otpcode = Math.floor((Math.random()*10000)+1);
+        console.log('otpcode', otpcode)
+        let otpData = new Otp({
+            email: req.body.email,
+            otp: otpcode,
+            expireIn: new Date().getTime() + 300*1000
+        });
+
+        
+        responseType.statusText = 'Success'
+        Email.mailer(req.body.email, otpcode);
+        responseType.message = 'Otp has been sent to the registered email ID'
+        otpData.save(()=> {
+            res.status(200).json(responseType);
+        });
+    } else {
+        responseType.statusText = 'Error'
+        responseType.message = 'Email ID does not exist'
+        res.status(500).json(responseType);
+    }
+    
+}
+
+var _updatePassword = async function(req, res) {
+    console.log('email', req.body.email);
+    console.log('otp', req.body.otp);
+    let data = await Otp.findOne({email: req.body.email, otp: req.body.otp});
+    console.log(data);
+    const responseType = {};
+    if(data){
+        console.log('if')
+        let currentTime = new Date().getTime();
+        let diff = data.expireIn - currentTime;
+        if(diff < 0){
+            responseType.status = 'Error';
+            responseType.message = 'One Time Password Expired';
+            res.status(500).json(responseType);
+        }else{
+            let user = await User.findOne({email: req.body.email})
+            user.password = user.generateHash(req.body.password);
+            user.save();
+            responseType.status = 'Success';
+            responseType.message = 'Password Changed Successfully!';
+            res.status(200).json(responseType);
+        }
+    }else{
+        console.log('error')
+        responseType.status = 'Error';
+        responseType.message = 'Invalid OTP';
+        res.status(404).json(responseType);
+    }
 }
 
 
@@ -452,11 +516,11 @@ var _updateCurrentUser = function(req, res){
                 var key = uuidv4();
                 var file_name = key + '-' + getSlug(user.name);
                 var dp = req.body.dp.replace(/^https:\/\//i, 'http://');
-                Utility.get_resized_image(file_name, dp, 100, function(resized){
-                    Utility.upload_file(resized, file_name, function(image_url){
-                        User.updateOne({ _id: req.user.id }, { $set: { 'dp.s': image_url }}).exec();
-                    });
-                });
+                // Utility.get_resized_image(file_name, dp, 100, function(resized){
+                //     Utility.upload_file(resized, file_name, function(image_url){
+                //         User.updateOne({ _id: req.user.id }, { $set: { 'dp.s': image_url }}).exec();
+                //     });
+                // });
             });
         }
     });
