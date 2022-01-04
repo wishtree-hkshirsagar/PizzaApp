@@ -329,7 +329,7 @@ select{
     background-image: url('../../images/app/action-icons.png');
 }
 .block-actions span:hover{
-    background-color: #1b07f2;
+    background-color: #f27307;
 }
 .block-actions .action-edit-block{
     background-position: -40px -40px;
