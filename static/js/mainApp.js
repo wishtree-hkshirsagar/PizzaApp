@@ -1,6 +1,7 @@
 var ProjectManager = new Backbone.Marionette.Application();
 //Initialize Variables and Functions
-var totalQty;
+var totalQty,
+    datatable;
 //Variable to check if inside discussion
 var pathInDiscussion = false;
 
@@ -790,6 +791,12 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
 
     EntityViews.OrdersDatatable = Marionette.ItemView.extend({
         template: 'allOrdersTemplate',
+        events: {
+            'click .js-show-order': 'showOrder',
+        },
+        showOrder: function(){
+            console.log('****showOrder')
+        }
 
     });
 
@@ -1135,7 +1142,83 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
 
                 console.log(orders)
                 ordersDatatable.on('show', function () {
+                    
+                    datatable = $('#orderDatatable').DataTable({
+                        procesing: true,
+                        serverSide: true,
+                        order: [[5, 'desc']],
+                        ajax: {
+                            url: "/api/admin/orders",
+                            dataType: 'json',
+                            dataSrc: '',
+                            error: function () {
+                                $('#orderDatatable tbody').html('<tr class="odd"><td valign="top" colspan="5" class="dataTables_empty">No data available in table</td></tr>')
+                            }
+                        },
+                        columns: [
+                            {
+                                data: null,
+                                sortable: false,
+                                class: 'dt-index',
+                                render: function (data, type, row, meta) {
+                                    let index = datatable.page.info().page * 10 + meta.row + 1;
+                                    return index;
+                                }
+                            },
+                            {
+                                data: null, class: 'order-dt-orders', render: function (data) {
+                                    
+                                    // let obj = [];
+                                    // for(let i of Object.values(data.items)){
+                                    //     let obj1 = {};
+                                    //     obj1.item = i.item;
+                                    //     obj1.item.qty = i.qty;
+                                    //     obj.push(obj1);
+                                    // }
+                                    // // console.log(obj)
+                                    // // obj = JSON.stringify(obj);
+                                    // // obj = JSON.parse(obj);
+                                    // // console.log(obj.item)
+                                    // obj.forEach((n,i)=> {
+                                    //     return (n.item)
+                                    // });
+                                    return '<a class="show-order js-show-order">' + data._id + '</a>';
+                                }
+                            },
+                            {
+                                data: null, class: 'order-dt-name', render: function (data) {
+                                        
+                                        return data.customerId.name;
+                                }
+                            },
+                            {
+                                data: null, class: 'order-dt-address',render: function (data) {
+                                        
+                                        return data.address;
+                                }
+                            },
+                            {
+                                data: null, class: 'order-dt-status', render: function (data) {
+                                        
+                                        return data.status;
+                                }
+                            },
+                            {
+                                data: null, class: 'order-dt-time', render: function (data) {
+                                        
+                                        return moment(data.createdAt).format('MMM-DD-YYYY');
+                                }
+                            },
+                        ],
+                        language: {
+                            search: "",
+                            searchPlaceholder: "Search Pizza By Title",
+                            class: 'entity-title',
+                            emptyTable: 'No records found!'
+                        }
+                    }); 
 
+                    $('.mainHeader .header-title').html("<a href='/' class='header-back header-home'>Pizza Hut</a>");
                 })
                 ProjectManager.contentRegion.show(ordersDatatable);
             });

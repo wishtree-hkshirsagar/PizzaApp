@@ -3583,10 +3583,45 @@ label[name=wrap-pizzaType-edit]:after{
     margin-bottom: 20px;
 }
 
+table.datatable{
+    width: 100%;
+    margin: 0 auto;
+    clear: both;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
 table.dataTable tbody tr, .orders-dashboard{
     background-color: #fff;
     border: 1px solid #e9e9ef;
 }
 .orders-dashboard{
     box-shadow: 0px 0px 20px #e9e9ef;
+}
+.datatable-action .add-entity, .dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select{
+  color: #232323;
+  background-color: #efefef;
+}
+.dataTables_length label select {
+    min-width: 65px;
+    width: auto !important;
+    -webkit-appearance: auto !important;
+    border: none !important;
+}
+.dataTables_filter .entity-title, .dataTables_wrapper .dataTables_filter input {
+    border-radius: 4px !important;
+    padding: 14px !important;
+    margin-bottom: 10px !important;
+    width: auto !important;
+    border: 2px solid transparent !important;
+}
+
+.show-order{
+    cursor: pointer;
+}
+
+.dataTables_wrapper .dataTables_filter {
+    float: right;
+    text-align: right;
 }
