@@ -3572,3 +3572,21 @@ label[name=wrap-pizzaType-edit]:after{
     float: right;
     margin-right: 20px;
 }
+
+.orders-dashboard{
+    position: relative;
+    width: 100%;
+    display: inline-block;
+    vertical-align: top;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+table.dataTable tbody tr, .orders-dashboard{
+    background-color: #fff;
+    border: 1px solid #e9e9ef;
+}
+.orders-dashboard{
+    box-shadow: 0px 0px 20px #e9e9ef;
+}

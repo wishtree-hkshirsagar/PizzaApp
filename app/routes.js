@@ -77,8 +77,8 @@ module.exports = function(app, passport) {
                         initials: req.user.initials,
                         // dp: req.user.dp.s,
                         type: req.user.type,
-                        theme: req.user.theme,
-                        page_layout: req.user.layout
+                        // theme: req.user.theme,
+                        // page_layout: req.user.layout
                     });
                 } else {
                     console.log(req.user);
@@ -89,8 +89,8 @@ module.exports = function(app, passport) {
                         initials: req.user.initials,
                         // dp: req.user.dp.s,
                         type: req.user.type,
-                        theme: req.user.theme,
-                        page_layout: req.user.layout
+                        // theme: req.user.theme,
+                        // page_layout: req.user.layout
                     });
                 }
             } else if(req.url == '/'){
@@ -133,6 +133,7 @@ module.exports = function(app, passport) {
     app.get('/pizzas', siteRoute.pizzas);
     app.get('/pizza/:slug', siteRoute.home);
     app.get('/customer/orders', siteRoute.order);
+    app.get('/admin/orders', siteRoute.home);
    
     //process the login form
     app.post('/login',

@@ -185,6 +185,7 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
         appRoutes: {
             '': 'publicPizzaView',
             'pizza/:slug': 'pizzaView',
+            'admin/orders': 'adminOrdersView'
         }
     });
     //API functions for each route
@@ -195,9 +196,6 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
         },
         newBlockOverlayView: function(order){
             ProjectManager.ProjectApp.EntityController.Controller.showNewBlockOverlay(order);
-        },
-        editBlockOverlayView: function(block_id){
-            ProjectManager.ProjectApp.EntityController.Controller.showEditBlockOverlay(block_id);
         },
         editPizzaOverlayView: function(pizza_id){
             ProjectManager.ProjectApp.EntityController.Controller.showEditPizzaOverlay(pizza_id);
@@ -228,6 +226,11 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
         settingsView: function(){
             ProjectManager.ProjectApp.EntityController.Controller.showSettings();
         },
+        adminOrdersView: function(){
+            console.log('adminOrdersView')
+            ProjectManager.ProjectApp.EntityController.Controller.showPizzaHeader($('.pageWrap').data('type'));
+            ProjectManager.ProjectApp.EntityController.Controller.showAllOrders();
+        }
     };
     //Triggers to particular views
     //Show new course overlay
@@ -246,13 +249,11 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
     ProjectManager.vent.on('newBlockOverlay:show', function(order){
         API.newBlockOverlayView(order);
     });
-    //Show edit block overlay
-    ProjectManager.vent.on('editBlockOverlay:show', function(block_id){
-        API.editBlockOverlayView(block_id);
+    //Show edit pizza overlay
+    ProjectManager.vent.on('editPizzaOverlay:show', function(block_id){
+        API.editPizzaOverlayView(block_id);
     });
-    ProjectManager.vent.on('editPizzaOverlay:show', function(pizza_id){
-        API.editPizzaOverlayView(pizza_id);
-    });
+
     //Show courses
     ProjectManager.vent.on('courses:show', function(type){
         if(type == 'public'){
@@ -545,6 +546,14 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
         },
         idAttribute: '_id'
     });
+
+    Entities.Orders = Backbone.Model.extend({
+        url: function(){
+              
+            return '/api/admin/orders'
+           
+        }
+    });
     //Functions to get data
     var API = {
         getPizza: function(){
@@ -559,12 +568,10 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
             return defer.promise();
         },
 
-        getCourses: function(_type){
-            var courses = new Entities.CourseCollection([], {
-                _type: _type
-            });
+        getOrders: function(){
+            var course = new Entities.Orders({});
             var defer = $.Deferred();
-            courses.fetch({
+            course.fetch({
                 success: function(data){
                     defer.resolve(data);
                 }
@@ -750,8 +757,8 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
         console.log('Request Response Callbacks')
         return API.getPizza();
     });
-    ProjectManager.reqres.setHandler('course:entities', function(_type){
-        return API.getCourses(_type);
+    ProjectManager.reqres.setHandler('order:entities', function(){
+        return API.getOrders();
     });
     ProjectManager.reqres.setHandler('pizza:entity', function(_id){
         return API.getOnePizza(_id);
@@ -899,6 +906,12 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
                 ProjectManager.vent.trigger('pizza:show', this.model.get('slug'));
         }
     });
+
+    EntityViews.OrdersDatatable = Marionette.ItemView.extend({
+        template: 'allOrdersTemplate',
+
+    });
+
     //Course item view
     EntityViews.CourseItemView = Marionette.ItemView.extend({
         tagName: 'a',
@@ -1678,7 +1691,7 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
         },
         events: {
             'click .container-item-block': 'showContainerBlocks',
-            'click .js-edit-block': 'editBlock',
+            'click .js-edit-block': 'openEditPizzaOverlay',
             'click .js-edit-theme': 'editTheme',
             'click .js-discuss, .block-comment': 'showDiscussion',
             'click .js-show-responses': 'showResponses',
@@ -1728,22 +1741,16 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
                 });
             });
         },
-        openEditPizzaOverlay: function(ev){
-            console.log('editPizzaOverlay')
-            ev.preventDefault();
-            ev.stopPropagation();
-            ProjectManager.vent.trigger('editPizzaOverlay:show', this.model.get('_id'));
-        },
         showContainerBlocks: function(ev){
             ev.preventDefault();
             ev.stopPropagation();
             ProjectManager.vent.trigger('blocks:show', this.model.get('course'), this.model.get('_id'), this.model.get('title'));
         },
-        editBlock: function(ev){
+        openEditPizzaOverlay: function(ev){
             console.log('edit block')
             ev.preventDefault();
             ev.stopPropagation();
-            ProjectManager.vent.trigger('editBlockOverlay:show', this.model.get('_id'));
+            ProjectManager.vent.trigger('editPizzaOverlay:show', this.model.get('_id'));
         },
         editTheme: function(ev){
             ev.preventDefault();
@@ -1931,47 +1938,6 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
             
         },
     });
-    //Settings View
-    EntityViews.SettingsView = Marionette.ItemView.extend({
-        template: 'settingsTemplate',
-        events: {
-            'click .js-close': 'closeOverlay',
-            'click #drop-dp': 'openFileBrowserForDp',
-            'click .file-input': 'doNothing',
-            'click .js-save': 'updateProfile'
-        },
-        closeOverlay: function(ev){
-            ev.preventDefault();
-            ProjectManager.commands.execute('close:overlay');
-        },
-        openFileBrowserForDp: function(ev){
-            this.$('#drop-dp .file-input').click();
-        },
-        doNothing: function(ev){
-            ev.stopPropagation();
-        },
-        updateProfile: function(ev){
-            ev.preventDefault();
-            var value = {
-                name: this.$('.profile-name').val().trim(),
-                about: this.$('.profile-about').val().trim(),
-                job_title: this.$('.profile-job').val().trim(),
-                job_org: this.$('.profile-org').val().trim(),
-                city: this.$('.profile-city').val().trim(),
-                country: this.$('.select-country').val(),
-                sex: this.$('.select-gender').val(),
-                phone: this.$('.profile-phone').val().trim(),
-                theme: this.$('.select-theme').val(),
-                layout: this.$('.select-layout').val(),
-            }
-            //Check if password is present or not
-            if(this.$('.profile-old-pwd').val()){
-                value.oldpwd = this.$('.profile-old-pwd').val().trim();
-                value.newpwd = this.$('.profile-new-pwd').val().trim();
-            }
-            this.trigger('update:profile', value);
-        }
-    });
 });
 //Common Views of the application - Loading
 ProjectManager.module('Common.Views', function(Views,ProjectManager, Backbone, Marionette, $, _){
@@ -2007,7 +1973,6 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                         if(!newPizzaView.$('#select-pizza').find(":selected").val()){
                             newPizzaView.$('.pizza-size').text('Please select pizza size:').show();
                             newPizzaView.$('.select-pizza').addClass('hasError');
-                            // newCourseView.$('label[name=wrap-pizzaType]:after').css({'top':'150px'});
                         } else {
                             newPizzaView.$('.pizza-size').text('').show();
                             newPizzaView.$('.select-pizza').removeClass('hasError');
@@ -2070,6 +2035,9 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
             pizzaHeaderView.on('show', function(){
                 if(type == 'admin'){
                     pizzaHeaderView.$('.admin-view').removeClass('u-hide');
+                   if(location.href.includes('/admin/orders')){
+                       pizzaHeaderView.$('.js-add-pizza').addClass('u-hide');
+                   }
                 } else {
                     pizzaHeaderView.$('.public-view').removeClass('u-hide');
                 }
@@ -2122,1293 +2090,26 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                 ProjectManager.headerRegion.show(pizzaDetailHeaderView);
             });
         },
-        // showOneCourse: function(slug, container, back_type){
-        //     console.log('showOneCourse')
-        //     //Fetch course
-        //     var fetchingCourse = ProjectManager.request('course:entity', slug);
-        //     $.when(fetchingCourse).done(function(course){
-        //         var courseHeaderView = new ProjectManager.ProjectApp.EntityViews.CourseHeaderView({
-        //             model: course
-        //         });
-        //         //Show
-        //         courseHeaderView.on('show', function(){
-        //             //Show course title
-        //             document.title = 'FramerSpace: '+ course.get('title');
-        //             //Add course id to header
-        //             courseHeaderView.$('.header-title').data('id', course.get('_id'));
-        //             courseHeaderView.$('.header-title').data('slug', course.get('slug'));
-        //             //Update learner progress
-        //             if(course.get('learners') && course.get('learners').length){
-        //                 learnerProgress = course.get('learners')[0].progress;
-        //                 learnerContainers = course.get('learners')[0].containers;
-        //             }
-        //             //Show course blocks
-        //             if(container){
-        //                 ProjectManager.vent.trigger('blocks:show', course.get('_id'), container);
-        //             } else {
-        //                 ProjectManager.vent.trigger('blocks:show', course.get('_id'));
-        //             }
-        //             //Show header title
-        //             if(back_type == 'drafts'){
-        //                 $('.mainHeader .header-title').append("<a href='/drafts' class='header-back header-drafts'>Draft Courses</a>");
-        //             } else if(back_type == 'archived'){
-        //                 $('.mainHeader .header-title').append("<a href='/archived' class='header-back header-archived'>Archived Courses</a>");
-        //             } else {
-        //                 $('.mainHeader .header-title').append("<a href='/' class='header-back header-home'>Courses</a>");
-        //             }
-        //             $('.mainHeader .header-title').append("<span class='header-seperator'>/</span>");
-        //             $('.mainHeader .header-title').append("<a href='/course/"+course.get('slug')+"' class='header-course header-now' data-id='"+course.get('_id')+"'>"+course.get('title')+"</a>");
-        //             //Add viewer
-        //             this.trigger('view:course', course.get('_id'));
-        //         });
-        //         //View course
-        //         courseHeaderView.on('view:course', function(value){
-        //             var course = new ProjectManager.Entities.Course({
-        //                 _id: value,
-        //                 _action: 'view'
-        //             });
-        //             course.set({});
-        //             course.save();
-        //         });
-        //         //Join Course
-        //         courseHeaderView.on('join:course', function(value){
-        //             var course = new ProjectManager.Entities.Course({
-        //                 _id: value,
-        //                 _action: 'join'
-        //             });
-        //             course.set({});
-        //             course.save({}, {
-        //                 dataType:"text",
-        //                 success: function(){
-        //                     location.reload();
-        //                 }
-        //             });
-        //         });
-        //         //Unjoin Course
-        //         courseHeaderView.on('unjoin:course', function(value){
-        //             var course = new ProjectManager.Entities.Course({
-        //                 _id: value,
-        //                 _action: 'unjoin'
-        //             });
-        //             course.set({});
-        //             course.save({}, {
-        //                 dataType:"text",
-        //                 success: function(){
-        //                     location.reload();
-        //                 }
-        //             });
-        //         });
-        //         ProjectManager.headerRegion.show(courseHeaderView);
-        //     });
-        // },
-        showNewBlockOverlay: function(order){
-            $('.overlay').show();
-            var mcq_option_bound, mcq_option_image_url;
-            var left_image_url, left_bound, right_image_url, right_bound, list_item_image_url, list_item_bound, grid_item_image_url, grid_item_bound, comic_url, container_image_url, container_bound;
-            //Editor
-            var richTextEditor;
-            var richTextEditorFiles = [];
-            //New block view
-            var newBlockView = new ProjectManager.ProjectApp.EntityViews.NewBlockView();
-            //Show
-            newBlockView.on('show', function(){
-                //Show overlay
-                setTimeout(function(){
-                    newBlockView.$('.overlay-box').addClass('animate');
-                }, 100);
-                //Hide scroll on main page
-                ProjectManager.commands.execute('show:overlay');
-                //LOAD EDITOR
-                //Wait till editor is ready
-                newBlockView.$('.block-text').bind('click mousedown dblclick', function(ev){
-                   ev.preventDefault();
-                   ev.stopImmediatePropagation();
+        showAllOrders: function(){
+            console.log('show all orders');
+            var loadingView = new ProjectManager.Common.Views.Loading();
+            ProjectManager.contentRegion.show(loadingView);
+
+            var fetchingOrders = ProjectManager.request('order:entities');
+            $.when(fetchingOrders).done(function (orders) {
+                var ordersDatatable = new ProjectManager.ProjectApp.EntityViews.OrdersDatatable({
+                    model: orders
                 });
-                richTextEditor = setUpAlloyToolbar(false, document.querySelector('.text-content'), false, false);
-                var nativeEditor = richTextEditor.get('nativeEditor');
-                //On editor ready
-                nativeEditor.on('instanceReady', function(ev){
-                    newBlockView.$('.block-text').unbind();
-                });
-                //On image upload
-                nativeEditor.on('imageAdd', function(ev){
-                    var id = generateRandomUUID();
-                    ev.data.file.id = id;
-                    richTextEditorFiles.push(ev.data.file);
-                    $(ev.data.el.$).addClass('upload-image').attr('data-id', id);
-                });
+
+                console.log(orders)
+                ordersDatatable.on('show', function () {
+
+                })
+                ProjectManager.contentRegion.show(ordersDatatable);
             });
-            //UPLOAD
-            //Upload file
-            newBlockView.on('open:fileBrowser', function(file_type){
-                newBlockView.$('.direct-upload').each(function(){
-                    //For each file selected, process and upload
-                    var form = $(this);
-                    var fileCount = 0;
-                    var uploadCount = 0;
-                    $(this).fileupload({
-                        dropZone: $('#drop-file'),
-                        url: form.attr('action'), //Grab form's action src
-                        type: 'POST',
-                        autoUpload: true,
-                        dataType: 'xml', //S3's XML response,
-                        add: function(event, data){
-                            if(data.files[0].size >= MAX_FILE_SIZE) return;
-                            fileCount += 1;
-                            //Upload through CORS
-                            $.ajax({
-                                url: '/api/signed',
-                                type: 'GET',
-                                dataType: 'json',
-                                data: {title: data.files[0].name}, // Send filename to /signed for the signed response
-                                async: false,
-                                success: function(data){
-                                    // Now that we have our data, we update the form so it contains all
-                                    // the needed data to sign the request
-                                    form.find('input[name=key]').val(data.key);
-                                    form.find('input[name=policy]').val(data.policy);
-                                    form.find('input[name=signature]').val(data.signature);
-                                    form.find('input[name=Content-Type]').val(data.contentType);
-                                }
-                            });
-                            data.files[0].s3Url = form.find('input[name=key]').val();
-                            data.submit();
-                        },
-                        start: function(e){
-                            $('#drop-file span').html('Uploaded <b></b>');
-                        },
-                        progressall: function(e, data){
-                            var progress = parseInt(data.loaded / data.total * 100, 10);
-                            $('#drop-file span b').text(progress + '%'); // Update progress bar percentage
-                        },
-                        fail: function(e, data){
-                            $('#drop-file span').html('Choose files or drag and drop them here');
-                        },
-                        done: function(e, data){
-                            var file_name = data.files[0].name;
-                            //Get extension of the file
-                            var index = file_name.lastIndexOf('.');
-                            var file_ext = file_name.substring(index+1, file_name.length);
-                            //Get block title
-                            if(newBlockView.$('.block-file-title').val()){
-                                var block_title = newBlockView.$('.block-file-title').val().trim();
-                            } else {
-                                var block_title = decodeURIComponent(file_name.substring(0, index));
-                            }
-                            //Url
-                            var url = 'https://d1u3z33x3g234l.cloudfront.net/' +  encodeURIComponent(data.files[0].s3Url).replace(/'/g,"%27").replace(/"/g,"%22");
-                            //Get extension
-                            var image_extensions = ['jpg', 'png', 'gif', 'jpeg'];
-                            if(image_extensions.indexOf(file_ext) < 0) {
-                                //Save file
-                                var new_block = new ProjectManager.Entities.Block({
-                                    type: file_type || 'file',
-                                    title: block_title,
-                                    provider: {
-                                        name: 'FramerSpace',
-                                        url: url
-                                    },
-                                    file: {
-                                        size: data.files[0].size,
-                                        ext: file_ext
-                                    },
-                                    order: order,
-                                    course: $('.mainHeader .header-title').data('id')
-                                });
-                                //Container id
-                                if($('.mainHeader .header-container.header-now').data('id')){
-                                    new_block.set('container', $('.mainHeader .header-container.header-now').data('id'));
-                                }
-                                //Save block
-                                new_block.save({}, {success: function(){
-                                    uploadCount += 1;
-                                    ProjectManager.commands.execute('close:overlay');
-                                    ProjectManager.vent.trigger('add:block', new_block);
-                                }});
-                            } else {
-                                //Save image
-                                var new_block = new ProjectManager.Entities.Block({
-                                    type: 'image',
-                                    title: block_title,
-                                    provider: {
-                                        name: 'FramerSpace',
-                                        url: url
-                                    },
-                                    file: {
-                                        size: data.files[0].size,
-                                        ext: file_ext
-                                    },
-                                    image: url,
-                                    order: order,
-                                    course: $('.mainHeader .header-title').data('id')
-                                });
-                                //Container id
-                                if($('.mainHeader .header-container.header-now').data('id')){
-                                    new_block.set('container', $('.mainHeader .header-container.header-now').data('id'));
-                                }
-                                //Image
-                                var image = new Image();
-                                image.src = window.URL.createObjectURL( data.files[0] );
-                                image.onload = function(){
-                                    var bound = ( image.naturalHeight * 400 ) / image.naturalWidth;
-                                    if(bound) {
-                                        bound = parseInt(bound);
-                                        new_block.set('bound', bound);
-                                    }
-                                    window.URL.revokeObjectURL(image.src);
-                                    //Save block
-                                    new_block.save({}, {success: function(){
-                                        uploadCount += 1;
-                                        ProjectManager.commands.execute('close:overlay');
-                                        ProjectManager.vent.trigger('add:block', new_block);
-                                    }});
-                                };
-                                image.onerror = function(){
-                                    //Save block
-                                    new_block.save({}, {success: function(){
-                                        uploadCount += 1;
-                                        ProjectManager.commands.execute('close:overlay');
-                                        ProjectManager.vent.trigger('add:block', new_block);
-                                    }});
-                                };
-                            }
-                        }
-                    });
-                });
-            });
-            //Upload MCQ option image
-            newBlockView.on('open:mcqFileBrowser', function(){
-                newBlockView.$('.option-image-upload').each(function(){
-                    /* For each file selected, process and upload */
-                    var form = $(this);
-                    $(this).fileupload({
-                        dropZone: $('#option-image'),
-                        url: form.attr('action'), //Grab form's action src
-                        type: 'POST',
-                        autoUpload: true,
-                        dataType: 'xml', //S3's XML response,
-                        add: function(event, data){
-                            //Check file type
-                            var fileType = data.files[0].name.split('.').pop(), allowedtypes = 'jpeg,jpg,png,gif';
-                            if (allowedtypes.indexOf(fileType) < 0) {
-                                alert('Invalid file type, aborted');
-                                return false;
-                            }
-                            //Get bound
-                            var image = new Image();
-                            image.src = window.URL.createObjectURL(data.files[0]);
-                            image.onload = function() {
-                                mcq_option_bound = ( image.naturalHeight * 200 ) / image.naturalWidth;
-                                if(mcq_option_bound) mcq_option_bound = parseInt(mcq_option_bound);
-                                window.URL.revokeObjectURL(image.src);
-                            };
-                            //Upload through CORS
-                            $.ajax({
-                                url: '/api/signed',
-                                type: 'GET',
-                                dataType: 'json',
-                                data: {title: data.files[0].name}, // Send filename to /signed for the signed response
-                                async: false,
-                                success: function(data){
-                                    // Now that we have our data, we update the form so it contains all
-                                    // the needed data to sign the request
-                                    form.find('input[name=key]').val(data.key);
-                                    form.find('input[name=policy]').val(data.policy);
-                                    form.find('input[name=signature]').val(data.signature);
-                                    form.find('input[name=Content-Type]').val(data.contentType);
-                                }
-                            });
-                            data.submit();
-                        },
-                        send: function(e, data){
-                            newBlockView.$('#option-image span').html('Uploading <b>...</b>');
-                            newBlockView.$('.js-save-mcq-item').addClass('u-hide');
-                        },
-                        progress: function(e, data){
-                            var percent = Math.round((e.loaded / e.total) * 100);
-                            newBlockView.$('#option-image span b').text(percent + '%');
-                        },
-                        fail: function(e, data){
-                            newBlockView.$('#option-image span').html('Optional image');
-                            newBlockView.$('.js-save-mcq-item').removeClass('u-hide');
-                        },
-                        success: function(data){
-                            mcq_option_image_url = 'https://d1u3z33x3g234l.cloudfront.net/' +  form.find('input[name=key]').val();
-                            mcq_option_image_url = encodeURI(mcq_option_image_url);
-                            newBlockView.$('#option-image span').addClass('u-hide');
-                            newBlockView.$('#option-image').css('backgroundImage', 'url('+mcq_option_image_url+')');
-                            newBlockView.$('.js-save-mcq-item').removeClass('u-hide');
-                        }
-                    });
-                });
-            });
-            //Upload Match option image
-            newBlockView.on('open:matchFileBrowser', function(){
-                //Upload option image left
-                newBlockView.$('.option-image-upload-left').each(function(){
-                    /* For each file selected, process and upload */
-                    var form = $(this);
-                    $(this).fileupload({
-                        dropZone: $('#option-image-left'),
-                        url: form.attr('action'), //Grab form's action src
-                        type: 'POST',
-                        autoUpload: true,
-                        dataType: 'xml', //S3's XML response,
-                        add: function(event, data){
-                            //Check file type
-                            var fileType = data.files[0].name.split('.').pop(), allowedtypes = 'jpeg,jpg,png,gif';
-                            if (allowedtypes.indexOf(fileType) < 0) {
-                                alert('Invalid file type, aborted');
-                                return false;
-                            }
-                            //Get bound
-                            var image = new Image();
-                            image.src = window.URL.createObjectURL(data.files[0]);
-                            image.onload = function() {
-                                left_bound = ( image.naturalHeight * 200 ) / image.naturalWidth;
-                                if(left_bound) left_bound = parseInt(left_bound);
-                                window.URL.revokeObjectURL(image.src);
-                            };
-                            //Upload through CORS
-                            $.ajax({
-                                url: '/api/signed',
-                                type: 'GET',
-                                dataType: 'json',
-                                data: {title: data.files[0].name}, // Send filename to /signed for the signed response
-                                async: false,
-                                success: function(data){
-                                    // Now that we have our data, we update the form so it contains all
-                                    // the needed data to sign the request
-                                    form.find('input[name=key]').val(data.key);
-                                    form.find('input[name=policy]').val(data.policy);
-                                    form.find('input[name=signature]').val(data.signature);
-                                    form.find('input[name=Content-Type]').val(data.contentType);
-                                }
-                            });
-                            data.submit();
-                        },
-                        send: function(e, data){
-                            newBlockView.$('#option-image-left span').html('Uploading <b>...</b>');
-                            newBlockView.$('.options-left .js-save-match-item').addClass('u-hide');
-                        },
-                        progress: function(e, data){
-                            var percent = Math.round((e.loaded / e.total) * 100);
-                            newBlockView.$('#option-image-left span b').text(percent + '%');
-                        },
-                        fail: function(e, data){
-                            newBlockView.$('#option-image-left span').html('Optional image');
-                            newBlockView.$('.options-left .js-save-match-item').removeClass('u-hide');
-                        },
-                        success: function(data){
-                            left_image_url = 'https://d1u3z33x3g234l.cloudfront.net/' +  form.find('input[name=key]').val();
-                            left_image_url = encodeURI(left_image_url);
-                            newBlockView.$('#option-image-left span').addClass('u-hide');
-                            newBlockView.$('#option-image-left').css('backgroundImage', 'url('+left_image_url+')');
-                            newBlockView.$('.options-left .js-save-match-item').removeClass('u-hide');
-                        }
-                    });
-                });
-                //Upload option image right
-                newBlockView.$('.option-image-upload-right').each(function(){
-                    /* For each file selected, process and upload */
-                    var form = $(this);
-                    $(this).fileupload({
-                        dropZone: $('#option-image-right'),
-                        url: form.attr('action'), //Grab form's action src
-                        type: 'POST',
-                        autoUpload: true,
-                        dataType: 'xml', //S3's XML response,
-                        add: function(event, data){
-                            //Check file type
-                            var fileType = data.files[0].name.split('.').pop(), allowedtypes = 'jpeg,jpg,png,gif';
-                            if (allowedtypes.indexOf(fileType) < 0) {
-                                alert('Invalid file type, aborted');
-                                return false;
-                            }
-                            //Get bound
-                            var image = new Image();
-                            image.src = window.URL.createObjectURL(data.files[0]);
-                            image.onload = function() {
-                                right_bound = ( image.naturalHeight * 200 ) / image.naturalWidth;
-                                if(right_bound) right_bound = parseInt(right_bound);
-                                window.URL.revokeObjectURL(image.src);
-                            };
-                            //Upload through CORS
-                            $.ajax({
-                                url: '/api/signed',
-                                type: 'GET',
-                                dataType: 'json',
-                                data: {title: data.files[0].name}, // Send filename to /signed for the signed response
-                                async: false,
-                                success: function(data){
-                                    // Now that we have our data, we update the form so it contains all
-                                    // the needed data to sign the request
-                                    form.find('input[name=key]').val(data.key);
-                                    form.find('input[name=policy]').val(data.policy);
-                                    form.find('input[name=signature]').val(data.signature);
-                                    form.find('input[name=Content-Type]').val(data.contentType);
-                                }
-                            });
-                            data.submit();
-                        },
-                        send: function(e, data){
-                            newBlockView.$('#option-image-right span').html('Uploading <b>...</b>');
-                            newBlockView.$('.options-right .js-save-match-item').addClass('u-hide');
-                        },
-                        progress: function(e, data){
-                            var percent = Math.round((e.loaded / e.total) * 100);
-                            newBlockView.$('#option-image-right span b').text(percent + '%');
-                        },
-                        fail: function(e, data){
-                            newBlockView.$('#option-image-right span').html('Optional image');
-                            newBlockView.$('.options-right .js-save-match-item').removeClass('u-hide');
-                        },
-                        success: function(data){
-                            right_image_url = 'https://d1u3z33x3g234l.cloudfront.net/' +  form.find('input[name=key]').val();
-                            right_image_url = encodeURI(right_image_url);
-                            newBlockView.$('#option-image-right span').addClass('u-hide');
-                            newBlockView.$('#option-image-right').css('backgroundImage', 'url('+right_image_url+')');
-                            newBlockView.$('.options-right .js-save-match-item').removeClass('u-hide');
-                        }
-                    });
-                });
-            });
-            //Upload comic
-            newBlockView.on('open:comicFileBrowser', function(){
-                newBlockView.$('.comic-upload').each(function(){
-                    /* For each file selected, process and upload */
-                    var form = $(this);
-                    $(this).fileupload({
-                        dropZone: $('#drop-comic'),
-                        url: form.attr('action'), //Grab form's action src
-                        type: 'POST',
-                        autoUpload: true,
-                        dataType: 'xml', //S3's XML response,
-                        add: function(event, data){
-                            //Check file type
-                            var fileType = data.files[0].name.split('.').pop(), allowedtypes = 'jpeg,jpg,png,gif';
-                            if (allowedtypes.indexOf(fileType) < 0) {
-                                alert('Invalid file type, aborted');
-                                return false;
-                            }
-                            //Upload through CORS
-                            $.ajax({
-                                url: '/api/signed',
-                                type: 'GET',
-                                dataType: 'json',
-                                data: {title: data.files[0].name}, // Send filename to /signed for the signed response
-                                async: false,
-                                success: function(data){
-                                    // Now that we have our data, we update the form so it contains all
-                                    // the needed data to sign the request
-                                    form.find('input[name=key]').val(data.key);
-                                    form.find('input[name=policy]').val(data.policy);
-                                    form.find('input[name=signature]').val(data.signature);
-                                    form.find('input[name=Content-Type]').val(data.contentType);
-                                }
-                            });
-                            data.submit();
-                        },
-                        send: function(e, data){
-                            newBlockView.$('#drop-comic span').html('Uploading <b>...</b>');
-                            newBlockView.$('.js-save-block').addClass('u-hide');
-                        },
-                        progress: function(e, data){
-                            var percent = Math.round((e.loaded / e.total) * 100);
-                            newBlockView.$('#drop-comic span b').text(percent + '%');
-                        },
-                        fail: function(e, data){
-                            newBlockView.$('#drop-comic span').html('Choose comic strip and drop them here');
-                            newBlockView.$('.js-save-block').removeClass('u-hide');
-                        },
-                        success: function(data){
-                            comic_url = 'https://d1u3z33x3g234l.cloudfront.net/' +  form.find('input[name=key]').val();
-                            comic_url = encodeURI(comic_url);
-                            newBlockView.$('#drop-comic span').addClass('u-hide');
-                            newBlockView.$('#drop-comic').css('backgroundImage', 'url('+comic_url+')');
-                            newBlockView.$('.js-save-block').removeClass('u-hide');
-                        }
-                    });
-                });
-            });
-            //Upload list item image
-            newBlockView.on('open:listFileBrowser', function(){
-                newBlockView.$('.list-image-upload').each(function(){
-                    /* For each file selected, process and upload */
-                    var form = $(this);
-                    $(this).fileupload({
-                        dropZone: $('#list-image'),
-                        url: form.attr('action'), //Grab form's action src
-                        type: 'POST',
-                        autoUpload: true,
-                        dataType: 'xml', //S3's XML response,
-                        add: function(event, data){
-                            //Check file type
-                            var fileType = data.files[0].name.split('.').pop(), allowedtypes = 'jpeg,jpg,png,gif';
-                            if (allowedtypes.indexOf(fileType) < 0) {
-                                alert('Invalid file type, aborted');
-                                return false;
-                            }
-                            //Get bound
-                            var image = new Image();
-                            image.src = window.URL.createObjectURL(data.files[0]);
-                            image.onload = function() {
-                                list_item_bound = ( image.naturalHeight * 200 ) / image.naturalWidth;
-                                if(list_item_bound) list_item_bound = parseInt(list_item_bound);
-                                window.URL.revokeObjectURL(image.src);
-                            };
-                            //Upload through CORS
-                            $.ajax({
-                                url: '/api/signed',
-                                type: 'GET',
-                                dataType: 'json',
-                                data: {title: data.files[0].name}, // Send filename to /signed for the signed response
-                                async: false,
-                                success: function(data){
-                                    // Now that we have our data, we update the form so it contains all
-                                    // the needed data to sign the request
-                                    form.find('input[name=key]').val(data.key);
-                                    form.find('input[name=policy]').val(data.policy);
-                                    form.find('input[name=signature]').val(data.signature);
-                                    form.find('input[name=Content-Type]').val(data.contentType);
-                                }
-                            });
-                            data.submit();
-                        },
-                        send: function(e, data){
-                            newBlockView.$('#list-image span').html('Uploading <b>...</b>');
-                            newBlockView.$('.js-save-list-item').addClass('u-hide');
-                        },
-                        progress: function(e, data){
-                            var percent = Math.round((e.loaded / e.total) * 100);
-                            newBlockView.$('#list-image span b').text(percent + '%');
-                        },
-                        fail: function(e, data){
-                            newBlockView.$('#list-image span').html('Optional image');
-                            newBlockView.$('.js-save-list-item').removeClass('u-hide');
-                        },
-                        success: function(data){
-                            list_item_image_url = 'https://d1u3z33x3g234l.cloudfront.net/' +  form.find('input[name=key]').val();
-                            list_item_image_url = encodeURI(list_item_image_url);
-                            newBlockView.$('#list-image span').addClass('u-hide');
-                            newBlockView.$('#list-image').css('backgroundImage', 'url('+list_item_image_url+')');
-                            newBlockView.$('.js-save-list-item').removeClass('u-hide');
-                        }
-                    });
-                });
-            });
-            //Upload container image
-            newBlockView.on('open:containerFileBrowser', function(){
-                newBlockView.$('.container-upload').each(function(){
-                    /* For each file selected, process and upload */
-                    var form = $(this);
-                    $(this).fileupload({
-                        dropZone: $('#drop-container'),
-                        url: form.attr('action'), //Grab form's action src
-                        type: 'POST',
-                        autoUpload: true,
-                        dataType: 'xml', //S3's XML response,
-                        add: function(event, data){
-                            //Check file type
-                            var fileType = data.files[0].name.split('.').pop(), allowedtypes = 'jpeg,jpg,png,gif';
-                            if (allowedtypes.indexOf(fileType) < 0) {
-                                alert('Invalid file type, aborted');
-                                return false;
-                            }
-                            //Get bound
-                            var image = new Image();
-                            image.src = window.URL.createObjectURL(data.files[0]);
-                            image.onload = function() {
-                                container_bound = ( image.naturalHeight * 800 ) / image.naturalWidth;
-                                container_bound = container_bound / 2; //for retina
-                                if(container_bound) container_bound = parseInt(container_bound);
-                                window.URL.revokeObjectURL(image.src);
-                            };
-                            //Upload through CORS
-                            $.ajax({
-                                url: '/api/signed',
-                                type: 'GET',
-                                dataType: 'json',
-                                data: {title: data.files[0].name}, // Send filename to /signed for the signed response
-                                async: false,
-                                success: function(data){
-                                    // Now that we have our data, we update the form so it contains all
-                                    // the needed data to sign the request
-                                    form.find('input[name=key]').val(data.key);
-                                    form.find('input[name=policy]').val(data.policy);
-                                    form.find('input[name=signature]').val(data.signature);
-                                    form.find('input[name=Content-Type]').val(data.contentType);
-                                }
-                            });
-                            data.submit();
-                        },
-                        send: function(e, data){
-                            newBlockView.$('#drop-container span').html('Uploading <b>...</b>');
-                            newBlockView.$('.js-save').addClass('u-disabled');
-                        },
-                        progress: function(e, data){
-                            var percent = Math.round((e.loaded / e.total) * 100);
-                            newBlockView.$('#drop-container span b').text(percent + '%');
-                        },
-                        fail: function(e, data){
-                            newBlockView.$('#drop-container span').html('Choose container image');
-                            newBlockView.$('.js-save').removeClass('u-disabled');
-                        },
-                        success: function(data){
-                            container_image_url = 'https://d1u3z33x3g234l.cloudfront.net/' +  form.find('input[name=key]').val();
-                            container_image_url = encodeURI(container_image_url);
-                            //Show save button
-                            newBlockView.$('#drop-container span').addClass('u-hide');
-                            newBlockView.$('#drop-container').css('backgroundImage', 'url('+container_image_url+')');
-                            newBlockView.$('.js-save').removeClass('u-disabled');
-                        }
-                    });
-                });
-            });
-            //Upload grid item image
-            newBlockView.on('open:gridFileBrowser', function(){
-                newBlockView.$('.grid-image-upload').each(function(){
-                    /* For each file selected, process and upload */
-                    var form = $(this);
-                    $(this).fileupload({
-                        dropZone: $('#grid-image'),
-                        url: form.attr('action'), //Grab form's action src
-                        type: 'POST',
-                        autoUpload: true,
-                        dataType: 'xml', //S3's XML response,
-                        add: function(event, data){
-                            //Check file type
-                            var fileType = data.files[0].name.split('.').pop(), allowedtypes = 'jpeg,jpg,png,gif';
-                            if (allowedtypes.indexOf(fileType) < 0) {
-                                alert('Invalid file type, aborted');
-                                return false;
-                            }
-                            //Get bound
-                            var image = new Image();
-                            image.src = window.URL.createObjectURL(data.files[0]);
-                            image.onload = function() {
-                                grid_item_bound = ( image.naturalHeight * 400 ) / image.naturalWidth;
-                                if(grid_item_bound) grid_item_bound = parseInt(grid_item_bound);
-                                window.URL.revokeObjectURL(image.src);
-                            };
-                            //Upload through CORS
-                            $.ajax({
-                                url: '/api/signed',
-                                type: 'GET',
-                                dataType: 'json',
-                                data: {title: data.files[0].name}, // Send filename to /signed for the signed response
-                                async: false,
-                                success: function(data){
-                                    // Now that we have our data, we update the form so it contains all
-                                    // the needed data to sign the request
-                                    form.find('input[name=key]').val(data.key);
-                                    form.find('input[name=policy]').val(data.policy);
-                                    form.find('input[name=signature]').val(data.signature);
-                                    form.find('input[name=Content-Type]').val(data.contentType);
-                                }
-                            });
-                            data.submit();
-                        },
-                        send: function(e, data){
-                            newBlockView.$('#grid-image span').html('Uploading <b>...</b>');
-                            newBlockView.$('.js-save-grid-item').addClass('u-hide');
-                        },
-                        progress: function(e, data){
-                            var percent = Math.round((e.loaded / e.total) * 100);
-                            newBlockView.$('#grid-image span b').text(percent + '%');
-                        },
-                        fail: function(e, data){
-                            newBlockView.$('#grid-image span').html('Optional image');
-                            newBlockView.$('.js-save-grid-item').removeClass('u-hide');
-                        },
-                        success: function(data){
-                            grid_item_image_url = 'https://d1u3z33x3g234l.cloudfront.net/' +  form.find('input[name=key]').val();
-                            grid_item_image_url = encodeURI(grid_item_image_url);
-                            newBlockView.$('#grid-image span').addClass('u-hide');
-                            newBlockView.$('#grid-image').css('backgroundImage', 'url('+grid_item_image_url+')');
-                            newBlockView.$('.js-save-grid-item').removeClass('u-hide');
-                        }
-                    });
-                });
-            });
-            //SAVE
-            //Save body HTML
-            newBlockView.on('save:htmlBlock', function(value){
-                if(richTextEditor){
-                    var nativeEditor = richTextEditor.get('nativeEditor');
-                    var text = nativeEditor.getData();
-                    var new_block = new ProjectManager.Entities.Block({
-                        type: value.type,
-                        text: text,
-                        order: order,
-                        course: value.course,
-                        container: value.container
-                    });
-                    //Save and upload image
-                    async.series([
-                        function(callback){
-                            if(newBlockView.$('.text-content .upload-image').length){
-                                newBlockView.$('.js-save-block').text('Uploading...').addClass('u-disabled');
-                                //Upload
-                                editorUploadImage(richTextEditorFiles, function(image_urls){
-                                    richTextEditorFiles = [];
-                                    if(image_urls && image_urls.length){
-                                        new_block.set('text', nativeEditor.getData());
-                                        new_block.set('images', image_urls);
-                                        new_block.set('image', image_urls[0]);
-                                        callback();
-                                    } else {
-                                        callback();
-                                    }
-                                });
-                            } else {
-                                callback();
-                            }
-                        }
-                    ],
-                    function(err){
-                        newBlockView.$('.js-save-block').text('Save').removeClass('u-disabled');
-                        new_block.save({}, {success: function(){
-                            richTextEditor.destroy();
-                            ProjectManager.commands.execute('close:overlay');
-                            ProjectManager.vent.trigger('add:block', new_block);
-                        }});
-                    });
-                }
-            });
-            //Save block
-            newBlockView.on('save:block', function(value){
-                if(value.type == 'button'){
-                    //Button
-                    var new_block = new ProjectManager.Entities.Block({
-                        type: 'button',
-                        text: value.text,
-                        button_url: value.button_url,
-                        button_block: value.button_block,
-                        is_new_tab: value.is_new_tab,
-                        order: order,
-                        course: value.course,
-                        container: value.container
-                    });
-                    new_block.save({}, {success: function(){
-                        ProjectManager.commands.execute('close:overlay');
-                        ProjectManager.vent.trigger('add:block', new_block);
-                    }});
-                } else if(value.type == 'divider'){
-                    //Divider
-                    var new_block = new ProjectManager.Entities.Block({
-                        type: 'divider',
-                        text: value.text,
-                        divider_time: value.divider_time,
-                        divider_type: value.divider_type,
-                        divider_name: value.divider_name,
-                        order: order,
-                        course: value.course,
-                        container: value.container
-                    });
-                    new_block.save({}, {success: function(){
-                        ProjectManager.commands.execute('close:overlay');
-                        ProjectManager.vent.trigger('add:block', new_block);
-                    }});
-                } else if(value.type == 'toggle_list'){
-                    //Toggle list
-                    var new_block = new ProjectManager.Entities.Block({
-                        type: 'toggle_list',
-                        title: value.title,
-                        text: value.text,
-                        order: order,
-                        course: value.course,
-                        container: value.container
-                    });
-                    new_block.save({}, {success: function(){
-                        ProjectManager.vent.trigger('add:block', new_block);
-                        //Clear
-                        newBlockView.$('.block-toggle-title').val('').focus();
-                        newBlockView.$('.block-toggle-text').val('');
-                        //Update block id
-                        newBlockView.$('.js-save-toggle-item').data('block', new_block.get('_id'));
-                        var item = new_block.get('items')[0];
-                        //Add item
-                        newBlockView.$('.toggle-list').append("<div class='one-item one-toggle-item' data-id='"+item._id+"'><div class='item-title'>"+item.title+"</div><div class='item-text'>"+item.text+"</div><span class='remove-item u-delete'>Remove</span></div>");
-                    }});
-                } else if(value.type == 'link'){
-                    //Link
-                    if(!value.image){
-                        var new_block = new ProjectManager.Entities.Block({
-                            type: 'link',
-                            linkdata: value.linkdata,
-                            order: order,
-                            course: value.course,
-                            container: value.container
-                        });
-                        new_block.save({}, {success: function(){
-                            ProjectManager.commands.execute('close:overlay');
-                            ProjectManager.vent.trigger('add:block', new_block);
-                        }});
-                    } else {
-                        var new_block = new ProjectManager.Entities.Block({
-                            type: 'link',
-                            linkdata: value.linkdata,
-                            image: value.image,
-                            order: order,
-                            course: value.course,
-                            container: value.container
-                        });
-                        //Get bound
-                        var image = new Image();
-                        image.src = value.image;
-                        image.onload = function(){
-                            var bound = ( this.height * 400 ) / this.width;
-                            if(bound) {
-                                bound = parseInt(bound);
-                                new_block.set('bound', bound);
-                            }
-                            new_block.save({}, {success: function(){
-                                ProjectManager.commands.execute('close:overlay');
-                                ProjectManager.vent.trigger('add:block', new_block);
-                            }});
-                        };
-                        image.onerror = function(){
-                            new_block.save({}, {success: function(){
-                                ProjectManager.commands.execute('close:overlay');
-                                ProjectManager.vent.trigger('add:block', new_block);
-                            }});
-                        };
-                    }
-                } else if(value.type == 'gif'){
-                    var new_block = new ProjectManager.Entities.Block({
-                        type: 'gif',
-                        gif_embed: value.gif_embed,
-                        gif_url: value.gif_url,
-                        width: value.width,
-                        height: value.height,
-                        order: order,
-                        course: value.course,
-                        container: value.container
-                    });
-                    new_block.save({}, {success: function(){
-                        ProjectManager.commands.execute('close:overlay');
-                        ProjectManager.vent.trigger('add:block', new_block);
-                    }});
-                } else if(value.type == 'mcq'){
-                    //MCQ
-                    var new_block = new ProjectManager.Entities.Block({
-                        type: 'mcq',
-                        title: value.title,
-                        is_multiple: value.is_multiple,
-                        order: order,
-                        course: value.course,
-                        container: value.container
-                    });
-                    new_block.save({}, {success: function(){
-                        ProjectManager.vent.trigger('add:block', new_block);
-                        //Show options
-                        newBlockView.$('.block-mcq-title').attr('readonly', true);
-                        newBlockView.$('.is-multiple-label, .js-save-block').addClass('u-hide');
-                        newBlockView.$('.mcq-new-option, .js-done').removeClass('u-hide');
-                        //Update block id
-                        newBlockView.$('.js-save-mcq-item').data('block', new_block.get('_id'));
-                    }});
-                } else if(value.type == 'fill'){
-                    //Fill in the blanks
-                    var new_block = new ProjectManager.Entities.Block({
-                        type: 'fill',
-                        title: value.title,
-                        text: value.text,
-                        order: order,
-                        course: value.course,
-                        container: value.container
-                    });
-                    new_block.save({}, {success: function(){
-                        ProjectManager.vent.trigger('add:block', new_block);
-                        //Show fill options
-                        newBlockView.$('.block-fill-title').attr('readonly', true);
-                        newBlockView.$('.block-fill-text , .js-save-block').addClass('u-hide');
-                        newBlockView.$('.fill-new-item, .js-done').removeClass('u-hide');
-                        //Update block id
-                        newBlockView.$('.js-save-fill-item').data('block', new_block.get('_id'));
-                    }});
-                } else if(value.type == 'match'){
-                    //Match the following
-                    var new_block = new ProjectManager.Entities.Block({
-                        type: 'match',
-                        title: value.title,
-                        text: value.text,
-                        order: order,
-                        course: value.course,
-                        container: value.container
-                    });
-                    new_block.save({}, {success: function(){
-                        ProjectManager.vent.trigger('add:block', new_block);
-                        //Show match options
-                        newBlockView.$('.block-match-title').attr('readonly', true);
-                        newBlockView.$('.block-match-text , .js-save-block').addClass('u-hide');
-                        newBlockView.$('.match-new-item, .js-done').removeClass('u-hide');
-                        //Update block id
-                        newBlockView.$('.js-save-match-item').data('block', new_block.get('_id'));
-                    }});
-                } else if(value.type == 'response'){
-                    var new_block = new ProjectManager.Entities.Block({
-                        type: 'response',
-                        title: value.title,
-                        text: value.text,
-                        response_type: value.response_type,
-                        order: order,
-                        course: value.course,
-                        container: value.container,
-                        keywords: value.keywords
-                    });
-                    new_block.save({}, {success: function(){
-                        ProjectManager.commands.execute('close:overlay');
-                        ProjectManager.vent.trigger('add:block', new_block);
-                    }});
-                } else if(value.type == 'list'){
-                    //List
-                    var new_block = new ProjectManager.Entities.Block({
-                        type: 'list',
-                        title: value.title,
-                        text: value.text,
-                        order: order,
-                        course: value.course,
-                        container: value.container
-                    });
-                    new_block.save({}, {success: function(){
-                        ProjectManager.vent.trigger('add:block', new_block);
-                        //Show options
-                        newBlockView.$('.block-list-title').attr('readonly', true);
-                        newBlockView.$('.block-list-text, .js-save-block').addClass('u-hide');
-                        newBlockView.$('.list-new-item, .js-done').removeClass('u-hide');
-                        //Update block id
-                        newBlockView.$('.js-save-list-item').data('block', new_block.get('_id'));
-                    }});
-                } else if(value.type == 'container'){
-                    //Container
-                    var new_block = new ProjectManager.Entities.Block({
-                        type: 'container',
-                        title: value.title,
-                        text: value.text,
-                        image: container_image_url,
-                        bound: container_bound,
-                        order: order,
-                        course: value.course,
-                        container: value.container
-                    });
-                    new_block.save({}, {success: function(){
-                        ProjectManager.commands.execute('close:overlay');
-                        ProjectManager.vent.trigger('add:block', new_block);
-                    }});
-                } else if(value.type == 'grid'){
-                    //Grid
-                    var new_block = new ProjectManager.Entities.Block({
-                        type: 'grid',
-                        title: value.title,
-                        text: value.text,
-                        order: order,
-                        course: value.course,
-                        container: value.container
-                    });
-                    new_block.save({}, {success: function(){
-                        ProjectManager.vent.trigger('add:block', new_block);
-                        //Show options
-                        newBlockView.$('.block-grid-title').attr('readonly', true);
-                        newBlockView.$('.block-grid-text, .js-save-block').addClass('u-hide');
-                        newBlockView.$('.grid-new-item, .js-done').removeClass('u-hide');
-                        //Update block id
-                        newBlockView.$('.js-save-grid-item').data('block', new_block.get('_id'));
-                    }});
-                } else if(value.type == 'comic'){
-                    //Comic
-                    var new_block = new ProjectManager.Entities.Block({
-                        type: 'comic',
-                        text: value.text,
-                        image: comic_url,
-                        order: order,
-                        course: value.course,
-                        container: value.container
-                    });
-                    new_block.save({}, {success: function(){
-                        ProjectManager.commands.execute('close:overlay');
-                        ProjectManager.vent.trigger('add:block', new_block);
-                    }});
-                } else if(value.type == 'embed'){
-                    //Embed
-                    var new_block = new ProjectManager.Entities.Block({
-                        type: 'embed',
-                        title: value.title,
-                        embed_code: value.embed_code,
-                        width: value.width,
-                        height: value.height,
-                        order: order,
-                        course: value.course,
-                        container: value.container
-                    });
-                    new_block.save({}, {success: function(){
-                        ProjectManager.commands.execute('close:overlay');
-                        ProjectManager.vent.trigger('add:block', new_block);
-                    }});
-                }
-            });
-            //Add toggle item
-            newBlockView.on('add:toggleItem', function(value){
-                 var new_item = new ProjectManager.Entities.Block({
-                    _id: value.block,
-                    _action: 'add_item'
-                });
-                new_item.set({
-                    title: value.title,
-                    text: value.text
-                });
-                new_item.save({}, {success: function(){
-                    //Clear
-                    newBlockView.$('.block-toggle-title').val('').focus();
-                    newBlockView.$('.block-toggle-text').val('').focus();
-                    //Add item
-                    newBlockView.$('.toggle-list').append("<div class='one-item one-toggle-item' data-id='"+new_item.get('_id')+"'><div class='item-title'>"+new_item.get('title')+"</div><div class='item-text'>"+new_item.get('text')+"</div><span class='remove-item u-delete'>Remove</span></div>");
-                }});
-            });
-            //Remove toggle item
-            newBlockView.on('remove:toggleItem', function(value){
-                var block = new ProjectManager.Entities.Block({
-                    _id: value.block,
-                    _action: 'remove_item'
-                });
-                block.set({
-                    item: value.item
-                });
-                block.save();
-            });
-            //Add MCQ option
-            newBlockView.on('add:mcqOption', function(value){
-                 var new_option = new ProjectManager.Entities.Block({
-                    _id: value.block,
-                    _action: 'add_option'
-                });
-                new_option.set({
-                    text: value.text,
-                    image: mcq_option_image_url,
-                    bound: mcq_option_bound
-                });
-                new_option.save({}, {success: function(){
-                    //Clear
-                    newBlockView.$('.mcq-new-option .option-text').val('').focus();
-                    newBlockView.$('.mcq-new-option #option-image').css('backgroundImage', '');
-                    newBlockView.$('.mcq-new-option #option-image span').html('Optional image');
-                    //Add item
-                    newBlockView.$('.mcq-option-list').append("<div class='one-item one-mcq-item' data-id='"+new_option.get('_id')+"'><div class='item-title'>"+new_option.get('text')+"</div><span class='correct-item'>Set as correct</span><span class='remove-item u-delete'>Remove</span></div>");
-                }});
-            });
-            //Set correct MCQ option
-            newBlockView.on('correct:mcqOption', function(value){
-                var block = new ProjectManager.Entities.Block({
-                    _id: value.block,
-                    _action: 'correct_mcq_option'
-                });
-                block.set({
-                    option: value.option,
-                    is_correct: value.is_correct
-                });
-                block.save({}, {success: function(){
-                    if(value.is_correct){
-                        //Remove other correct option
-                        if(!block.get('is_multiple')){
-                            newBlockView.$('.one-mcq-item .correct-item.selected').removeClass('selected').text('Set as correct');
-                        }
-                        newBlockView.$(".one-mcq-item[data-id='" + value.option + "'] .correct-item").addClass('selected').text('Correct option');
-                    } else {
-                        newBlockView.$(".one-mcq-item[data-id='" + value.option + "'] .correct-item").removeClass('selected').text('Set as correct');
-                    }
-                }});
-            });
-            //Remove MCQ option
-            newBlockView.on('remove:mcqOption', function(value){
-                var block = new ProjectManager.Entities.Block({
-                    _id: value.block,
-                    _action: 'remove_option'
-                });
-                block.set({
-                    option: value.option
-                });
-                block.save();
-            });
-            //Add fill
-            newBlockView.on('add:fill', function(value){
-                 var new_fill = new ProjectManager.Entities.Block({
-                    _id: value.block,
-                    _action: 'add_fill'
-                });
-                new_fill.set({
-                    text: value.text,
-                    is_blank: value.is_blank,
-                    size: value.size,
-                    options: value.options
-                });
-                new_fill.save({}, {success: function(){
-                    //Clear
-                    newBlockView.$('.fill-new-item .fill-text').val('').focus();
-                    newBlockView.$('.fill-new-item .fill-size').val('');
-                    //Add item
-                    if(new_fill.get('text')){
-                        newBlockView.$('.fill-list').append("<div class='one-item one-fill-item' data-id='"+new_fill.get('_id')+"'><div class='item-title'>"+new_fill.get('text')+"</div><span class='remove-item u-delete'>Remove</span></div>");
-                    } else {
-                        newBlockView.$('.fill-list').append("<div class='one-item one-fill-item' data-id='"+new_fill.get('_id')+"'><input placeholder='' type='' autocomplete='' class='blank-fill entity-title'><span class='update-item'>Update</span><span class='remove-item u-delete'>Remove</span></div>");
-                    }
-                }});
-            });
-            //Update fill
-            newBlockView.on('update:fill', function(value){
-                var block = new ProjectManager.Entities.Block({
-                    _id: value.block,
-                    _action: 'edit_fill'
-                });
-                block.set({
-                    fill: value.fill,
-                    keywords: value.keywords
-                });
-                block.save({}, {success: function(){
-                    if(value.keywords){
-                        var keywords = value.keywords.toLowerCase().match(/(?=\S)[^,]+?(?=\s*(,|$))/g).join().replace(/,/g, ", ");
-                        newBlockView.$(".one-fill-item[data-id='" + value.fill + "'] .blank-fill").val(keywords);
-                    }
-                }});
-            });
-            //Remove fill
-            newBlockView.on('remove:fill', function(value){
-                var block = new ProjectManager.Entities.Block({
-                    _id: value.block,
-                    _action: 'remove_fill'
-                });
-                block.set({
-                    fill: value.fill
-                });
-                block.save();
-            });
-            //Add match option
-            newBlockView.on('add:matchOption', function(value){
-                 var new_option = new ProjectManager.Entities.Block({
-                    _id: value.block,
-                    _action: 'add_option'
-                });
-                if(value.is_optionb){
-                    new_option.set({
-                        text: value.text,
-                        image: right_image_url,
-                        bound: right_bound,
-                        is_optionb: value.is_optionb
-                    });
-                } else {
-                    new_option.set({
-                        text: value.text,
-                        image: left_image_url,
-                        bound: left_bound
-                    });
-                }
-                new_option.save({}, {success: function(){
-                    if(value.is_optionb){
-                        newBlockView.$('.option-text-right').val('').focus();
-                        newBlockView.$('#option-image-right').css('backgroundImage', '');
-                        newBlockView.$('#option-image-right span').html('Optional image').removeClass('u-hide');
-                        newBlockView.$('.options-right .js-save-match-item').removeClass('u-hide');
-                        //Add item
-                        newBlockView.$('.match-option-list-right').append("<div class='one-item' data-id='"+new_option.get('_id')+"'><div class='item-text'>"+new_option.get('text')+"</div></div>");
-                    } else {
-                        newBlockView.$('.option-text-left').val('').focus();
-                        newBlockView.$('#option-image-left').css('backgroundImage', '');
-                        newBlockView.$('#option-image-left span').html('Optional image').removeClass('u-hide');
-                        newBlockView.$('.options-left .js-save-match-item').removeClass('u-hide');
-                        //Add item
-                        newBlockView.$('.match-option-list-left').append("<div class='one-item' data-id='"+new_option.get('_id')+"'><div class='item-text'>"+new_option.get('text')+"</div></div>");
-                    }
-                }});
-            });
-            //Add List item
-            newBlockView.on('add:listItem', function(value){
-                 var new_item = new ProjectManager.Entities.Block({
-                    _id: value.block,
-                    _action: 'add_list_item'
-                });
-                new_item.set({
-                    item_type: value.item_type,
-                    text: value.text,
-                    image: list_item_image_url,
-                    bound: list_item_bound,
-                    is_right: value.is_right
-                });
-                new_item.save({}, {success: function(){
-                    //Clear
-                    newBlockView.$('.list-new-item .list-item-text').val('').focus();
-                    newBlockView.$('.list-new-item #list-image').css('backgroundImage', '');
-                    newBlockView.$('.list-new-item #list-image span').html('Optional image');
-                    //Add item
-                    if(new_item.get('text')){
-                        var text = new_item.get('text');
-                    } else {
-                        var text = 'List item';
-                    }
-                    newBlockView.$('.list-item-list').append("<div class='one-item one-list-item' data-id='"+new_item.get('_id')+"'><div class='item-title'>"+text+"</div><span class='remove-item u-delete'>Remove</span></div>");
-                }});
-            });
-            //Remove List item
-            newBlockView.on('remove:listItem', function(value){
-                var block = new ProjectManager.Entities.Block({
-                    _id: value.block,
-                    _action: 'remove_list_item'
-                });
-                block.set({
-                    item: value.item
-                });
-                block.save();
-            });
-            //Add Grid item
-            newBlockView.on('add:gridItem', function(value){
-                 var new_item = new ProjectManager.Entities.Block({
-                    _id: value.block,
-                    _action: 'add_grid_item'
-                });
-                new_item.set({
-                    text: value.text,
-                    image: grid_item_image_url,
-                    bound: grid_item_bound
-                });
-                new_item.save({}, {success: function(){
-                    //Clear
-                    newBlockView.$('.grid-new-item .grid-item-text').val('').focus();
-                    newBlockView.$('.grid-new-item #grid-image').css('backgroundImage', '');
-                    newBlockView.$('.grid-new-item #grid-image span').html('Optional image');
-                    //Add item
-                    if(new_item.get('text')){
-                        var text = new_item.get('text');
-                    } else {
-                        var text = 'Image item';
-                    }
-                    newBlockView.$('.grid-item-list').append("<div class='one-item one-grid-item' data-id='"+new_item.get('_id')+"'><div class='item-title'>"+text+"</div><span class='remove-item u-delete'>Remove</span></div>");
-                }});
-            });
-            //Remove Grid item
-            newBlockView.on('remove:gridItem', function(value){
-                var block = new ProjectManager.Entities.Block({
-                    _id: value.block,
-                    _action: 'remove_grid_item'
-                });
-                block.set({
-                    item: value.item
-                });
-                block.save();
-            });
-            ProjectManager.overlayRegion.show(newBlockView);
+
         },
-        // showEditPizzaOverlay: function(pizza_id){
-        //     $('.overlay').show();
-        //     var fetchingPizza = ProjectManager.request('pizza:entity', pizza_id);
-        //     $.when(fetchingPizza).done(function(pizza){
-        //         console.log(pizza);
-        //         var editPizzaView = new ProjectManager.ProjectApp.EntityViews.EditPizzaView();
-        //         editPizzaView.on('show', function(){
-        //             newBlockView.$('.overlay-box').addClass('edit-box');
-        //             newBlockView.$('.overlay-form .message').html('Edit Pizza Details:');
-        //         });
-        //     });
-        // },
-        showEditBlockOverlay: function(block_id){
+        showEditPizzaOverlay: function(block_id){
             $('.overlay').show();
             var fetchingBlock = ProjectManager.request('pizza:entity', block_id);
             $.when(fetchingBlock).done(function(block){
@@ -3426,7 +2127,8 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                         newBlockView.$('.pizza-price').val(block.get('price'));
                         let path = '../images/site/'+block.get('image');
                         console.log(path);
-                        newBlockView.$('.image img').attr('src', path)
+                        newBlockView.$('.image img').attr('src', path);
+                        newBlockView.$('.image').css({'text-align': 'center'});
                     }, 100);
 
                     newBlockView.$("#uploadFile").on('change',function(e) {
@@ -3542,163 +2244,6 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                     $(".all-blocks .one-block[data-id='" + block.get('_id') + "']").removeClass('u-transparent');
                 });
                 ProjectManager.contentRegion.show(blocksView);
-            });
-        },
-       
-        showSettings: function(){
-            $('.overlay').show();
-            //Fetch current user
-            var fetchingUser = ProjectManager.request('user:entity');
-            $.when(fetchingUser).done(function(user){
-                var settingsView = new ProjectManager.ProjectApp.EntityViews.SettingsView({
-                    model:user
-                });
-                //Show
-                settingsView.on('show', function(){
-                    setTimeout(function(){
-                        settingsView.$('.overlay-box').addClass('animate');
-                    }, 100);
-                    //Hide scroll on main page
-                    ProjectManager.commands.execute('show:overlay');
-                    //Focus
-                    settingsView.$('.profile-name').focus();
-                    //Show about
-                    if(user.get('about')){
-                        var tmp = document.createElement('div');
-                        tmp.innerHTML = user.get('about').replace(/<br\s*[\/]?>/gi, '\n');
-                        var about = tmp.textContent || tmp.innerText || "";
-                        settingsView.$('.profile-about').val(about);
-                    }
-                    //Upload dp
-                    settingsView.$('.dp-upload').each(function(){
-                        /* For each file selected, process and upload */
-                        var form = $(this);
-                        $(this).fileupload({
-                            dropZone: $('#drop-dp'),
-                            url: form.attr('action'), //Grab form's action src
-                            type: 'POST',
-                            autoUpload: true,
-                            dataType: 'xml', //S3's XML response,
-                            add: function(event, data){
-                                //Check file type
-                                var fileType = data.files[0].name.split('.').pop(), allowedtypes = 'jpeg,jpg,png,gif';
-                                if (allowedtypes.indexOf(fileType) < 0) {
-                                    alert('Invalid file type, aborted');
-                                    return false;
-                                }
-                                //Upload through CORS
-                                $.ajax({
-                                    url: '/api/signed',
-                                    type: 'GET',
-                                    dataType: 'json',
-                                    data: {title: data.files[0].name}, // Send filename to /signed for the signed response
-                                    async: false,
-                                    success: function(data){
-                                        // Now that we have our data, we update the form so it contains all
-                                        // the needed data to sign the request
-                                        form.find('input[name=key]').val(data.key);
-                                        form.find('input[name=policy]').val(data.policy);
-                                        form.find('input[name=signature]').val(data.signature);
-                                        form.find('input[name=Content-Type]').val(data.contentType);
-                                    }
-                                });
-                                data.submit();
-                            },
-                            send: function(e, data){
-                                settingsView.$('#drop-dp span').html('Uploading <b>...</b>');
-                                settingsView.$('.js-save').addClass('u-disabled');
-                            },
-                            progress: function(e, data){
-                                var percent = Math.round((e.loaded / e.total) * 100);
-                                settingsView.$('#drop-dp span b').text(percent + '%');
-                            },
-                            fail: function(e, data){
-                                settingsView.$('#drop-dp span').html('Update profile picture');
-                                settingsView.$('.js-save').removeClass('u-disabled');
-                            },
-                            success: function(data){
-                                var image_url = 'https://d1u3z33x3g234l.cloudfront.net/' +  form.find('input[name=key]').val();
-                                image_url = encodeURI(image_url);
-                                //Update User
-                                var user = new ProjectManager.Entities.User();
-                                user.set({
-                                    dp: image_url
-                                });
-                                user.save({}, {success: function(){
-                                    //Show save button
-                                    settingsView.$('#drop-dp span').addClass('u-hide');
-                                    settingsView.$('#drop-dp').css('backgroundImage', 'url('+image_url+')');
-                                    settingsView.$('.js-save').removeClass('u-disabled');
-                                }});
-                            }
-                        });
-                    });
-                    //Show chosen on touch devices
-                    if(!$('html').hasClass('touchevents')){
-                        //Pre-populate gender and country
-                        if(user.get('sex')) settingsView.$(".select-gender option[value="+user.get('sex')+"]").prop('selected', true);
-                        if(user.get('country')) settingsView.$(".select-country option[value='"+user.get('country')+"']").prop('selected', true);
-                        //Pre-populate theme and layout
-                        if(user.get('theme')) settingsView.$(".select-theme option[value="+user.get('theme')+"]").prop('selected', true);
-                        if(user.get('layout')) settingsView.$(".select-layout option[value="+user.get('layout')+"]").prop('selected', true);
-                        //Add chosen to dropdown
-                        settingsView.$('.select-gender').chosen({
-                            width: "400px",
-                            disable_search_threshold: 13
-                        });
-                        settingsView.$('.select-country').chosen({
-                            width: "400px",
-                            disable_search_threshold: 13
-                        });
-                        settingsView.$('.select-theme').chosen({
-                            width: "400px",
-                            disable_search_threshold: 13
-                        });
-                        settingsView.$('.select-layout').chosen({
-                            width: "400px",
-                            disable_search_threshold: 13
-                        });
-                    } else {
-                        settingsView.$('.select-gender > option:first-child').remove();
-                        settingsView.$('.select-country > option:first-child').remove();
-                        settingsView.$('.select-gender').prepend("<option value='' disabled selected>Gender</option>").val('');
-                        settingsView.$('.select-country').prepend("<option value='' disabled selected>Country</option>").val('');
-                        //Pre-populate gender and country
-                        if(user.get('sex')) settingsView.$(".select-gender option[value="+user.get('sex')+"]").prop('selected', true);
-                        if(user.get('country')) settingsView.$(".select-country option[value='"+user.get('country')+"']").prop('selected', true);
-                        //Pre-populate theme and layout
-                        if(user.get('theme')) settingsView.$(".select-theme option[value="+user.get('theme')+"]").prop('selected', true);
-                        if(user.get('layout')) settingsView.$(".select-layout option[value="+user.get('layout')+"]").prop('selected', true);
-                    }
-                });
-                //Update profile
-                settingsView.on('update:profile', function(value){
-                    var user = new ProjectManager.Entities.User();
-                    user.set({
-                        name: value.name,
-                        about: value.about,
-                        job: {
-                            title: value.job_title,
-                            org: value.job_org
-                        },
-                        country: value.country,
-                        city: value.city,
-                        sex: value.sex,
-                        phone: value.phone,
-                        theme: value.theme,
-                        layout: value.layout,
-                        oldpwd: value.oldpwd,
-                        newpwd: value.newpwd
-                    });
-                    user.save({}, {success: function(){
-                        ProjectManager.commands.execute('close:overlay');
-                        //Update theme and layout
-                        if(value.theme != $('.pageWrap').data('theme') || value.layout != $('.pageWrap').data('layout')){
-                            location.reload();
-                        }
-                    }});
-                });
-                ProjectManager.overlayRegion.show(settingsView);
             });
         },
     };
