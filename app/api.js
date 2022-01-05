@@ -39,7 +39,7 @@ module.exports = function(app, passport, io){
      app.put('/api/pizza/:_id', isLoggedIn, _updatePizza);
      app.delete('/api/pizza/:_id', isLoggedIn, _deletePizza);
      app.post('/api/order', isLoggedIn, _orderPizza);
-     
+     app.get('/api/order/:_id', isLoggedIn,  _getOrderByIdOrSlug);
 
       /* -----------------Public Pizza Api ------------------ */
       app.get('/api/public/pizza', _getPublicPizza);
@@ -47,7 +47,7 @@ module.exports = function(app, passport, io){
       app.post('/api/cart', _addToCart);
       app.get('/api/cart', _getCartItems);
       app.get('/api/customer/orders', isLoggedIn, _getCustomerOrders);
-      app.get('/api/admin/orders', _getAdminOrders);
+      app.get('/api/admin/orders', isLoggedIn, _getAdminOrders);
       app.post('/api/sendEmail', _sendEmail);
       app.post('/api/updatePassword', _updatePassword);
 
@@ -152,11 +152,38 @@ var _addToCart = function(req, res) {
     });
 }
 
+var _getOrderByIdOrSlug = async function(req, res) {
+    console.log('****getOrderByIdOrSlug****')
+    var query;
+    if(req.params._id.match(/^[0-9a-fA-F]{24}$/)){
+        query = {
+            _id: req.params._id
+        }
+    } else {
+        query = {
+            slug: req.params._id
+        }
+    }
+    await Order.findOne(query, function(err, order){
+            if(!order){
+                res.send(err);
+            }
+            let obj = [];
+            for(let i of Object.values(order.items)){
+                let obj1 = {};
+                obj1.item = i.item;
+                obj1.item.qty = i.qty;
+                obj.push(obj1);
+            }
+            res.status(200).send({items: obj});
+    });
+}
+
 var _getCartItems = function(req, res) {
     // console.log('get cart items')
     let obj = [];
     
-    // console.log('session cart', req.session.cart);
+    console.log('session cart', req.session.cart);
     
     for(let i of Object.values(req.session.cart.items)){
         let obj1 = {};
@@ -198,11 +225,65 @@ var _getCustomerOrders = async function(req, res) {
 
 var _getAdminOrders = async function(req, res) {
     console.log('getAdminOrders')
+    var data;
     try{
-        Order.find({ status: {$ne: 'completed'}}, 
+        await Order.find({ status: {$ne: 'completed'}}, 
         null,
         {sort: { 'createdAt': -1}}).populate('customerId','-password').exec((error, orders)=> {
-            res.status(200).json(orders);
+            // console.log('orders', orders)
+            
+            if (Object.prototype.hasOwnProperty.call(req.query, "start")) {
+                const columns = ["srno", "orderId", "customerName", "address", "status", "placedAt"];
+                const columnStart = parseInt(req.query.start);
+                // console.log('*****columnStart****', columnStart)
+                const columnLength = parseInt(req.query.length);
+                // console.log('*****columnLength****', columnLength)
+                const showPage = columnStart / columnLength + 1;
+                const sortColumn = req.query.order[0].column;
+                const sortDirection = req.query.order[0].dir == 'asc'? 1 : -1;
+                const sortCriteria = {};
+                sortCriteria[columns[sortColumn]] = sortDirection;
+                var searchStr = req.query.search;
+                // console.log('***searchStr***',searchStr);
+                if(searchStr.value !== ""){
+                    var regex = new RegExp(searchStr.value, "i");
+                    searchStr = { $or: [{'slug':regex },{'status': regex},{'address': regex }] };
+                }else{
+                    searchStr={};
+                }
+                var recordsTotal = 0;
+                var recordsFiltered=0;
+                // console.log('***searchStr***',searchStr);
+                Order.count({}, function(err, c){
+                    recordsTotal = c;
+                    // console.log('***c***',c);
+                    Order.count(searchStr, function(err, c){
+                        recordsFiltered=c;
+                        // console.log('***c***',c);
+                        // console.log('req.body.start',req.query.start);
+                        // console.log('req.body.length',req.query.length);
+                        let skip = columnLength * (showPage - 1);
+                        let limit = parseInt(columnLength, 10);
+                        Order.find(searchStr).skip(skip).limit(limit).sort(sortCriteria).populate('customerId','-password').exec((err, results) => {
+                            if (err) {
+                                console.log('error while getting results'+err);
+                                return;
+                            }
+                            data = JSON.stringify({
+                                "draw": req.query.draw,
+                                "recordsFiltered": recordsFiltered,
+                                "recordsTotal": recordsTotal,
+                                "data": results
+                            });
+                            // console.log(data)
+                            res.send(data);
+                        })
+                       
+                    })
+                })
+            }
+            // res.send(data);
+            // res.status(200).json({data: data});
         });
     }catch(error){
         res.status(500).json({
@@ -210,6 +291,7 @@ var _getAdminOrders = async function(req, res) {
         })
     }
 }
+
 
 var _sendEmail = async function(req, res) {
     let data = await User.findOne({email: req.body.email});
@@ -372,6 +454,7 @@ var _getPizzaByIdOrSlug = function(req, res) {
     
 }
 
+
 var _updatePizza = function(req, res){
     console.log('update pizza')
     var query = { _id: req.params._id };
@@ -426,12 +509,15 @@ var _orderPizza = function(req, res){
     if(!contactNumber || !address){
         res.json({msg : "Error, All fields are required"});
     }
-
+    //Slug
+    var key = shortid.generate();
+    var slug = key + '-' + getSlug(contactNumber);
     var new_order = new Order({
         customerId: req.user._id,
         items: req.session.cart.items,
         contactNumber: contactNumber,
-        address: address
+        address: address,
+        slug: slug
     });
 
     try{

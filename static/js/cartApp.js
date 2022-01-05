@@ -239,6 +239,7 @@ CartManager.module('CartApp.EntityViews', function (EntityViews, CartManager, Ba
         className: 'one-block',
         template: 'blockOneTemplate',
         initialize: function(){
+            console.log(this.model);
             $('#cart-counter').text(totalQty);
             this.$el.attr('data-id', this.model.get('_id'));
             //Theme and Size

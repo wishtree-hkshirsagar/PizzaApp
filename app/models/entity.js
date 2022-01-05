@@ -23,6 +23,7 @@ var PizzaSchema = new Schema({
 
 var OrderSchema = new Schema({
     customerId: {type: ObjectId, ref: 'User', require: true},
+    slug: {type: String, index: true, unique: true},
     items: {type: Object, require: true},
     contactNumber: {type: String, require: true},
     address: {type: String, required: true},

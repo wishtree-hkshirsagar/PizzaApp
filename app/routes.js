@@ -24,6 +24,7 @@ module.exports = function(app, passport) {
             if(req.isAuthenticated()){
                 res.redirect('/');
             } else {
+                console.log('public pizzas')
                 res.render('site/pizzas', {
                     errorMessage: req.flash('errorMessage'),
                     successMessage: req.flash('successMessage')
@@ -65,9 +66,9 @@ module.exports = function(app, passport) {
         },
         home: function(req, res){
             console.log('home')
+            console.log('***req params***',req.params)
             if(req.isAuthenticated()){
                 //Render
-                //If invited
                 if(req.user.type == 'admin'){
                     console.log('inside admin')
                     res.render('app/admin', {
@@ -75,11 +76,21 @@ module.exports = function(app, passport) {
                         email: req.user.email,
                         username: req.user.username,
                         initials: req.user.initials,
-                        // dp: req.user.dp.s,
                         type: req.user.type,
-                        // theme: req.user.theme,
-                        // page_layout: req.user.layout
+                        
                     });
+                } else if(req.user.type == 'admin' && (req.url == '/admin/orders' || req.url == '/order/' + req.params.slug)){
+                    console.log('else if')
+                    res.render('app/admin', {
+                        userid: req.user.id,
+                        email: req.user.email,
+                        username: req.user.username,
+                        initials: req.user.initials,
+                        type: req.user.type
+                        
+                    });
+                } else if(req.user.type == 'customer' && req.url == '/admin/orders'){
+                    res.redirect('/');
                 } else {
                     console.log(req.user);
                     res.render('app/index', {
@@ -87,15 +98,12 @@ module.exports = function(app, passport) {
                         email: req.user.email,
                         username: req.user.username,
                         initials: req.user.initials,
-                        // dp: req.user.dp.s,
-                        type: req.user.type,
-                        // theme: req.user.theme,
-                        // page_layout: req.user.layout
+                        type: req.user.type
                     });
                 }
             } else if(req.url == '/'){
+                console.log('home page')
                 req.session.redirectURL = null;
-                //Send
                 res.render('site/index', {
                     errorMessage: req.flash('errorMessage'),
                     successMessage: req.flash('successMessage')
@@ -110,7 +118,6 @@ module.exports = function(app, passport) {
                         res.redirect('/');
                     } else {
                         req.session.redirectURL = req.url;
-                        //Send
                         res.render('site/pizzas', {
                             title: pizza.title,
                             slug: 'pizza/' + pizza.slug,
@@ -134,6 +141,7 @@ module.exports = function(app, passport) {
     app.get('/pizza/:slug', siteRoute.home);
     app.get('/customer/orders', siteRoute.order);
     app.get('/admin/orders', siteRoute.home);
+    app.get('/order/:slug', siteRoute.home);
    
     //process the login form
     app.post('/login',

@@ -3613,15 +3613,19 @@ table.dataTable tbody tr, .orders-dashboard{
     border-radius: 4px !important;
     padding: 14px !important;
     margin-bottom: 10px !important;
-    width: auto !important;
+    width: 290px !important;
     border: 2px solid transparent !important;
+}
+
+.dataTables_wrapper .dataTables_filter {
+    float: right;
+    text-align: right;
 }
 
 .show-order{
     cursor: pointer;
 }
 
-.dataTables_wrapper .dataTables_filter {
-    float: right;
-    text-align: right;
+.show-order:hover{
+    color: #f27307;
 }

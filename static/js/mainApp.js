@@ -127,7 +127,8 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
         appRoutes: {
             '': 'publicPizzaView',
             'pizza/:slug': 'pizzaView',
-            'admin/orders': 'adminOrdersView'
+            'admin/orders': 'adminOrdersView',
+            'order/:slug': 'orderView'
         }
     });
     //API functions for each route
@@ -140,7 +141,7 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
             ProjectManager.ProjectApp.EntityController.Controller.showEditPizzaOverlay(pizza_id);
         },
         publicPizzaView: function(){
-            console.log($('.pageWrap').data('type'));
+            console.log('publicPizzaView');
             ProjectManager.ProjectApp.EntityController.Controller.showPizzaHeader($('.pageWrap').data('type'));
             ProjectManager.ProjectApp.EntityController.Controller.showPizzas();
         },
@@ -155,6 +156,11 @@ ProjectManager.module('ProjectApp', function (ProjectApp, ProjectManager, Backbo
             console.log('adminOrdersView')
             ProjectManager.ProjectApp.EntityController.Controller.showPizzaHeader($('.pageWrap').data('type'));
             ProjectManager.ProjectApp.EntityController.Controller.showAllOrders();
+        },
+        orderView: function(order_id){
+            console.log('orderview')
+            ProjectManager.ProjectApp.EntityController.Controller.showPizzaHeader($('.pageWrap').data('type'));
+            ProjectManager.ProjectApp.EntityController.Controller.showOrders(order_id);
         }
     };
     //Triggers to particular views
@@ -240,16 +246,6 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
         },
         model: Entities.Pizza
     });
-    Entities.CourseCollection = Backbone.Collection.extend({
-        initialize: function(models, options){
-            //_type is courses type like public, drafts, archived
-            this._type = options._type;
-        },
-        url: function(){
-            return '/api/courses/' + this._type
-        },
-        model: Entities.Course
-    });
     
     Entities.Block = Backbone.Model.extend({
         initialize: function(options){
@@ -287,11 +283,11 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
         initialize: function(models, options){
             //_id is course id
             this._id = options._id;
-            this._container = options._container;
+            this._action = options._action;
         },
         url: function(){
-            if(this._container){
-                return '/api/blocks/container/' + this._container
+            if(this._action == 'getOrder'){
+                return '/api/order/' + this._id
             } else if(this._id){
                 return '/api/blocks/' + this._id
             } else {
@@ -300,42 +296,8 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
         },
         model: Entities.Block
     });
-    //Message Models and Collection
-    Entities.Message = Backbone.Model.extend({
-        initialize: function(options){
-            this._id = options._id;
-        },
-        url: function(){
-            if(this._id){
-                return '/api/message/' + this._id
-            } else {
-                return '/api/message'
-            }
-        },
-        idAttribute: '_id'
-    });
-    Entities.MessageCollection = Backbone.Collection.extend({
-        url: '/api/messages',
-        model: Entities.Message
-    });
-    //Comment Model
-    Entities.Comment = Backbone.Model.extend({
-        initialize: function(options){
-            this._action = options._action;
-            this._id = options._id;
-        },
-        url: function(){
-            //Get - Edit single comment
-            if(this._action){
-                return '/api/comment/' + this._id + '/' + this._action
-            } else if(this._id){
-                return '/api/comment/' + this._id
-            } else {
-                return '/api/comment'
-            }
-        },
-        idAttribute: '_id'
-    });
+
+
     //User Models and Collection
     Entities.User = Backbone.Model.extend({
         initialize: function(options){
@@ -363,46 +325,9 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
         },
         model: Entities.User
     });
-    //Analysis
-    Entities.Analysis = Backbone.Model.extend({
-        initialize: function(options){
-            if(options) this._type = options._type;
-        },
-        url: function(){
-            if (this._type) {
-                return '/api/analysis/' + this._type
-            }
-        },
-        idAttribute: '_id'
-    });
-    //Link Preview
-    Entities.LinkPreview = Backbone.Model.extend({
-        initialize: function(options){
-            this._url = options._url;
-        },
-        url: function(){
-            if (this._url) {
-                return '/api/embedlink?url=' + this._url
-            }
-        },
-        idAttribute: '_id'
-    });
-    //Insight
-    Entities.Insight = Backbone.Model.extend({
-        initialize: function(options){
-            this._id = options._id;
-            this._type = options._type;
-            this._user = options._user;
-        },
-        url: function(){
-            if(this._user) {
-                return '/api/insight/' + this._id + '/' + this._type + '?user=' + this._user
-            } else {
-                return '/api/insight/' + this._id + '/' + this._type
-            }
-        },
-        idAttribute: '_id'
-    });
+
+
+
     //Search
     Entities.Search = Backbone.Model.extend({
         initialize: function(models, options){
@@ -418,17 +343,7 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
             }
         }
     });
-    //Minimap
-    Entities.Minimap = Backbone.Model.extend({
-        initialize: function(options){
-            //_id is course id
-            this._id = options._id;
-        },
-        url: function(){
-            return '/api/minimap/' + this._id
-        },
-        idAttribute: '_id'
-    });
+
 
     Entities.Orders = Backbone.Model.extend({
         url: function(){
@@ -455,6 +370,19 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
             var course = new Entities.Orders({});
             var defer = $.Deferred();
             course.fetch({
+                success: function(data){
+                    defer.resolve(data);
+                }
+            });
+            return defer.promise();
+        },
+        getOneOrder: function(_id, _action){
+            var blocks = new Entities.BlockCollection([], {
+                _id: _id,
+                _action: _action
+            });
+            var defer = $.Deferred();
+            blocks.fetch({
                 success: function(data){
                     defer.resolve(data);
                 }
@@ -658,6 +586,9 @@ ProjectManager.module('Entities', function (Entities, ProjectManager, Backbone, 
     ProjectManager.reqres.setHandler('cart:entities', function(){
         return API.getCartItems();
     });
+    ProjectManager.reqres.setHandler('order:entity', function(_id, _action){
+        return API.getOneOrder(_id, _action);
+    });
     ProjectManager.reqres.setHandler('block:entity', function(_id){
         return API.getOneBlock(_id);
     });
@@ -791,40 +722,23 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
 
     EntityViews.OrdersDatatable = Marionette.ItemView.extend({
         template: 'allOrdersTemplate',
+        initialize: function(){
+           console.log(this.model);
+        },
         events: {
             'click .js-show-order': 'showOrder',
         },
-        showOrder: function(){
-            console.log('****showOrder')
+        showOrder: function(ev){
+            // ev.preventDefault();
+            // ProjectManager.vent.trigger('pizza:show', this.model.get('slug'));
+            console.log('****showOrder');
+            // console.log($(this).attr("data-slug"));
+            console.log($(this).attr('href')); 
+
         }
 
     });
 
-    //Course item view
-    EntityViews.CourseItemView = Marionette.ItemView.extend({
-        tagName: 'a',
-        className: 'one-course',
-        template: 'courseOneTemplate',
-        initialize: function(){
-            this.$el.attr('href', '/course/' + this.model.get('slug'));
-            this.$el.attr('data-slug', this.model.get('slug'));
-        },
-        events: {
-            'click': 'getOneCourse'
-        },
-        getOneCourse: function(ev){
-            if(ev.metaKey || ev.ctrlKey) return;
-            ev.preventDefault();
-            //Get type of courses
-            if(!$('.draft-courses').hasClass('u-hide')){
-                ProjectManager.vent.trigger('course:show', this.model.get('slug'), 'drafts');
-            } else if(!$('.archived-courses').hasClass('u-hide')){
-                ProjectManager.vent.trigger('course:show', this.model.get('slug'), 'archived');
-            } else {
-                ProjectManager.vent.trigger('course:show', this.model.get('slug'), 'public');
-            }
-        }
-    });
     //Empty blocks view
     EntityViews.EmptyBlocksView = Marionette.ItemView.extend({
         tagName: 'div',
@@ -899,6 +813,7 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
         className: 'one-block u-transparent',
         template: 'blockOneTemplate',
         initialize: function(){
+            console.log(this.model)
             if(this.model.get('item')){
                 $('#cart-counter').text(totalQty);
             }
@@ -1068,7 +983,6 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
             ProjectManager.overlayRegion.show(newPizzaView);
         },
         showPizzaHeader: function(type){
-            console.log(type)
             var pizzaHeaderView = new ProjectManager.ProjectApp.EntityViews.PizzaHeaderView();
             //show
             pizzaHeaderView.on('show', function(){
@@ -1077,6 +991,7 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                    if(location.href.includes('/admin/orders')){
                        pizzaHeaderView.$('.js-add-pizza').addClass('u-hide');
                    }
+                   pizzaHeaderView.$('.link-cart').addClass('u-hide');
                 } else {
                     pizzaHeaderView.$('.public-view').removeClass('u-hide');
                 }
@@ -1134,55 +1049,42 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
             var loadingView = new ProjectManager.Common.Views.Loading();
             ProjectManager.contentRegion.show(loadingView);
 
-            var fetchingOrders = ProjectManager.request('order:entities');
+            var fetchingOrders = ProjectManager.request('pizza:entities');
             $.when(fetchingOrders).done(function (orders) {
                 var ordersDatatable = new ProjectManager.ProjectApp.EntityViews.OrdersDatatable({
                     model: orders
                 });
-
-                console.log(orders)
+                // console.log(orders);
                 ordersDatatable.on('show', function () {
-                    
                     datatable = $('#orderDatatable').DataTable({
+                        paging: true,
+                        pageLength: 10,
                         procesing: true,
                         serverSide: true,
-                        order: [[5, 'desc']],
+                        order: [[2, 'desc']],
                         ajax: {
                             url: "/api/admin/orders",
                             dataType: 'json',
-                            dataSrc: '',
+                            dataSrc: 'data',
                             error: function () {
                                 $('#orderDatatable tbody').html('<tr class="odd"><td valign="top" colspan="5" class="dataTables_empty">No data available in table</td></tr>')
                             }
                         },
                         columns: [
                             {
-                                data: null,
+                                data: 'null',
                                 sortable: false,
                                 class: 'dt-index',
                                 render: function (data, type, row, meta) {
+                    
                                     let index = datatable.page.info().page * 10 + meta.row + 1;
                                     return index;
                                 }
                             },
                             {
                                 data: null, class: 'order-dt-orders', render: function (data) {
-                                    
-                                    // let obj = [];
-                                    // for(let i of Object.values(data.items)){
-                                    //     let obj1 = {};
-                                    //     obj1.item = i.item;
-                                    //     obj1.item.qty = i.qty;
-                                    //     obj.push(obj1);
-                                    // }
-                                    // // console.log(obj)
-                                    // // obj = JSON.stringify(obj);
-                                    // // obj = JSON.parse(obj);
-                                    // // console.log(obj.item)
-                                    // obj.forEach((n,i)=> {
-                                    //     return (n.item)
-                                    // });
-                                    return '<a class="show-order js-show-order">' + data._id + '</a>';
+
+                                    return '<a class="show-order js-show-order" href="/order/' + data.slug + '">'+ data.slug +'</a>';
                                 }
                             },
                             {
@@ -1212,7 +1114,7 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                         ],
                         language: {
                             search: "",
-                            searchPlaceholder: "Search Pizza By Title",
+                            searchPlaceholder: "Search Pizza By OrderID, Address, Status",
                             class: 'entity-title',
                             emptyTable: 'No records found!'
                         }
@@ -1223,6 +1125,29 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                 ProjectManager.contentRegion.show(ordersDatatable);
             });
 
+        },
+        showOrders: function(order_id){
+            console.log('showOrders')
+            var loadingView = new ProjectManager.Common.Views.Loading();
+            ProjectManager.contentRegion.show(loadingView);
+            var fetchingCustomerOrders = ProjectManager.request('order:entity', order_id, 'getOrder');
+            // console.log(fetchingCustomerOrders);
+            $.when(fetchingCustomerOrders).done(function(orders){
+                var blocksView = new ProjectManager.ProjectApp.EntityViews.BlocksView({
+                    collection: new Backbone.Collection(orders.models[0].get('items'))
+                });
+                console.log(orders.models[0].get('items'));
+
+                blocksView.on('show', function(){
+                    //Show all blocks
+                    blocksView.$('.all-blocks').removeClass('u-hide');
+                    blocksView.$('.action-edit-block').addClass('u-hide');
+                    blocksView.$('.item-price').addClass('u-hide');
+                    blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
+
+                });
+                ProjectManager.contentRegion.show(blocksView);
+            });
         },
         showEditPizzaOverlay: function(block_id){
             $('.overlay').show();

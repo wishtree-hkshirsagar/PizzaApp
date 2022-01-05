@@ -753,7 +753,6 @@ PublicManager.module('PublicApp.EntityController', function (EntityController, P
                     
                     pizzaHeaderView.$('.header-title').data('id', pizza.get('_id'));
                     pizzaHeaderView.$('.header-title').data('slug', pizza.get('slug'));
-
                     PublicManager.vent.trigger('blocks:show', pizza.get('_id'));
 
                     //Show header title
@@ -765,6 +764,7 @@ PublicManager.module('PublicApp.EntityController', function (EntityController, P
             });
         },
         showBlocks: function(pizza_id){
+            console.log('showBlocks')
             //Show loading page
             console.log(pizza_id);
             var loadingView = new PublicManager.Common.Views.Loading();
@@ -781,7 +781,8 @@ PublicManager.module('PublicApp.EntityController', function (EntityController, P
                     //Show all blocks
                     blocksView.$('.all-blocks').removeClass('u-hide');
                     blocksView.$('.action-edit-block').addClass('u-hide');
-
+                    blocksView.$('.block-price').removeClass('u-hide');
+                    blocksView.$('.add-cart').removeClass('u-hide');
                 //Show blocks
                 if($('.pageWrap').data('layout') == 'grid' && $('body').width() > 1100){
                     var totalWidth = parseInt(blocksView.$('.all-blocks').css('width'));
