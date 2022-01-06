@@ -16,6 +16,7 @@ var app_root = __dirname,
     mongoStore = require('connect-mongo')(session),
     dotenv = require('dotenv'),
     configDB = require('./config/database');
+
 var dotenv = require('dotenv');
 dotenv.config();
 
@@ -40,6 +41,7 @@ var sessionStore = new mongoStore({
     url: urlDB,
     collection: 'sessions'
 });
+
 
 var sessionMiddleware = session({
     name: 'pizza.sid',
@@ -77,18 +79,12 @@ app.use(passport.authenticate('remember-me'));
 
 app.use(flash());
 var server = require('http').Server(app);
-var io = require('socket.io')(server);
-io.use(function(socket, next){
-    sessionMiddleware(socket.request, socket.request.res, next);
-});
-
-
 
 server.listen(app.get('port'));
 
 require('./app/routes.js')(app, passport);
 
-require('./app/api.js')(app, passport, io);
+require('./app/api.js')(app, passport);
 
 app.use(function(req,res,next){
     var err = new Error('Not Found');

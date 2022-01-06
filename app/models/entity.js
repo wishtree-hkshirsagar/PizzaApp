@@ -17,9 +17,9 @@ var PizzaSchema = new Schema({
     image: {
         type: String,
     },
-    createdAt: {type: Date, default: Date.now},
-    updated_at: Date,
-});
+    // createdAt: {type: Date, default: Date.now},
+    // updated_at: Date,
+},{timestamps: true});
 
 var OrderSchema = new Schema({
     customerId: {type: ObjectId, ref: 'User', require: true},
@@ -29,15 +29,16 @@ var OrderSchema = new Schema({
     address: {type: String, required: true},
     paymentType: {type: String, default: 'COD'},
     status: {type: String, default: 'order_placed'},
-    createdAt: {type: Date, default: Date.now},
-});
+    // createdAt: {type: Date, default: Date.now},
+    // updated_at: Date,
+},{timestamps: true});
 
 var OtpSchema = new Schema({
     email: {type: String, require: true},
     otp: {type: String},
     expireIn: {type: Number},
-    createdAt: {type: Date, default: Date.now}
-});
+    // createdAt: {type: Date, default: Date.now}
+}, {timestamps: true});
 
 
 module.exports.Pizza = mongoose.model('Pizza', PizzaSchema);

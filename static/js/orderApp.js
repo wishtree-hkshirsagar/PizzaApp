@@ -74,7 +74,8 @@ OrderManager.commands.setHandler('close:overlay', function(view){
 OrderManager.module('OrderApp', function (OrderApp, OrderManager, Backbone, Marionette, $, _) {
     OrderApp.Router = Marionette.AppRouter.extend({
         appRoutes: {
-            'customer/orders': 'orderView'
+            'customer/orders': 'orderView',
+            'customer/orders/:slug': 'orderStatusView'
         }
     });
 
@@ -83,6 +84,11 @@ OrderManager.module('OrderApp', function (OrderApp, OrderManager, Backbone, Mari
             console.log('order view')
             OrderManager.OrderApp.EntityController.Controller.showOrderHeader($('.pageWrap').data('type'));
             OrderManager.OrderApp.EntityController.Controller.showOrders();
+        },
+        orderStatusView: function(order_id){
+            console.log('order status view')
+            OrderManager.OrderApp.EntityController.Controller.showOrderHeader('order status');
+            OrderManager.OrderApp.EntityController.Controller.showOrderStatus(order_id);
         }
     };
 
@@ -93,6 +99,18 @@ OrderManager.module('OrderApp', function (OrderApp, OrderManager, Backbone, Mari
 });
 
 OrderManager.module('Entities', function (Entities, OrderManager, Backbone, Marionette, $, _) {
+            
+            Entities.Order = Backbone.Model.extend({
+                initialize: function(options){
+                    this._id = options._id;
+                },
+                url: function(){
+                    return '/api/customer/orders/' + this._id;
+                },
+                idAttribute: '_id'
+            });
+
+
 
             //Block Collection
             Entities.BlockCollection = Backbone.Collection.extend({
@@ -100,8 +118,13 @@ OrderManager.module('Entities', function (Entities, OrderManager, Backbone, Mari
                     this._id = options._id;
                 },
                 url: function(){
-                  
-                    return '/api/customer/orders'
+                    if(this._id){
+                        console.log('inside if')
+                        return '/api/customer/orders/' + this._id;
+                    }else{
+                        console.log('else')
+                        return '/api/customer/orders'
+                    }
                    
                 }
             });
@@ -118,10 +141,27 @@ OrderManager.module('Entities', function (Entities, OrderManager, Backbone, Mari
                     });
                     return defer.promise();
                 },
+
+                getOneOrder: function(_id){
+                    var order = new Entities.Order({
+                        _id: _id
+                    });
+                    var defer = $.Deferred();
+                    order.fetch({
+                        success: function(data){
+                            defer.resolve(data);
+                        }
+                    });
+                    return defer.promise();
+                },
             };
 
             OrderManager.reqres.setHandler('order:entities', function(){
                 return API.getOrderItems();
+            });
+
+            OrderManager.reqres.setHandler('order:entity', function(_id){
+                return API.getOneOrder(_id);
             });
 });
 
@@ -137,6 +177,15 @@ OrderManager.module('Common.Views', function(Views,OrderManager, Backbone, Mario
 
 //Views of the application
 OrderManager.module('OrderApp.EntityViews', function (EntityViews, OrderManager, Backbone, Marionette, $, _) {
+
+    EntityViews.OrderStatus = Marionette.ItemView.extend({
+        className: 'sectionBox',
+        template: 'showOrderStatusTemplate',
+        initialize: function(){
+            console.log(this.model);
+        }
+    });
+    
     EntityViews.OrderHeaderView = Marionette.ItemView.extend({
         className: 'sectionBox',
         template: 'pizzasHeaderTemplate',
@@ -155,29 +204,7 @@ OrderManager.module('OrderApp.EntityViews', function (EntityViews, OrderManager,
         initialize: function(){
             console.log(this.model);
             this.$el.attr('data-id', this.model.get('_id'));
-            //Theme and Size
-            if(this.model.get('size')){
-                var width = this.model.get('size').width;
-                var margin = this.model.get('size').margin;
-                if(margin){
-                    this.$el.css({'width': 'calc('+ width +'% - '+ margin +'px)' });
-                    this.$el.css({'margin-right': margin + 'px'});
-                } else {
-                    this.$el.css({'width': width + '%'});
-                }
-            } else {
-                this.$el.width('100%');
-            }
-            if(this.model.get('theme')){
-                this.$el.addClass(this.model.get('theme')).addClass('themed-block');
-            }
-            if(this.model.get('art') && this.model.get('art').m){
-                this.$el.addClass('with-art');
-            }
-            //Comic
-            if(this.model.get('type') == 'comic'){
-                this.$el.addClass('is-comic');
-            }
+            this.$el.width('100%');
         }
     });
 
@@ -201,10 +228,14 @@ OrderManager.module('OrderApp.EntityController', function (EntityController, Ord
             var orderHeaderView = new OrderManager.OrderApp.EntityViews.OrderHeaderView({
                 collection: orders
             });
-            console.log(orders);
+            // console.log(orders);
             orderHeaderView.on('show', function(){
                 if(type == 'admin'){
                     orderHeaderView.$('.admin-view').removeClass('u-hide');
+                } else if (type == 'order status'){
+                    orderHeaderView.$('.all-orders').removeClass('u-hide');
+                    orderHeaderView.$('.public-view').removeClass('u-hide');
+                    orderHeaderView.$('.all-orders h1').text('Track delivery status')
                 } else {
                     orderHeaderView.$('.all-orders').removeClass('u-hide');
                     orderHeaderView.$('.public-view').removeClass('u-hide');
@@ -235,30 +266,65 @@ OrderManager.module('OrderApp.EntityController', function (EntityController, Ord
                     // console.log(time)
                     let now = new Date(time);
                     blocksView.$('.order-date').text(moment.utc(now).format('DD-MMM-YYYY HH:mm:ss'));
-                //Show blocks
-                if($('.pageWrap').data('layout') == 'grid' && $('body').width() > 1100){
-                    var totalWidth = parseInt(blocksView.$('.all-blocks').css('width'));
-                    var start_index;
-                    var heights = [];
-                    blocksView.$('.all-blocks .one-block').each(function(i, obj) {
-                        if(parseInt($(this).css('width')) != totalWidth){
-                            if(!start_index) start_index = i;
-                            heights.push(parseInt($(this).css('height')));
-                        } else if(heights.length) {
-                            var max_height = Math.max(...heights);
-                            for(var j=start_index; j<i; j++){
-                                blocksView.$('.all-blocks .one-block').eq(j).css('height', max_height + 'px');
-                            }
-                            start_index = '';
-                            heights = [];
-                        }
-                    });
                     blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
-                } else {
-                    blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
-                }
                 });
                 OrderManager.contentRegion.show(blocksView);
+            });
+        },
+
+        showOrderStatus: function(order_id){
+            var loadingView = new OrderManager.Common.Views.Loading();
+            OrderManager.contentRegion.show(loadingView);
+            console.log('show order status')
+            var fetchingOrderStatus = OrderManager.request('order:entity', order_id);
+            $.when(fetchingOrderStatus).done(function(order){
+                var orderStatusView = new OrderManager.OrderApp.EntityViews.OrderStatus({
+                    model: order
+                });
+                console.log(order);
+                console.log(order.get('order').updatedAt);
+                orderStatusView.on('show', function(){
+                    let stepCompleted = true;
+                    orderStatusView.$('.order-input').val(JSON.stringify(order.get('order')));
+                    let orderStatus = orderStatusView.$('.order-input').val();
+                    orderStatus = JSON.parse(orderStatus)
+                    let time = document.createElement('small');
+                    console.log('hidden input', orderStatus);
+                    let allStatus = orderStatusView.$('.status_line').toArray();
+                    // console.log(allStatus)
+                    allStatus.forEach((status) => {
+                        let data = status.dataset.status;
+                        // console.log(data);
+                        if(stepCompleted){
+                            status.classList.add('step-completed');
+                        }
+
+                        if(data == order.get('order').status){
+                            stepCompleted = false;
+                            time.innerText = moment(order.get('order').updatedAt).format('hh:mm A');
+                            status.appendChild(time);
+                            if(status.nextElementSibling){
+                                status.nextElementSibling.classList.add('current')
+                            }
+                        }
+                    }); 
+                    
+                    // let socket = io();
+                    // if(order){
+                    //     socket.emit('join', `order_${order.get('_id')}`)
+                    // }
+
+                    // socket.on('orderUpdated', (data) => {
+                    //     console.log('7879')
+                    //     const updatedOrder = {...order}
+                    //     updatedOrder.updatedAt = moment().format()
+                    //     updatedOrder.status = data.status
+                    //     OrderManager.vent.trigger('order:entity', data.id);
+                    // });
+                });
+                
+                
+                OrderManager.contentRegion.show(orderStatusView);
             });
         }
     }

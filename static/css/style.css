@@ -68,7 +68,7 @@ input, a, textarea{
 input[type='checkbox'] {
     cursor: pointer;
 }
-select{
+select, .orderType{
     width: 100%;
     height: 51px;
     border-radius: 4px;
@@ -78,6 +78,13 @@ select{
     font-size: 16px;
     margin-bottom: 10px;
     -webkit-appearance: none;
+}
+
+.orderType{
+    color: #000 !important;
+    padding-left: 8px !important;
+    background-color: #fff !important;
+    -webkit-appearance: auto !important;
 }
 /* Utilities */
 .u-hide{
@@ -3367,7 +3374,7 @@ option {
     color: black;
 }
 
-label[name=wrap-pizzaType]:after{
+label[name=wrap-pizzaType]:after, label[name=wrap-orderType]:after{
     content: "\25BE";
     color: gray;
     position: absolute;
@@ -3378,6 +3385,11 @@ label[name=wrap-pizzaType]:after{
     height: 100%;
     pointer-events: none;
     transform: scale(1,0.6);
+}
+
+label[name="wrap-orderType"]:after{
+    right: 108px !important;
+    top: 58px !important;
 }
 
 label[name=wrap-pizzaType-edit]:after{
@@ -3628,4 +3640,127 @@ table.dataTable tbody tr, .orders-dashboard{
 
 .show-order:hover{
     color: #f27307;
+}
+
+.order-id{
+    text-align: center;
+    color: #f27307;
+    margin-top: -55px;
+}
+
+
+.status-box{
+    background: #fff;
+}
+
+.status-box ul{
+    list-style: none;
+    font-size: 20px;
+    margin-left: 200px;
+    line-height: 4.4em;
+}
+
+.status-box ul li span{
+    position: relative;
+    padding-left: 20px;
+}
+
+.status-box ul li span:after{
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    background: #232323;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 1px 10px #fff;
+}
+
+/* Icons */
+
+.status-box ul li span:before{
+    
+    font-family: 'Line Awesome Free';
+    font-size: 46px;
+    font-weight: 600;
+    position: absolute;
+    left: -95px;
+    top: 50%;
+    transform: translateY(-52%);
+    color: inherit;
+}
+
+.status-box ul li:nth-child(1) span:before {
+    content: "\f46c";
+}
+
+.status-box ul li:nth-child(2) span:before {
+    content: "\f560";
+}
+
+.status-box ul li:nth-child(3) span:before {
+    content: "\f818";
+}
+
+.status-box ul li:nth-child(4) span:before {
+    content: "\f0d1";
+}
+
+.status-box ul li:nth-child(5) span:before {
+    content: "\f59a";
+}
+
+.status-box ul li{
+    position: relative;
+}
+
+.status-box ul li:before{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -6px;
+    width: 2px;
+    height: 100%;
+    background: #000;
+    margin-top: 30px;
+}
+
+.status-box ul li:last-child:after{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -6px;
+    width: 2px;
+    height: 100%;
+    background: #fff;
+    margin-top: 50px;
+}
+
+.status-box ul li.step-completed:before{
+    background: #d6d3d3;
+}
+
+.status-box ul li.step-completed span:after{
+    background: #d6d3d3;
+}
+
+.status-box ul li.step-completed span{
+    color: #d6d3d3;
+}
+
+.status-box ul li.current span{
+    color: #e8712d;
+}
+
+.status-box ul li.current span:after{
+    background: #e8712d;
+}
+
+
+.status-box ul li small {
+    float: right;
+    font-size: 14px;
+    margin-right: 145px;
 }

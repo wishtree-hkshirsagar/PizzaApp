@@ -51,6 +51,8 @@ module.exports = function(app, passport) {
         },
         order: function(req, res) {
             if(req.isAuthenticated()){
+                if(req.user.type == 'customer'){
+                    // console.log('****',req.params)
                 res.render('app/order', {
                         userid: req.user.id,
                         email: req.user.email,
@@ -60,13 +62,17 @@ module.exports = function(app, passport) {
                         // theme: req.user.theme,
                         // page_layout: req.user.layout
                 });
+            } else{
+                req.session.redirectURL = null;
+                res.redirect('/');
+            }
             } else {
                 res.redirect('/');
             }
         },
         home: function(req, res){
-            console.log('home')
-            console.log('***req params***',req.params)
+            // console.log('home')
+            // console.log('***req params***',req.params)
             if(req.isAuthenticated()){
                 //Render
                 if(req.user.type == 'admin'){
@@ -132,16 +138,17 @@ module.exports = function(app, passport) {
     };
     //Site main page
     app.get('/', siteRoute.home);
-    app.get('/cart', siteRoute.cart);
     app.get('/login', siteRoute.site);
     app.get('/signup', siteRoute.site);
     app.get('/forgot', siteRoute.site);
     app.get('/terms', siteRoute.site);
-    app.get('/pizzas', siteRoute.pizzas);
     app.get('/pizza/:slug', siteRoute.home);
-    app.get('/customer/orders', siteRoute.order);
     app.get('/admin/orders', siteRoute.home);
     app.get('/order/:slug', siteRoute.home);
+    app.get('/cart', siteRoute.cart);
+    app.get('/pizzas', siteRoute.pizzas);
+    app.get('/customer/orders', siteRoute.order);
+    app.get('/customer/orders/:slug', siteRoute.order);
    
     //process the login form
     app.post('/login',
@@ -193,6 +200,7 @@ module.exports = function(app, passport) {
 
     //Logout handler by passport
     app.get('/site/logout', function(req, res){
+        console.log('logout')
         req.logout();
         req.session.destroy(function(err){
             res.redirect('/login');

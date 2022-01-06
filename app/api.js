@@ -40,6 +40,7 @@ module.exports = function(app, passport, io){
      app.delete('/api/pizza/:_id', isLoggedIn, _deletePizza);
      app.post('/api/order', isLoggedIn, _orderPizza);
      app.get('/api/order/:_id', isLoggedIn,  _getOrderByIdOrSlug);
+     app.post('/api/order/status',isLoggedIn,_addOrderStatus);
 
       /* -----------------Public Pizza Api ------------------ */
       app.get('/api/public/pizza', _getPublicPizza);
@@ -47,6 +48,7 @@ module.exports = function(app, passport, io){
       app.post('/api/cart', _addToCart);
       app.get('/api/cart', _getCartItems);
       app.get('/api/customer/orders', isLoggedIn, _getCustomerOrders);
+      app.get('/api/customer/orders/:_id', isLoggedIn, _getCustomerOrderByIdOrSlug);
       app.get('/api/admin/orders', isLoggedIn, _getAdminOrders);
       app.post('/api/sendEmail', _sendEmail);
       app.post('/api/updatePassword', _updatePassword);
@@ -179,11 +181,29 @@ var _getOrderByIdOrSlug = async function(req, res) {
     });
 }
 
+var _addOrderStatus = function(req, res) {
+    console.log(req.body);
+    Order.updateOne({
+        _id: req.body.orderId
+    }, {
+        status: req.body.status
+    }, (err, data) => {
+        if(err) {
+            res.status(500).json({err: err});
+        }
+
+        // const eventEmitter = req.app.get('eventEmitter');
+        // eventEmitter.emit('orderUpdated', { id: req.body.orderId , status: req.body.status});
+        return res.redirect('/admin/orders');
+    })
+}
+ 
+
 var _getCartItems = function(req, res) {
     // console.log('get cart items')
     let obj = [];
     
-    console.log('session cart', req.session.cart);
+    // console.log('session cart', req.session.cart);
     
     for(let i of Object.values(req.session.cart.items)){
         let obj1 = {};
@@ -221,6 +241,30 @@ var _getCustomerOrders = async function(req, res) {
         })
     }
     // console.log('orders',orders);
+}
+
+var _getCustomerOrderByIdOrSlug = async function(req, res) {
+    console.log('get order status')
+    
+    var query;
+    if(req.params._id.match(/^[0-9a-fA-F]{24}$/)){
+        query = {
+            _id: req.params._id
+        }
+    } else {
+        query = {
+            slug: req.params._id
+        }
+    }
+    const order = await Order.findOne(query);
+    console.log(order);
+    console.log(req.user)
+    //Authorize user
+    if(req.user._id.toString() === order.customerId.toString()){
+        console.log('order#####', order);
+       return res.status(200).send({order: order});
+    }
+        return res.redirect('/');
 }
 
 var _getAdminOrders = async function(req, res) {

@@ -100,8 +100,12 @@ CartManager.module('Entities', function (Entities, CartManager, Backbone, Marion
                 this._id = options._id;
             },
             url: function(){
-              
-                return '/api/cart'
+                if(this._id){
+                    return '/api/customer/orders/' + this._id;
+                }else{
+
+                    return '/api/cart';
+                }
                
             }
         });
@@ -119,10 +123,26 @@ CartManager.module('Entities', function (Entities, CartManager, Backbone, Marion
                 });
                 return defer.promise();
             },
+            getOneOrder: function(_id){
+                var blocks = new Entities.BlockCollection([], {
+                    _id: _id
+                });
+                var defer = $.Deferred();
+                blocks.fetch({
+                    success: function(data){
+                        defer.resolve(data);
+                    }
+                });
+                return defer.promise();
+            },
         };
 
         CartManager.reqres.setHandler('cart:entities', function(){
             return API.getCartItems();
+        });
+
+        CartManager.reqres.setHandler('order:entity', function(_id){
+            return API.getOneOrder(_id);
         });
 
         CartManager.reqres.setHandler('place:order', function(){

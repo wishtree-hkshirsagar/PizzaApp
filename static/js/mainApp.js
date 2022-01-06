@@ -93,11 +93,6 @@ ProjectManager.commands.setHandler('close:overlay', function(view){
     if(!$('.overlay > div').length) return;
     //remove animate class on overlay box
     $('.overlay-box').removeClass('animate');
-    //Remove socket of discussion
-    if(pathInDiscussion){
-        socket.emit('socketInDiscussion', false);
-        pathInDiscussion = false;
-    }
     //after animation, remove view, change route and hide overlay
     setTimeout(function(){
         $('.overlay > div').remove();
@@ -726,14 +721,12 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
            console.log(this.model);
         },
         events: {
-            'click .js-show-order': 'showOrder',
+            'onchange .js-update-order': 'updateOrder',
         },
-        showOrder: function(ev){
-            // ev.preventDefault();
-            // ProjectManager.vent.trigger('pizza:show', this.model.get('slug'));
-            console.log('****showOrder');
-            // console.log($(this).attr("data-slug"));
-            console.log($(this).attr('href')); 
+        updateOrder: function(ev){
+            
+            console.log('****updateOrder');
+           
 
         }
 
@@ -1061,7 +1054,7 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                         pageLength: 10,
                         procesing: true,
                         serverSide: true,
-                        order: [[2, 'desc']],
+                        order: [[5, 'desc']],
                         ajax: {
                             url: "/api/admin/orders",
                             dataType: 'json',
@@ -1102,13 +1095,14 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                             {
                                 data: null, class: 'order-dt-status', render: function (data) {
                                         
-                                        return data.status;
+
+                                        return '<form action="/api/order/status" method="POST"><input type="hidden" name="orderId" value="'+ `${data._id}`+'">'+'<select class="orderType" name="status" onchange="this.form.submit()"><option value="order_placed"'+ `${data.status === "order_placed" ? "selected" : "" }` + '>' + "Order Placed" + '</option><option value="confirmed"'+ `${data.status === "confirmed" ? "selected" : "" }` + '>' + "Confirmed" + '</option><option value="prepared"'+ `${data.status === "prepared" ? "selected" : "" }` + '>' + "Prepared" + '</option><option value="delivered"'+ `${data.status === "delivered" ? "selected" : "" }` + '>' + "Delivered" + '</option><option value="completed"'+ `${data.status === "completed" ? "selected" : "" }` + '>' + "Completed" + '</option></select></form>'
                                 }
                             },
                             {
                                 data: null, class: 'order-dt-time', render: function (data) {
                                         
-                                        return moment(data.createdAt).format('MMM-DD-YYYY');
+                                        return moment(data.createdAt).format('hh:mm:ss A');
                                 }
                             },
                         ],
