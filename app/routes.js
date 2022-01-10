@@ -37,8 +37,6 @@ module.exports = function(app, passport) {
                         username: req.user.username,
                         initials: req.user.initials,
                         type: req.user.type,
-                        // theme: req.user.theme,
-                        // page_layout: req.user.layout
                 });
             } else {
                 res.render('site/cart', {
@@ -50,18 +48,17 @@ module.exports = function(app, passport) {
         order: function(req, res) {
             if(req.isAuthenticated()){
                 if(req.user.type == 'customer'){
-                    // console.log('****',req.params)
+                   
                 res.render('app/order', {
                         userid: req.user.id,
                         email: req.user.email,
                         username: req.user.username,
                         initials: req.user.initials,
                         type: req.user.type,
-                        // theme: req.user.theme,
-                        // page_layout: req.user.layout
+                       
                 });
             } else{
-                // req.session.redirectURL = null;
+                
                 res.redirect('/');
             }
             } else {
@@ -131,6 +128,10 @@ module.exports = function(app, passport) {
                 res.redirect('/login');
             }
         },
+
+        unauthorized: function(req, res){
+            res.render('site/unauthorized',{});
+        }
        
     };
 
@@ -148,11 +149,12 @@ module.exports = function(app, passport) {
     app.get('/pizzas', siteRoute.pizzas);
     app.get('/customer/orders', siteRoute.order);
     app.get('/customer/orders/:slug', siteRoute.order);
+    app.get('/unauthorized',siteRoute.unauthorized);
     
    
     //process the login form
     app.post('/login',
-        passport.authenticate('local-login', { failureRedirect: '/login', failureFlash: true}),
+        passport.authenticate('local-login', { failureRedirect: '/unauthorized', failureFlash: true}),
         function(req, res, next){
            
             if (!req.body.remember_me) { 

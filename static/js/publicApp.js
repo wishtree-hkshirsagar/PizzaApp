@@ -474,17 +474,7 @@ PublicManager.module('PublicApp.EntityViews', function (EntityViews, PublicManag
             PublicManager.vent.trigger('terms:show');
         },
     });
-    EntityViews.Terms = Marionette.ItemView.extend({
-        template: 'termsTemplate',
-        events: {
-            'click .js-close': 'closeOverlay'
-        },
-        //close overlay
-        closeOverlay: function(ev){
-            ev.preventDefault();
-            PublicManager.vent.trigger('signup:show');
-        }
-    });
+
     //Pizzas header view
     EntityViews.PizzasHeaderView = Marionette.ItemView.extend({
         className: 'sectionBox',
@@ -557,30 +547,10 @@ PublicManager.module('PublicApp.EntityViews', function (EntityViews, PublicManag
             if(this.model.get('item')){
                 console.log(this.model.get('item'))
             }
-            this.$el.attr('data-id', this.model.get('_id'));
-            //Theme and Size
-            if(this.model.get('size')){
-                var width = this.model.get('size').width;
-                var margin = this.model.get('size').margin;
-                if(margin){
-                    this.$el.css({'width': 'calc('+ width +'% - '+ margin +'px)' });
-                    this.$el.css({'margin-right': margin + 'px'});
-                } else {
-                    this.$el.css({'width': width + '%'});
-                }
-            } else {
-                this.$el.width('100%');
-            }
-            if(this.model.get('theme')){
-                this.$el.addClass(this.model.get('theme')).addClass('themed-block');
-            }
-            if(this.model.get('art') && this.model.get('art').m){
-                this.$el.addClass('with-art');
-            }
-            //Comic
-            if(this.model.get('type') == 'comic'){
-                this.$el.addClass('is-comic');
-            }
+            
+            this.$el.width('100%');
+            
+           
         },
         events: {
             'click .container-item-block': 'showContainerBlocks',
@@ -616,11 +586,6 @@ PublicManager.module('PublicApp.EntityViews', function (EntityViews, PublicManag
                 });
             });
         },
-        // showContainerBlocks: function(ev){
-        //     ev.preventDefault();
-        //     ev.stopPropagation();
-        //     PublicManager.vent.trigger('blocks:show', this.model.get('course'), this.model.get('_id'), this.model.get('title'));
-        // }
     });
     //Empty blocks view
     EntityViews.EmptyBlocksView = Marionette.ItemView.extend({
@@ -680,19 +645,6 @@ PublicManager.module('PublicApp.EntityController', function (EntityController, P
                 signupView.$( '.js-name input').focus();
             });
             PublicManager.overlayRegion.show(signupView);
-        },
-        showTerms: function(email){
-            $('.overlay').show();
-            var termsView = new PublicManager.PublicApp.EntityViews.Terms();
-            termsView.on('show', function(){
-                //Animate overlay box
-                setTimeout(function(){
-                    termsView.$('.overlay-box').addClass('animate');
-                }, 100);
-                //hide scroll on main page
-                $('body').css('overflow', 'hidden');
-            });
-            PublicManager.overlayRegion.show(termsView);
         },
         showPizzasHeader: function(type){
             console.log('showPizzasHeader');
@@ -783,28 +735,8 @@ PublicManager.module('PublicApp.EntityController', function (EntityController, P
                     blocksView.$('.action-edit-block').addClass('u-hide');
                     blocksView.$('.block-price').removeClass('u-hide');
                     blocksView.$('.add-cart').removeClass('u-hide');
-                //Show blocks
-                if($('.pageWrap').data('layout') == 'grid' && $('body').width() > 1100){
-                    var totalWidth = parseInt(blocksView.$('.all-blocks').css('width'));
-                    var start_index;
-                    var heights = [];
-                    blocksView.$('.all-blocks .one-block').each(function(i, obj) {
-                        if(parseInt($(this).css('width')) != totalWidth){
-                            if(!start_index) start_index = i;
-                            heights.push(parseInt($(this).css('height')));
-                        } else if(heights.length) {
-                            var max_height = Math.max(...heights);
-                            for(var j=start_index; j<i; j++){
-                                blocksView.$('.all-blocks .one-block').eq(j).css('height', max_height + 'px');
-                            }
-                            start_index = '';
-                            heights = [];
-                        }
-                    });
+ 
                     blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
-                } else {
-                    blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
-                }
                 });
                 PublicManager.contentRegion.show(blocksView);
             });
@@ -820,37 +752,16 @@ PublicManager.module('PublicApp.EntityController', function (EntityController, P
 
                     collection: new Backbone.Collection(items.models[0].get('items'))
                 });
-                console.log(items);
-                // totalAmount = items.models[0].get('totalPrice');
-                // console.log(items.models[0].get('totalPrice'));
-                // console.log(items.models[0].get('items'))
+                
+                
                 blocksView.on('show', function(){
-                    //Show all blocks
+                   
                     blocksView.$('.all-blocks').removeClass('u-hide');
                     blocksView.$('.action-edit-block').addClass('u-hide');
-                    // blocksView.$('.total-price')
-                //Show blocks
-                if($('.pageWrap').data('layout') == 'grid' && $('body').width() > 1100){
-                    var totalWidth = parseInt(blocksView.$('.all-blocks').css('width'));
-                    var start_index;
-                    var heights = [];
-                    blocksView.$('.all-blocks .one-block').each(function(i, obj) {
-                        if(parseInt($(this).css('width')) != totalWidth){
-                            if(!start_index) start_index = i;
-                            heights.push(parseInt($(this).css('height')));
-                        } else if(heights.length) {
-                            var max_height = Math.max(...heights);
-                            for(var j=start_index; j<i; j++){
-                                blocksView.$('.all-blocks .one-block').eq(j).css('height', max_height + 'px');
-                            }
-                            start_index = '';
-                            heights = [];
-                        }
-                    });
+                   
+                
                     blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
-                } else {
-                    blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
-                }
+
                 });
                 PublicManager.contentRegion.show(blocksView);
             });

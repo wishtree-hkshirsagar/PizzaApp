@@ -268,6 +268,9 @@ OrderManager.module('OrderApp.EntityController', function (EntityController, Ord
                     blocksView.$('.order-date').text(moment.utc(now).format('DD-MMM-YYYY HH:mm:ss'));
                     blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
                 });
+                $('.mainHeader .header-title').text('').append("<a href='/' class='header-back header-home'>Pizza Hut</a>");
+                $('.mainHeader .header-title').append("<span class='header-seperator'>/</span>");
+                $('.mainHeader .header-title').append("<a href='/customer/orders' class='header-course header-now'>My Orders</a>");
                 OrderManager.contentRegion.show(blocksView);
             });
         },
@@ -308,22 +311,13 @@ OrderManager.module('OrderApp.EntityController', function (EntityController, Ord
                             }
                         }
                     }); 
-                    
-                    // let socket = io();
-                    // if(order){
-                    //     socket.emit('join', `order_${order.get('_id')}`)
-                    // }
-
-                    // socket.on('orderUpdated', (data) => {
-                    //     console.log('7879')
-                    //     const updatedOrder = {...order}
-                    //     updatedOrder.updatedAt = moment().format()
-                    //     updatedOrder.status = data.status
-                    //     OrderManager.vent.trigger('order:entity', data.id);
-                    // });
                 });
                 
-                
+                $('.mainHeader .header-title').text('').append("<a href='/' class='header-back header-home'>Pizza Hut</a>");
+                $('.mainHeader .header-title').append("<span class='header-seperator'>/</span>");
+                $('.mainHeader .header-title').append("<a href='/customer/orders' class='header-course header-now'>My Orders</a>");
+                $('.mainHeader .header-title').append("<span class='header-seperator'>/</span>");
+                $('.mainHeader .header-title').append("<a href='" +window.location.href +"' class='header-course header-now'>Order Status</a>");
                 OrderManager.contentRegion.show(orderStatusView);
             });
         }

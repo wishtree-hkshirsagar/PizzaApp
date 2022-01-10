@@ -306,19 +306,10 @@ CartManager.module('CartApp.EntityViews', function (EntityViews, CartManager, Ba
         initialize: function(){
             console.log(this.model);
             $('#cart-counter').text(totalQty);
-            this.$el.attr('data-id', this.model.get('_id'));
-            if(this.model.get('size')){
-                var width = this.model.get('size').width;
-                var margin = this.model.get('size').margin;
-                if(margin){
-                    this.$el.css({'width': 'calc('+ width +'% - '+ margin +'px)' });
-                    this.$el.css({'margin-right': margin + 'px'});
-                } else {
-                    this.$el.css({'width': width + '%'});
-                }
-            } else {
-                this.$el.width('100%');
-            }
+           
+           
+            this.$el.width('100%');
+           
         }
     });
 
@@ -394,32 +385,12 @@ CartManager.module('CartApp.EntityController', function (EntityController, CartM
                 console.log(items.models[0].get('items'));
 
                 blocksView.on('show', function(){
-                    //Show all blocks
                     blocksView.$('.all-blocks').removeClass('u-hide');
                     blocksView.$('.action-edit-block').addClass('u-hide');
 
-                //Show blocks
-                if($('.pageWrap').data('layout') == 'grid' && $('body').width() > 1100){
-                    var totalWidth = parseInt(blocksView.$('.all-blocks').css('width'));
-                    var start_index;
-                    var heights = [];
-                    blocksView.$('.all-blocks .one-block').each(function(i, obj) {
-                        if(parseInt($(this).css('width')) != totalWidth){
-                            if(!start_index) start_index = i;
-                            heights.push(parseInt($(this).css('height')));
-                        } else if(heights.length) {
-                            var max_height = Math.max(...heights);
-                            for(var j=start_index; j<i; j++){
-                                blocksView.$('.all-blocks .one-block').eq(j).css('height', max_height + 'px');
-                            }
-                            start_index = '';
-                            heights = [];
-                        }
-                    });
+               
                     blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
-                } else {
-                    blocksView.$('.all-blocks .one-block').removeClass('u-transparent');
-                }
+                
                 });
                 CartManager.contentRegion.show(blocksView);
             });

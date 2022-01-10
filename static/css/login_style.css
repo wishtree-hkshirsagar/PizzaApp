@@ -19,19 +19,9 @@ html{
     box-sizing: border-box;
     outline: none;
 }
-div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
+div, span,
+h1, h2, h3, h4, h5, h6, p,
+a, img, form, label,footer, header {
     margin: 0;
     padding: 0;
     border: 0;
@@ -287,30 +277,15 @@ input[type='checkbox'] {
     top: auto;
     bottom: 0px;
 }
-.feature-blocks .card-illustration{
-    background-image: url(../images/site/graphic-blocks.png);
-}
+
 .feature-social .card-illustration{
     background-image: url(../images/site/pizza.png);
 }
-.feature-ai .card-illustration{
-    background-image: url(../images/site/graphic-ai.png);
-}
+
 .feature-privacy .card-illustration{
     background-image: url(../images/site/pizza1.png);
 }
-.feature-reinvent .card-illustration{
-    background-image: url(../images/site/graphic-reinvent.png);
-}
-.feature-toolkit .card-illustration{
-    background-image: url(../images/site/graphic-toolkit.png);
-}
-.feature-datacentre .card-illustration{
-    background-image: url(../images/site/graphic-datacentre.png);
-}
-.feature-contact .card-illustration{
-    background-image: url(../images/site/empty-cart.png);
-}
+
 .card-one .card-title{
     display: inline-block;
     margin-bottom: 10px;
@@ -619,22 +594,7 @@ input[type='checkbox'] {
     color: #ffd370;
     font-weight: 600;
 }
-.terms-text p{
-    font-size: 14px;
-    margin-bottom: 10px;
-}
-.terms-text b{
-    font-weight: 600;
-}
-.terms-text ul{
-    font-size: 14px;
-    padding-left: 40px;
-    margin-bottom: 10px;
-}
-.terms-text li{
-    margin-bottom: 5px;
-    font-size: 14;
-}
+
 /* Animation */
 .animate-reveal{
     opacity: 0;
@@ -735,188 +695,6 @@ input[type='checkbox'] {
         -moz-transform: translateY(0);
         -o-transform: translateY(0);
         transform: translateY(0);
-    }
-}
-/* Responsive CSS */
-@media (min-width: 660px) and (max-width: 1100px){
-    .sectionBox{
-        padding: 40px;
-    }
-    .feature-card .card-one{
-        position: relative;
-        display: block;
-        float: none;
-        width: 100%;
-        margin-right: 0px;
-        margin-bottom: 20px;
-        height: 350px;
-    }
-    .aboutPage .card-one{
-        height: auto;
-    }
-    .card-full .card-one .card-content{
-        width: 300px;
-    }
-    .card-one .card-illustration{
-        width: 350px;
-        height: 350px;
-    }
-    .footer-made img{
-        left: 40px;
-        top: 15px;
-    }
-    .overlay-box{
-        width: 660px;
-        margin-left: -330px;
-    }
-    .overlay-form,
-    .overlay-about{
-        width: 330px;
-    }
-    .overlay-art{
-        width: 290px;
-        height: 218px;
-    }
-}
-@media (min-width: 300px) and (max-width: 659px){
-    .navBar .link-about{
-        display: none;
-    }
-    .sectionBox{
-        padding: 30px;
-    }
-    .feature-card .card-one{
-        position: relative;
-        display: block;
-        float: none;
-        width: 100%;
-        height: auto;
-        margin-right: 0px;
-        margin-bottom: 20px;
-        padding: 0px;
-    }
-    .card-one .card-content,
-    .card-full .card-one .card-content{
-        width: 300px;
-        padding: 30px 30px 0px 30px;
-    }
-    .card-one.feature-privacy{
-        margin-left: 0px;
-    }
-    .card-one .card-illustration{
-        position: relative;
-        top: auto;
-        right: auto;
-        bottom: 20px;
-        width: 300px;
-        height: 300px;
-        margin: 0 auto;
-    }
-    .footer .sectionBox{
-        padding-bottom: 30px;
-    }
-    .footer-made,
-    .footer-links{
-        display: block;
-        margin-bottom: 10px;
-        float: none;
-    }
-    .footer-made img,
-    .footer-made span{
-        position: relative;
-        display: block;
-        left: auto;
-        top: auto;
-        margin-bottom: 10px;
-        margin-left: 0px;
-    }
-    .footer-links a{
-        display: block;
-        margin-left: 0px;
-        margin-bottom: 10px;
-    }
-    .overlay-box{
-        display: block;
-        width: 100%;
-        height: auto;
-        min-height: 100%;
-        margin: 0%;
-        top: 0px;
-        left: 0px;
-        padding: 50px 20px 30px;
-        border-radius: 0px;
-        -webkit-transition: inherit;
-        -moz-transition: inherit;
-        transition: inherit;
-        -webkit-transform: translateY(0%);
-        -moz-transform: translateY(0%);
-        -ms-transform: translateY(0%);
-        transform: translateY(0%);
-    }
-    .overlay-box.animate{
-        -webkit-transform: translateY(0%);
-        -moz-transform: translateY(0%);
-        -ms-transform: translateY(0%);
-        transform: translateY(0%);
-    }
-    .overlay-about,
-    .overlay-form{
-        display: block;
-        width: 100%;
-    }
-    .btn-submit{
-        position: relative;
-        left: auto;
-        right: auto;
-        bottom: auto;
-        width: 100%;
-    }
-    .overlay-about .overlay-art{
-        display: none;
-    }
-    .overlay-close{
-        top: 70px;
-        right: 40px;
-    }
-    .resetForm{
-        width: 100%;
-        left: 0px;
-        margin-left: 0px;
-    }
-}
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi){
-    .feature-card .feature-blocks .card-illustration{
-        background-image: url(../images/site/graphic-blocks@2x.png);
-    }
-    .feature-card .feature-social .card-illustration{
-        background-image: url(../images/site/graphic-social@2x.png);
-    }
-    .feature-card .feature-ai .card-illustration{
-        background-image: url(../images/site/graphic-ai@2x.png);
-    }
-    .feature-card .feature-privacy .card-illustration{
-        background-image: url(../images/site/graphic-privacy@2x.png);
-    }
-    .feature-card .feature-reinvent .card-illustration{
-        background-image: url(../images/site/graphic-reinvent@2x.png);
-    }
-    .feature-card .feature-toolkit .card-illustration{
-        background-image: url(../images/site/graphic-toolkit@2x.png);
-    }
-    .feature-card .feature-datacentre .card-illustration{
-        background-image: url(../images/site/graphic-datacentre@2x.png);
-    }
-    .feature-contact .feature-privacy .card-illustration{
-        background-image: url(../images/site/graphic-contact@2x.png);
-    }
-    .login-box .overlay-art{
-        background-image: url(../images/site/graphic-login@2x.png);
-    }
-    .signup-box .overlay-art{
-        background-image: url(../images/site/graphic-signup@2x.png);
-    }
-    .forgot-box .overlay-art{
-        background-image: url(../images/site/graphic-forgot@2x.png);
     }
 }
 

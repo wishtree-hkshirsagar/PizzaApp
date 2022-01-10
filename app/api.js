@@ -38,18 +38,25 @@ module.exports = function(app, passport, io){
      app.get('/api/pizza/:_id', isLoggedIn, _getPizzaByIdOrSlug);
      app.put('/api/pizza/:_id', isLoggedIn, _updatePizza);
      app.delete('/api/pizza/:_id', isLoggedIn, _deletePizza);
+     app.get('/api/public/pizza', _getPublicPizza);
+     app.get('/api/public/pizza/:_id', _getPublicPizzaByIdOrSlug);
+
+     /* ----------------- ORDER API ------------------ */
+
      app.post('/api/order', isLoggedIn, _orderPizza);
      app.get('/api/order/:_id', isLoggedIn,  _getOrderByIdOrSlug);
      app.post('/api/order/status',isLoggedIn,_addOrderStatus);
+     app.get('/api/customer/orders', isLoggedIn, _getCustomerOrders);
+     app.get('/api/customer/orders/:_id', isLoggedIn, _getCustomerOrderByIdOrSlug);
+     app.get('/api/admin/orders', isLoggedIn, _getAdminOrders);
 
-      /* -----------------Public Pizza Api ------------------ */
-      app.get('/api/public/pizza', _getPublicPizza);
-      app.get('/api/public/pizza/:_id', _getPublicPizzaByIdOrSlug);
+
+      /* -----------------CART API ------------------ */
+     
       app.post('/api/cart', _addToCart);
       app.get('/api/cart', _getCartItems);
-      app.get('/api/customer/orders', isLoggedIn, _getCustomerOrders);
-      app.get('/api/customer/orders/:_id', isLoggedIn, _getCustomerOrderByIdOrSlug);
-      app.get('/api/admin/orders', isLoggedIn, _getAdminOrders);
+      
+       /* -----------------FORGOT PASSWORD API ------------------ */
       app.post('/api/sendEmail', _sendEmail);
       app.post('/api/updatePassword', _updatePassword);
 
