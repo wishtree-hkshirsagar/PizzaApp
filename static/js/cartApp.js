@@ -1,7 +1,10 @@
+
+
 var CartManager = new Backbone.Marionette.Application();
 
 var totalQty;
-
+var stripe;
+var card = null;
 CartManager.addRegions({
     headerRegion: '.mainHeader',
     contentRegion: '.mainContent',
@@ -184,15 +187,19 @@ CartManager.module('CartApp.EntityViews', function (EntityViews, CartManager, Ba
         orderPizza: function(ev){
             ev.preventDefault();
             console.log('orderPizza');
+            console.log(this.$('#payment-type').find(":selected").val());
              let contactNumberRegex = /^[7-9]{1}[0-9]{9}$/;
             let contactVal = this.$('.js-delivery-contact input').val();
-            if(!$('.delivery-contact').val() && !$('.delivery-address').val()){
+            if(!$('.delivery-contact').val() && !$('.delivery-address').val() && !$('#payment-type').find(":selected").val()){
                 this.$('.js-delivery-contact .u-formError').text('Please enter your contact number:').show();
                 this.$('.js-delivery-contact input').addClass('hasError');
                 this.$('.js-delivery-contact input').css({'border': '2px solid red'})
                 this.$('.js-delivery-address .u-formError').text('Please enter your delivery address:').show();
                 this.$('.js-delivery-address textarea').addClass('hasError');
                 this.$('.js-delivery-address textarea').css({'border': '2px solid red'})
+                this.$('.js-payment-type .u-formError').text('Please select payment mode:').show();
+                this.$('.payment-type').addClass('hasError');
+                this.$('.payment-type').css({'border': '2px solid red'})
                 return;
             }else{
                 this.$('.js-delivery-contact .u-formError').text('').show();
@@ -229,26 +236,64 @@ CartManager.module('CartApp.EntityViews', function (EntityViews, CartManager, Ba
                 this.$('.js-delivery-address textarea').removeClass('hasError');
                 this.$('.js-delivery-address textarea').css({'border': '2px solid #000'})
             }
+
+            if(!$('#payment-type').find(":selected").val()){
+                this.$('.js-payment-type .u-formError').text('Please select payment mode:').show();
+                this.$('.payment-type').addClass('hasError');
+                this.$('.payment-type').css({'border': '2px solid red'})
+            }else{
+                this.$('.js-payment-type .u-formError').text('').show();
+                this.$('.payment-type').removeClass('hasError');
+                this.$('.payment-type').css({'border': '2px solid #000'})
+            }
+            var value = {
+                paymentType: this.$('#payment-type').find(':selected').val(),
+                contactNumber: this.$('.delivery-contact').val(),
+                address: this.$('.delivery-address').val(),
+            }
+            
            
-            $.ajax({
-                url: '/api/order',
-                type: 'POST',
-                contentType: 'application/json',
-                dataType: 'json',
-                data: JSON.stringify({
-                    'contactNumber': this.$('.delivery-contact').val(),
-                    'address': this.$('.delivery-address').val()
-                }),
-                success: function(result){
+            if(card){
+                console.log('inside if')
+              let stripeToken = stripe.createToken(card).then((result) => {
                     console.log(result);
-                    location.assign('/')
-                }
-            })
+                    stripeToken = result.token.id;
+                    value.stripeToken = stripeToken;
+                    console.log(value);
+                    $.ajax({
+                        url: '/api/order',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify(value),
+                        success: function(result){
+                            console.log(result);
+                            location.assign('/')
+                        }
+                    })
+                }).catch((err) => {
+                    console.log(err)
+                })
+                
+            } else {
+                console.log('else')
+                $.ajax({
+                    url: '/api/order',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(value),
+                    success: function(result){
+                        console.log(result);
+                        location.assign('/')
+                    }
+                })
+            }
            
         }
     });
 
-    //Empty blocks view
+    
     EntityViews.EmptyBlocksView = Marionette.ItemView.extend({
         tagName: 'div',
         className: 'zero-items',
@@ -262,7 +307,6 @@ CartManager.module('CartApp.EntityViews', function (EntityViews, CartManager, Ba
             console.log(this.model);
             $('#cart-counter').text(totalQty);
             this.$el.attr('data-id', this.model.get('_id'));
-            //Theme and Size
             if(this.model.get('size')){
                 var width = this.model.get('size').width;
                 var margin = this.model.get('size').margin;
@@ -275,20 +319,10 @@ CartManager.module('CartApp.EntityViews', function (EntityViews, CartManager, Ba
             } else {
                 this.$el.width('100%');
             }
-            if(this.model.get('theme')){
-                this.$el.addClass(this.model.get('theme')).addClass('themed-block');
-            }
-            if(this.model.get('art') && this.model.get('art').m){
-                this.$el.addClass('with-art');
-            }
-            //Comic
-            if(this.model.get('type') == 'comic'){
-                this.$el.addClass('is-comic');
-            }
         }
     });
 
-    //Blocks collection view
+
     EntityViews.BlocksView = Marionette.CompositeView.extend({
     className: 'sectionBox',
     template: 'pizzaBlocksTemplate',
@@ -306,6 +340,7 @@ CartManager.module('CartApp.EntityController', function (EntityController, CartM
 
         showCartHeader: function(type){
             console.log('header');
+            
             var fetchingCartDetails = CartManager.request('cart:entities');
             $.when(fetchingCartDetails).done(function(items){
             var cartHeaderView = new CartManager.CartApp.EntityViews.CartHeaderView({
@@ -318,6 +353,23 @@ CartManager.module('CartApp.EntityController', function (EntityController, CartM
                 } else {
                     cartHeaderView.$('.public-view').removeClass('u-hide');
                 }
+                function mountWidget(){
+                    stripe = Stripe('pk_test_51KFtEUCiI18G0MYYyc1LgjlF8gXdS67JF0zApvVRzoNkMGB5HdYkHXj029s7SaOI3SPNdNVRRQ3lD22vA02qX9Tc002YjVGh7d');
+                    
+                    const elements = stripe.elements();
+                    card = elements.create('card', {hidePostalCode: true});
+                    card.mount('#js-card-number');
+                }
+                cartHeaderView.$('#payment-type').on('change', function(){
+                   if($('#payment-type').find(":selected").val() == 'card'){
+                        mountWidget();
+                   }else {
+                       if(card != null){
+                           card.destroy();
+                       }
+                   }
+                });
+                
                 cartHeaderView.$('.flex-items').removeClass('u-hide');
                 cartHeaderView.$('.align-right').removeClass('u-hide');
                 cartHeaderView.$('.login-cart').addClass('u-hide');

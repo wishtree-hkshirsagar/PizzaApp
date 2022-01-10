@@ -1,4 +1,4 @@
-//Schema for Courses, Blocks, Groups and related items
+
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     ObjectId = Schema.Types.ObjectId;
@@ -17,8 +17,6 @@ var PizzaSchema = new Schema({
     image: {
         type: String,
     },
-    // createdAt: {type: Date, default: Date.now},
-    // updated_at: Date,
 },{timestamps: true});
 
 var OrderSchema = new Schema({
@@ -28,16 +26,14 @@ var OrderSchema = new Schema({
     contactNumber: {type: String, require: true},
     address: {type: String, required: true},
     paymentType: {type: String, default: 'COD'},
+    paymentStatus: { type: Boolean, default: false},
     status: {type: String, default: 'order_placed'},
-    // createdAt: {type: Date, default: Date.now},
-    // updated_at: Date,
 },{timestamps: true});
 
 var OtpSchema = new Schema({
     email: {type: String, require: true},
     otp: {type: String},
     expireIn: {type: Number},
-    // createdAt: {type: Date, default: Date.now}
 }, {timestamps: true});
 
 

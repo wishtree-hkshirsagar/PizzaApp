@@ -14,7 +14,7 @@ var app_root = __dirname,
     passport = require('passport'),
     flash = require('connect-flash'),
     mongoStore = require('connect-mongo')(session),
-    dotenv = require('dotenv'),
+    dotenv = require('dotenv').config(),
     configDB = require('./config/database');
 
 var dotenv = require('dotenv');

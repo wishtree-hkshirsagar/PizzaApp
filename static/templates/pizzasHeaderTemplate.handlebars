@@ -7,28 +7,6 @@
 <div class="public-view u-hide">
     <p class="header-title">Pizza Hut</p>
     <p class="header-desc">Explore your taste buds with us.</p>
-    
-     {{!-- <div class="align-right u-hide">
-            <div>
-                <span class="one">Total Items:</span>
-                <span class="two"><span class="total-items two"></span>Pcs</span> <br>
-                <span class="one">Total Amount:</span>
-                <span class="two">&#8377; <span class="total-amount two"></span></span>
-            </div> --}}
-
-            {{!-- <div>
-                <form>
-                    <input type="text" name="Phone Number" class="delivery-details" placeholder="Phone number"> <br>
-                    <textarea name="address" cols="30" rows="5" class="delivery-details" placeholder="Address"></textarea> <br>
-                    <button type="submit" class="btn-order">Order Now</button>
-                </form>
-            </div> --}}
-
-            
-            {{!-- <div class="navBar login-nav">
-                <a href="/login">Login to continue</a>
-            </div>
-    </div> --}}
 </div>
 <div class="flex-items u-hide">
         <img src="/images/site/cart-black.png" alt="cart">
@@ -44,9 +22,17 @@
         <span class="one">Total Amount:</span>
         <span class="two">&#8377; <span class="total-amount two"></span></span>
     </div>
-
+    <br> <br>
     <div class="delivery-form u-hide">
         <form>
+            <div class="js-payment-type">
+                <p class='u-formError'></p>
+                <select class="delivery-details payment-type" name="payment-type" id="payment-type">
+                    <option value="" disabled selected hidden>Select Payment Mode</option>
+                    <option value="cod">Cash on delivery</option>
+                    <option value="card">Pay with card</option>
+                </select>
+            </div>
             <div class="js-delivery-contact">
                 <p class='u-formError'></p>
                 <input type="text" name="Phone Number" class="delivery-details delivery-contact" placeholder="Phone number">
@@ -55,7 +41,7 @@
                 <p class='u-formError'></p>
                 <textarea name="address" cols="30" rows="5" class="delivery-details delivery-address" placeholder="Address"></textarea>
             </div>
-             
+             <div class="js-card-number" id="js-card-number"></div>
             
            <button class="navBar order-now js-save">Order Now</button>
         </form>

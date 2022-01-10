@@ -12,6 +12,8 @@ var util = require('util'),
     fs = require('fs'),
     express = require('express'),
     session = require('express-session'),
+    dotenv = require('dotenv'),
+    stripe = require('stripe')('sk_test_51KFtEUCiI18G0MYYSMrYFvsLCzDF1T7gaugFNlx64gpnufN2eRD0RVyuFCxffg9FRfzv4PpsRBm00LWKpktNAyuI00t00uKcXe'),
     _ = require('lodash');
 //UUID
 const { v4: uuidv4 } = require('uuid');
@@ -119,7 +121,7 @@ module.exports = function(app, passport, io){
 
 var _addToCart = function(req, res) {
 
-    console.log(req.body);
+    // console.log(req.body);
     if(!req.session.cart) {
         req.session.cart = {
             items: {},
@@ -182,7 +184,7 @@ var _getOrderByIdOrSlug = async function(req, res) {
 }
 
 var _addOrderStatus = function(req, res) {
-    console.log(req.body);
+    // console.log(req.body);
     Order.updateOne({
         _id: req.body.orderId
     }, {
@@ -257,11 +259,11 @@ var _getCustomerOrderByIdOrSlug = async function(req, res) {
         }
     }
     const order = await Order.findOne(query);
-    console.log(order);
-    console.log(req.user)
+    // console.log(order);
+    // console.log(req.user)
     //Authorize user
     if(req.user._id.toString() === order.customerId.toString()){
-        console.log('order#####', order);
+        // console.log('order#####', order);
        return res.status(200).send({order: order});
     }
         return res.redirect('/');
@@ -340,7 +342,7 @@ var _getAdminOrders = async function(req, res) {
 var _sendEmail = async function(req, res) {
     let data = await User.findOne({email: req.body.email});
     const responseType = {};
-    console.log('data', data)
+    // console.log('data', data)
     if(data){
         let otpcode = Math.floor((Math.random()*10000)+1);
         console.log('otpcode', otpcode)
@@ -548,10 +550,10 @@ var _deletePizza = function(req, res){
 
 var _orderPizza = function(req, res){
     console.log('orderPizza')
-    console.log('cart', req.session.cart.items)
-    const { contactNumber, address } = req.body;
+    console.log('body', req.body);
+    const { contactNumber, address, paymentType, stripeToken } = req.body;
     if(!contactNumber || !address){
-        res.json({msg : "Error, All fields are required"});
+         return res.status(422).json({msg : "Error, All fields are required"});
     }
     //Slug
     var key = shortid.generate();
@@ -561,18 +563,45 @@ var _orderPizza = function(req, res){
         items: req.session.cart.items,
         contactNumber: contactNumber,
         address: address,
+        paymentType: paymentType,
         slug: slug
     });
+    console.log('570', req.body.stripeToken);
 
-    try{
-        new_order.save(() => {
-            delete req.session.cart;
-           res.status(200).json(new_order); 
-
-        });
-     } catch(error){
-         return res.status(501).json(error);
-     }
+    new_order.save().then(result => {
+        Order.populate(result, { path: 'customerId' }, (err, placedOrder) => {
+            console.log('placedOrder', placedOrder);
+            if(placedOrder.paymentType === 'card'){
+                console.log('card payment');
+                
+                    
+                    stripe.charges.create({ 
+                                amount: req.session.cart.totalPrice  * 100,    // Charing Rs 25 
+                                description: `Pizza order id: ${placedOrder._id}`, 
+                                currency: 'inr', 
+                                source: stripeToken
+                            }).then(() => {
+                                placedOrder.paymentStatus = true
+                                placedOrder.paymentType = paymentType
+                                placedOrder.save().then((order) => {
+                                    console.log('587', order)
+                                    // delete req.session.cart
+                                    return res.json({ message : 'Payment successful, Order placed successfully' });
+                                }).catch((error) => {
+                                    console.log(error)
+                                })
+                            }).catch((error) => {
+                                // delete req.session.cart
+                                return res.json({ message : 'OrderPlaced but payment failed, You can pay at delivery time' });
+                            })
+            } else {
+                // delete req.session.cart
+                return res.json({ message : 'Order placed succesfully' });
+            }
+        })
+    }).catch(error => {
+        return res.status(500).json({message: 'Something went wrong'});
+    })
 }
 
 

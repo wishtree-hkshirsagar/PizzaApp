@@ -3374,37 +3374,6 @@ option {
     color: black;
 }
 
-label[name=wrap-pizzaType]:after, label[name=wrap-orderType]:after{
-    content: "\25BE";
-    color: gray;
-    position: absolute;
-    right: -25px;
-    top: 135px;
-    z-index: 1;
-    width: 10%;
-    height: 100%;
-    pointer-events: none;
-    transform: scale(1,0.6);
-}
-
-label[name="wrap-orderType"]:after{
-    right: 108px !important;
-    top: 58px !important;
-}
-
-label[name=wrap-pizzaType-edit]:after{
-    content: "\25BE";
-    color: gray;
-    position: absolute;
-    right: -50px;
-    top: 80px;
-    z-index: 1;
-    width: 10%;
-    height: 100%;
-    pointer-events: none;
-    transform: scale(1,0.6);
-}
-
 .pizza-image{
     float: right;
     margin: auto;
@@ -3525,8 +3494,8 @@ label[name=wrap-pizzaType-edit]:after{
     margin: 10px 0px 10px 5px;
     border: 2px solid #000;
     border-radius: 7px;
-    padding: 5px;
-    width: 25%;
+    padding: 5px 20px;
+    width: 30%;
 }
 
 .flex-items{
@@ -3764,3 +3733,44 @@ table.dataTable tbody tr, .orders-dashboard{
     font-size: 14px;
     margin-right: 145px;
 }
+
+.payment-type{
+    color: #000;
+    height: 43px;
+    background-color: #fff;
+    padding-left: 15px;
+    margin-left: -25px !important;
+    -webkit-appearance: auto !important;
+}
+
+.select-pizza{
+    -webkit-appearance: auto !important;
+}
+
+.StripeElement {
+    box-sizing: border-box;
+    width: 30%;
+    margin-left: auto;
+    height: 40px;
+    padding: 10px 12px;
+    margin-bottom: 20px;
+    border: 2px solid #000;
+    border-radius: 7px;
+    background-color: white;
+
+    box-shadow: 0 1px 3px 0 #e6ebf1;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+  }
+
+  .StripeElement--focus {
+    box-shadow: 0 1px 3px 0 #cfd7df;
+  }
+
+  .StripeElement--invalid {
+    border-color: #fa755a;
+  }
+
+  .StripeElement--webkit-autofill {
+    background-color: #fefde5 !important;
+  }

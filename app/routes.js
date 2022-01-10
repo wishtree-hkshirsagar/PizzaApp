@@ -63,7 +63,7 @@ module.exports = function(app, passport) {
                         // page_layout: req.user.layout
                 });
             } else{
-                req.session.redirectURL = null;
+                // req.session.redirectURL = null;
                 res.redirect('/');
             }
             } else {
@@ -98,7 +98,7 @@ module.exports = function(app, passport) {
                 } else if(req.user.type == 'customer' && req.url == '/admin/orders'){
                     res.redirect('/');
                 } else {
-                    console.log(req.user);
+                    // console.log(req.user);
                     res.render('app/index', {
                         userid: req.user.id,
                         email: req.user.email,
