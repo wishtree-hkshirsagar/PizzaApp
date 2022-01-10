@@ -99,12 +99,19 @@ app.use(function(req, res, next){
 
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next){
-        res.status(err.status || 500);
-        res.send(err);
+
+        if(res.status(404)){
+            res.render('site/pageNotFound')
+        } else if (res.status(500)){
+            res.render('site/serverError')
+        }
     });
 }
 
 app.use(function(err, req, res, next){
-    res.status(err.status || 500);
-    res.send('Error!');
+    if(res.status(404)){
+        res.render('site/pageNotFound')
+    } else if (res.status(500)){
+        res.render('site/serverError')
+    }
 });

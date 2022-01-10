@@ -1,7 +1,4 @@
 var crypto = require('crypto'),
-    async = require('async'),
-    mongoose = require('mongoose'),
-    User = require('../app/models/user').User,
     LoginToken = require('../app/models/logintoken').LoginToken,
     Pizza = require('../app/models/entity').Pizza;
 //UUID
@@ -10,6 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 //Routes
 module.exports = function(app, passport) {
     var siteRoute = {
+      
         site: function(req, res){
             if(req.isAuthenticated()){
                 res.redirect('/');
@@ -71,8 +69,6 @@ module.exports = function(app, passport) {
             }
         },
         home: function(req, res){
-            // console.log('home')
-            // console.log('***req params***',req.params)
             if(req.isAuthenticated()){
                 //Render
                 if(req.user.type == 'admin'){
@@ -134,8 +130,11 @@ module.exports = function(app, passport) {
                 req.session.redirectURL = req.url;
                 res.redirect('/login');
             }
-        }
+        },
+       
     };
+
+  
     //Site main page
     app.get('/', siteRoute.home);
     app.get('/login', siteRoute.site);
@@ -149,6 +148,7 @@ module.exports = function(app, passport) {
     app.get('/pizzas', siteRoute.pizzas);
     app.get('/customer/orders', siteRoute.order);
     app.get('/customer/orders/:slug', siteRoute.order);
+    
    
     //process the login form
     app.post('/login',
@@ -200,10 +200,11 @@ module.exports = function(app, passport) {
 
     //Logout handler by passport
     app.get('/site/logout', function(req, res){
-        console.log('logout')
         req.logout();
         req.session.destroy(function(err){
             res.redirect('/login');
         });
     });
+
 };
+
