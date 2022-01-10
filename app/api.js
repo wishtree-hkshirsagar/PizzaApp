@@ -4,10 +4,8 @@ var util = require('util'),
     mongoose = require('mongoose'),
     validator = require('validator'),
     getSlug = require('speakingurl'),
-    // linkify = require('linkifyjs'),
     linkifyHtml = require('linkifyjs/html'),
     shortid = require('shortid'),
-    // randomColor = require('randomcolor'),
     multer = require('multer'),
     fs = require('fs'),
     express = require('express'),
@@ -106,22 +104,11 @@ module.exports = function(app, passport, io){
         });
     });
 
-    /* ----------------- USER API  ------------------ */
-    //Get current user details
-    app.get('/api/me', isLoggedIn, _getCurrentUser);
-    //Update current user
-    app.post('/api/me', isLoggedIn, _updateCurrentUser);
-    //Get public user details
-    app.get('/api/user/:_id', isLoggedIn, _getPublicUser);
-    //Get all users for admin
-    app.get('/api/list/users', isLoggedIn, _getAllUsers);
-
 
 };
 
 var _addToCart = function(req, res) {
 
-    // console.log(req.body);
     if(!req.session.cart) {
         req.session.cart = {
             items: {},
@@ -184,7 +171,6 @@ var _getOrderByIdOrSlug = async function(req, res) {
 }
 
 var _addOrderStatus = function(req, res) {
-    // console.log(req.body);
     Order.updateOne({
         _id: req.body.orderId
     }, {
@@ -193,40 +179,33 @@ var _addOrderStatus = function(req, res) {
         if(err) {
             res.status(500).json({err: err});
         }
-
-        // const eventEmitter = req.app.get('eventEmitter');
-        // eventEmitter.emit('orderUpdated', { id: req.body.orderId , status: req.body.status});
         return res.redirect('/admin/orders');
     })
 }
  
 
 var _getCartItems = function(req, res) {
-    // console.log('get cart items')
+    
     let obj = [];
     
-    // console.log('session cart', req.session.cart);
     
-    for(let i of Object.values(req.session.cart.items)){
-        let obj1 = {};
-        // console.log('for*******',i.item);
-        obj1.item = i.item;
-        obj1.item.qty = i.qty;
+    if(req.session.cart){
+        for(let i of Object.values(req.session.cart.items)){
+            let obj1 = {};
+            
+            obj1.item = i.item;
+            obj1.item.qty = i.qty;
+            
+            obj.push(obj1);
+            
+        }
         
-        obj.push(obj1);
-        // console.log('obj1', obj)
-        // obj.push(i.qty);
+        return res.json({
+            items: obj,
+            totalQty: req.session.cart.totalQty,
+            totalPrice: req.session.cart.totalPrice
+        });
     }
-    // console.log('obj1', obj)
-    return res.json({
-        // title: req.session.cart.items.undefined.item.title,
-        // size: req.session.cart.items.undefined.item.size,
-        // price: req.session.cart.items.undefined.item.price,
-        // image: req.session.cart.items.undefined.item.image,
-        items: obj,
-        totalQty: req.session.cart.totalQty,
-        totalPrice: req.session.cart.totalPrice
-    });
 }
 
 var _getCustomerOrders = async function(req, res) {
@@ -606,133 +585,14 @@ var _orderPizza = function(req, res){
 
 
 
-/* ----------------- USER FUNCTION ------------------ */
-//GET Request functions - User
-//Get details of current user
-var _getCurrentUser = function(req, res){
-    console.log('getCurrentUser')
-    User.findOne({_id: req.user.id}).select('-reset_email -prev_password -loginAttempts -lockUntil -requestToken -resetPasswordToken -resetPasswordExpires')
-    .exec(function(err, user){
-        user.password = '';
-        res.send(user);
-    });
-};
 
 
-//POST Request functions - User
-//Update current user
-var _updateCurrentUser = function(req, res){
-    User.findOne({_id: req.user.id}).select('name initials about email dp password').exec(function(err, user){
-        var auser = user;
-        if(req.body.oldpwd && req.body.newpwd && user.validPassword(req.body.oldpwd) && req.body.name){
-            user.name = req.body.name;
-            user.initials = req.body.name.split(' ').map(function (s) { return s.charAt(0); }).join('').toUpperCase();
-            if(req.body.about != null){
-                var linkifiedText = linkifyHtml(req.body.about, {
-                    target: '_blank'
-                });
-                user.about = linkifiedText.replace(/\n\r?/g, '<br />');
-            }
-            user.job.title = req.body.job.title;
-            user.job.org = req.body.job.org;
-            user.country = req.body.country;
-            user.city = req.body.city;
-            user.phone = req.body.phone;
-            if(req.body.sex){
-                user.sex = req.body.sex;
-            }
-            if(req.body.theme){
-                user.theme = req.body.theme;
-            }
-            if(req.body.layout){
-                user.layout = req.body.layout;
-            }
-            user.prev_password = user.password;
-            user.password = user.generateHash(req.body.newpwd);
-            user.save(function(err){
-                user.password = null;
-                user.prev_password = null;
-                res.send(user);
-            });
-        } else if(req.body.name){
-            user.name = req.body.name;
-            user.initials = req.body.name.split(' ').map(function (s) { return s.charAt(0); }).join('').toUpperCase();
-            if(req.body.about != null){
-                var linkifiedText = linkifyHtml(req.body.about, {
-                    target: '_blank'
-                });
-                user.about = linkifiedText.replace(/\n\r?/g, '<br />');
-            }
-            user.job.title = req.body.job.title;
-            user.job.org = req.body.job.org;
-            user.country = req.body.country;
-            user.city = req.body.city;
-            user.phone = req.body.phone;
-            if(req.body.sex){
-                user.sex = req.body.sex;
-            }
-            if(req.body.theme){
-                user.theme = req.body.theme;
-            }
-            if(req.body.layout){
-                user.layout = req.body.layout;
-            }
-            user.save(function(err){
-                user.password = null;
-                res.send(user);
-            });
-        } else if(req.body.dp) {
-            user.dp.m = req.body.dp;
-            user.dp.s = req.body.dp;
-            user.save(function(err){
-                if(!err) {
-                    user.password = null;
-                    res.send(user);
-                }
-                //Resize image
-                var key = uuidv4();
-                var file_name = key + '-' + getSlug(user.name);
-                var dp = req.body.dp.replace(/^https:\/\//i, 'http://');
-                // Utility.get_resized_image(file_name, dp, 100, function(resized){
-                //     Utility.upload_file(resized, file_name, function(image_url){
-                //         User.updateOne({ _id: req.user.id }, { $set: { 'dp.s': image_url }}).exec();
-                //     });
-                // });
-            });
-        }
-    });
-};
-
-//Get user details
-var _getPublicUser = function(req, res){
-    //Match if object id or not
-    if(req.params._id.match(/^[0-9a-fA-F]{24}$/)){
-        var query = {
-            _id: req.params._id
-        };
-    } else {
-        var query = {
-            username: req.params._id
-        };
-    }
-    //Find
-    User.findOne(query).select('name accountCreated initials username about dp job city country').exec(function(err, user){
-        if(!user) return res.status(400).send({error: "No such user exists"});
-        res.send(user);
-    });
-};
 
 
-//Get all users for admin
-var _getAllUsers = function(req, res){
-    //Check if admin
-    if(req.user.type != 'admin'){
-        return res.status(400).send({error: "Unauthorized user. Cannot view"});
-    }
-    User.find({}).select('name about email dp city country sex about').sort({accountCreated: -1}).exec(function(err, users){
-        res.send(users);
-    });
-};
+
+
+
+
 
 
 //Route middleware to check if user is loggedIn

@@ -75,7 +75,7 @@ app.use(sessionMiddleware);
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(passport.authenticate('remember-me'));
+
 
 app.use(flash());
 var server = require('http').Server(app);

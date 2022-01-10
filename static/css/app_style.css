@@ -21,77 +21,7 @@ select{
 .logo-main{
     background-image: url('../../images/site/logo.png');
 }
-.search-btn{
-    background-image: url('../../images/app/main-icons-dark.png');
-}
-.searchWrap{
-    background-color: #fff;
-    border: 2px solid #e9e9ef;
-}
-.searchWrap .triangle{
-    border-bottom: 15px solid #e9e9ef;
-    border-bottom-color: #e9e9ef;
-}
-.searchWrap input{
-    color: #232323;
-    background-color: #f7f7f7;
-    border: 1px solid #f7f7f7;
-}
-.search-results .search-header{
-    color: #232323;
-    border: 2px solid #e9e9ef;
-}
-.search-results .one-search-result .result-title{
-    color: #232323;
-}
-.search-results .one-search-result:hover .result-title{
-    color: #1b07f2;
-}
-.messages-btn{
-    background-image: url('../../images/app/main-icons-dark.png');
-}
-.messages-btn .unread-message{
-    background-color: #1b07f2;
-}
-.messagesWrap{
-    background-color: #fff;
-    border: 2px solid #e9e9ef;
-}
-.messagesWrap .triangle{
-    border-bottom: 15px solid #e9e9ef;
-    border-bottom-color: #e9e9ef;
-}
-.messagesWrap .one-message{
-    border-bottom: 1px solid #e9e9ef;
-}
-.chatsWrap .chat-header{
-    border-bottom: 1px solid #e9e9ef;
-}
-.chatsWrap .chat-header .delete-btn{
-    background-color: rgba(255, 255, 255, 0.8);
-    background-image: url('../../images/site/close-dark.png');
-}
-.chatsWrap .chat-header .back-btn{
-    background-color: rgba(255, 255, 255, 0.8);
-    background-image: url('../../images/app/back-icon-dark.png');
-}
-.all-chats .one-chat .chat-text{
-    background-color: #f7f7f7;
-}
-.all-chats .one-chat .chat-text a{
-    color: #1b07f2;
-}
-.chatsWrap .new-chat{
-    background-color: #f7f7f7;
-    border-top: 1px solid #e9e9ef;
-}
-.new-chat textarea{
-    background-color: #fff;
-    color: #232323;
-}
-.help-btn{
-    background-image: url('../../images/app/main-icons-dark.png');
-}
+
 .profile-image,
 .user-image{
     background-color: #fff;

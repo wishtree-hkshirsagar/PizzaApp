@@ -626,13 +626,6 @@ AccountManager.module('AccountApp.EntityController', function(EntityController, 
                         success: function(res){
                             console.log(res)
                             AccountManager.vent.trigger('login:show');
-                            // forgotView.$('.js-email .u-formError').text(res.message).show().css({'color':'#fff'});
-                            // forgotView.$('.reset-message').addClass('u-hide');
-                            // forgotView.$('.input-otp').removeClass('u-hide');
-                            // forgotView.$('.js-submit').addClass('u-hide');
-                            // forgotView.$('.input-new-password').removeClass('u-hide');
-                            // forgotView.$('.js-change-password').removeClass('u-hide');
-                            // forgotView.$('.js-email input').prop('disabled', true);
                         },
                         error: function (error) {
                             forgotView.$('.js-email .u-formError').text(error.responseJSON.message).show();

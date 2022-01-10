@@ -98,7 +98,7 @@ module.exports = function(app, passport) {
                 } else if(req.user.type == 'customer' && req.url == '/admin/orders'){
                     res.redirect('/');
                 } else {
-                    // console.log(req.user);
+                    
                     res.render('app/index', {
                         userid: req.user.id,
                         email: req.user.email,
