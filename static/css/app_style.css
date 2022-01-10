@@ -115,9 +115,7 @@ select{
 .block-actions .action-edit-ifttt{
     background-position: -240px -40px;
 }
-.block-actions .action-show-insights{
-    background-position: -280px -40px;
-}
+
 .block-actions .action-add-block-below{
     background-position: 0px -40px;
 }
@@ -136,9 +134,7 @@ select{
 .block-actions .action-edit-ifttt:hover{
     background-position: -240px 0px;
 }
-.block-actions .action-show-insights:hover{
-    background-position: -280px 0px;
-}
+
 .block-actions .action-add-block-below:hover{
     background-position: 0px 0px;
 }

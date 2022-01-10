@@ -25,19 +25,9 @@ html{
     box-sizing: border-box;
     outline: none;
 }
-div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
+div, span,
+h1, h2, h3, h4, h5, h6, p,
+a, img, form, label,footer, header {
     margin: 0;
     padding: 0;
     border: 0;
@@ -169,7 +159,6 @@ select, .orderType{
 }
 .logo-main{
     position: absolute;
-    /* left: 25px; */
     top: -25px;
     width: 200px;
     height: 200px;
@@ -177,252 +166,7 @@ select, .orderType{
     background-position: 0px 0px;
     transform: scale(0.5,0.5);
 }
-/* Search */
-.search-btn{
-    position: absolute;
-    top: 50px;
-    right: 115px;
-    width: 40px;
-    height: 40px;
-    background-repeat: no-repeat;
-    background-position: 0px 0px;
-}
-.searchWrap{
-    position: absolute;
-    right: 50px;
-    top: 125px;
-    width: 390px;
-    padding: 20px 0px;
-    z-index: 2;
-}
-.searchWrap .triangle{
-    position: absolute;
-    right: 68px;
-    top: -16px;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    display: inline-block;
-}
-.searchWrap input{
-    position: relative;
-    display: inline-block;
-    width: 350px;
-    padding: 14px;
-    margin: 0px 20px;
-    font-size: 16px;
-    line-height: 1.6;
-    box-shadow: none;
-    border-radius: 0px;
-    outline: none;
-    -webkit-appearance: none;
-}
-.search-results{
-    position: relative;
-    padding: 0px 20px;
-    min-height: 200px;
-    max-height: 500px;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-.search-results .search-header{
-    display: block;
-    padding: 7px 0px;
-    text-align: center;
-    font-weight: 600;
-    font-size: 14px;
-    margin: 10px 0px;
-}
-.search-results .one-search-result{
-    display: block;
-    padding: 7px 0px;
-}
-.search-results .one-search-result.with-image{
-    display: table;
-}
-.search-results .one-search-result.with-image .result-image{
-    position: relative;
-    display: table-cell;
-    vertical-align: top;
-    width: 50px;
-}
-.search-results .one-search-result.with-image .result-image span{
-    display: inline-block;
-    width: 50px;
-    height: 50px;
-    background-size: cover;
-    background-repeat: no-repeat;
-}
-.search-results .one-search-result.with-image .result-title{
-    position: relative;
-    display: table-cell;
-    vertical-align: top;
-    padding-left: 20px;
-}
-/* Messages */
-.messages-btn{
-    position: absolute;
-    top: 50px;
-    right: 185px;
-    width: 40px;
-    height: 40px;
-    background-repeat: no-repeat;
-    background-position: -40px 0px;
-}
-.messages-btn .unread-message{
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
-    top: 0px;
-    right: 0px;
-}
-.messagesWrap{
-    position: absolute;
-    right: 70px;
-    top: 125px;
-    width: 390px;
-    z-index: 2;
-}
-.messagesWrap .triangle{
-    position: absolute;
-    right: 118px;
-    top: -16px;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    display: inline-block;
-}
-.messagesWrap .chatsWrap{
-    position: relative;
-    height: 500px;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-.messagesWrap .chatsWrap > div{
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-.messagesWrap .one-message{
-    position: relative;
-    font-size: 14px;
-    padding: 15px;
-    cursor: pointer;
-}
-.messagesWrap .one-message:last-of-type{
-    border-bottom: 0px;
-}
-.messagesWrap .one-message .name{
-    font-weight: 600;
-    margin-bottom: 5px;
-}
-.messagesWrap .one-message .date{
-    position: absolute;
-    right: 15px;
-    top: 15px;
-    font-size: 12px;
-}
-.chatsWrap .chat-header{
-    position: absolute;
-    top: 0px;
-    width: 100%;
-    padding: 15px;
-}
-.chatsWrap .chat-header span{
-    display: inline-block;
-    font-size: 14px;
-    font-weight: 600;
-}
-.chatsWrap .chat-header .delete-btn{
-    cursor: pointer;
-    position: absolute;
-    z-index: 2;
-    top: 12px;
-    right: 15px;
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-repeat: no-repeat;
-    background-size: 30px 30px;
-    border-radius: 4px;
-}
-.chatsWrap .chat-header .back-btn{
-    cursor: pointer;
-    position: absolute;
-    z-index: 2;
-    top: 12px;
-    right: 55px;
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background-repeat: no-repeat;
-    background-size: 30px 30px;
-    border-radius: 4px;
-}
-.chatsWrap .all-chats{
-    position: absolute;
-    top: 54px;
-    bottom: 88px;
-    width: 100%;
-    overflow: auto;
-    padding: 20px;
-}
-.all-chats .one-chat{
-    position: relative;
-    display: block;
-    margin-bottom: 15px;
-    text-align: right;
-}
-.all-chats .one-chat:last-of-type{
-    margin-bottom: 0px;
-}
-.all-chats .one-chat .chat-text{
-    position: relative;
-    display: inline-block;
-    padding: 10px 15px;
-    border-radius: 4px;
-    max-width: 300px;
-    text-align: left;
-    font-size: 14px;
-    word-wrap: break-word;
-    word-break: break-word;
-}
-.all-chats .one-chat.system-chat{
-    text-align: center;
-}
-.all-chats .one-chat.user-chat{
-    text-align: left;
-}
-.chatsWrap .new-chat{
-    position: absolute;
-    width: 100%;
-    bottom: 0px;
-    padding: 15px;
-}
-.new-chat textarea{
-    position: relative;
-    display: inline-block;
-    width: 100%;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    padding: 14px;
-    min-height: 48px;
-    margin: 0px;
-    font-size: 14px;
-    box-shadow: none;
-    resize: none;
-    outline: none;
-    -webkit-appearance: none;
-}
-/* Help */
-.help-btn{
-    position: absolute;
-    top: 50px;
-    right: 255px;
-    width: 40px;
-    height: 40px;
-    background-repeat: no-repeat;
-    background-position: -80px 0px;
-}
+
 /* Nav profile */
 .navProfile{
     position: absolute;
@@ -432,19 +176,11 @@ select, .orderType{
 .user-profile{
     right: 120px !important;
 }
-.profile-image,
-.user-image{
-    display: inline-block;
-    background-size: cover;
-    background-repeat: no-repeat;
-    border: 0px;
-}
-.profile-initials,
-.user-initials{
+
+.profile-initials{
     display: inline-block;
     text-align: center;
 }
-.navProfile .profile-image,
 .navProfile .profile-initials{
     width: 40px;
     height: 40px;
@@ -467,25 +203,7 @@ select, .orderType{
     padding: 5px 0px;
     z-index: 2;
 }
-.navMore .triangle{
-    right: 34px;
-    position: absolute;
-    top: -10px;
-}
-.navMore .triangle-outer{
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    display: inline-block;
-    position: absolute;
-}
-.navMore .triangle-inner{
-    top: 1px;
-    left: 1px;
-    border-left: 9px solid transparent;
-    border-right: 9px solid transparent;
-    display: inline-block;
-    position: absolute;
-}
+
 .navMore a{
     display: inline-block;
     width: 100%;
@@ -494,11 +212,7 @@ select, .orderType{
     padding: 12px 20px;
     text-transform: capitalize;
 }
-.navMore a.nav-my-insights,
-.navMore a.nav-archived{
-    margin-bottom: 10px;
-    padding-bottom: 22px;
-}
+
 /* Main wrap */
 .mainWrap{
     position: absolute;
@@ -575,8 +289,8 @@ select, .orderType{
     height: 40px;
     background-repeat: no-repeat;
 }
-/* Courses */
-.one-course, .one-pizza{
+
+.one-pizza{
     position: relative;
     display: block;
     width: 100%;
@@ -585,79 +299,8 @@ select, .orderType{
     border-radius: 20px;
     margin-bottom: 20px;
 }
-.one-course .course-content,
-.one-block .container-content{
-    position: relative;
-    width: 500px;
-}
-.one-block .container-content{
-    padding: 10px;
-}
-.one-course .course-title{
-    display: inline-block;
-    margin-bottom: 10px;
-    font-family: 'IBM Plex Serif', serif;
-    font-weight: 600;
-    font-size: 30px;
-    letter-spacing: 0.5px;
-}
-.one-course .course-tagline{
-    font-size: 16px;
-    word-wrap: break-word;
-    word-break: break-word;
-    -webkit-line-clamp: 7;
-    -webkit-box-orient: vertical;
-    max-height: 160px;
-    overflow: hidden;
-}
-.one-course .course-image,
-.one-block .container-image{
-    position: absolute;
-    right: 0px;
-    top: 0px;
-    width: 400px;
-    height: 400px;
-    background-repeat: no-repeat;
-    background-size: cover;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-}
-.one-block .container-image{
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-}
-.course-tags{
-    position: relative;
-    margin-top: 20px;
-    font-weight: 600;
-    font-size: 14px;
-}
-.course-tags span{
-    display: inline-block;
-    margin: 0px 5px 0px 0px;
-    padding: 0px;
-    font-weight: 600;
-}
-.one-course .course-tags .tag-arrow:last-of-type{
-    display: none;
-}
-.course-tags span.tag-arrow{
-    margin-right: 7px;
-}
-/* Progress Btn */
-.progress-btn{
-    position: relative;
-    display: block;
-    margin-bottom: 20px;
-    padding: 20px;
-    border-radius: 10px;
-    font-family: 'IBM Plex Serif', serif;
-    font-weight: 600;
-    font-size: 20px;
-    letter-spacing: 0.5px;
-    text-align: center;
-    cursor: pointer;
-}
+
+
 /* Blocks */
 .all-blocks{
     position: relative;
@@ -672,10 +315,7 @@ select, .orderType{
     margin-bottom: 20px;
     width: 65%;
 }
-.one-block.is-comic{
-    border-radius: 0px;
-    background-color: transparent;
-}
+
 .one-block .container-block{
     padding: 20px;
 }
@@ -684,438 +324,17 @@ select, .orderType{
     content: '';
     clear: both;
 }
-.one-block.is-comic .container-block{
-    padding: 0px;
-}
+
 .one-block .container-block.container-item-block{
     cursor: pointer;
     height: 400px;
 }
-.one-block .block-table{
-    position: relative;
-    display: table;
-    width: 100%;
-}
-.one-block .block-type{
-    display: table-cell;
-    width: 150px;
-}
-.one-block .block-details{
-    position: relative;
-    display: table-cell;
-    vertical-align: top;
-}
-.one-block .block-title{
-    font-weight: 600;
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-.container-content .block-title{
-    font-family: 'IBM Plex Serif', serif;
-    font-weight: 600;
-    font-size: 30px;
-    letter-spacing: 0.5px;
-}
-.one-block .block-text{
-    position: relative;
-    margin: 10px 0px 20px;
-}
-.one-block.is-comic .block-text{
-    margin: 0px;
-    padding: 20px;
-    font-family: 'Back Issues BB';
-    font-weight: normal;
-    font-style: normal;
-}
-.one-block.is-comic .comic-image{
-    position: relative;
-    display: inline-block;
-}
-.one-block .block-provider{
-    display: inline-block;
-    padding: 5px 10px;
-    border-radius: 4px;
-}
-.one-block .block-provider a{
-    font-weight: 600;
-    font-size: 14px;
-}
-.one-block .block-embed{
-    position: relative;
-    margin: 0 auto;
-}
-.one-block .block-embed > iframe{
-    position: relative;
-    display: block;
-    margin: 20px auto;
-    width: 960px;
-}
-.one-block .block-details.with-embed{
-    position: relative;
-    display: block;
-    padding: 20px;
-}
-.one-block .block-image{
-    position: relative;
-    display: table-cell;
-    vertical-align: top;
-    width: 400px;
-    border-radius: 10px;
-    background-size: cover;
-    background-repeat: no-repeat;
-}
-.one-block .block-image.image-left{
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
-.one-block .gif-block video{
-    border-radius: 5px;
-}
-.one-block .button-block{
-    position: relative;
-    display: block;
-    padding: 20px;
-    font-family: 'IBM Plex Serif', serif;
-    font-weight: 600;
-    font-size: 20px;
-    letter-spacing: 0.5px;
-}
-.one-block .divider-block{
-    position: relative;
-    display: block;
-    padding: 50px 0px;
-    border-radius: 0px;
-}
-.divider-block .divider-line{
-    position: absolute;
-    top: 50%;
-    width: 100%;
-    height: 4px;
-    border-radius: 2px;
-}
-.divider-block .divider-content{
-    position: relative;
-    display: inline-block;
-    max-width: 50%;
-    padding-right: 20px;
-}
-.divider-content .divider-text{
-    display: inline-block;
-    vertical-align: middle;
-    font-family: 'IBM Plex Serif', serif;
-    font-weight: 600;
-    font-size: 20px;
-}
-.divider-content .divider-btn{
-    display: inline-block;
-    vertical-align: middle;
-    padding: 5px 20px 4px;
-    font-weight: 600;
-    font-size: 14px;
-    border-radius: 4px;
-    margin-left: 10px;
-    cursor: pointer;
-}
-.divider-content .audio-block{
-    position: relative;
-    display: inline-block;
-    width: 400px;
-    margin-left: 20px;
-    vertical-align: middle;
-}
+
 .one-block .image-block img{
     max-width: 100%;
     border-radius: 10px;
 }
-.one-block .block-options{
-    position: relative;
-    margin-top: 20px;
-}
-.one-block .grid-block .block-options{
-    overflow: auto;
-}
-.one-block .match-options{
-    position: relative;
-    display: table;
-    width: 100%;
-}
-.one-block .block-options.block-options-left,
-.one-block .block-options.block-options-right{
-    position: relative;
-    width: 50%;
-    display: table-cell;
-    vertical-align: top;
-}
-.one-block .block-options.block-options-left{
-    border-right: 40px solid transparent;
-}
-.one-block .block-options.block-options-right{
-    border-left: 40px solid transparent;
-}
-.one-block .block-options > div{
-    position: relative;
-    display: inline-block;
-    vertical-align: top;
-    width: 200px;
-    cursor: pointer;
-    margin: 0px 20px 20px 0px;
-    border-radius: 10px;
-}
-.one-block .match-options .block-options > div{
-    width: auto;
-}
-.one-block .grid-block .block-options > div{
-    width: 400px;
-}
-.one-block .match-options .block-option{
-    display: block;
-}
-.match-block .match-colors{
-    position: absolute;
-    left: 10px;
-    top: -3px;
-    display: block;
-}
-.match-colors .one-color{
-    display: inline-block;
-    vertical-align: top;
-    height: 7px;
-    width: 20px;
-    margin-right: 3px;
-    cursor: inherit;
-    -webkit-transition: all 0.3s ease;
-    -moz-transition: all 0.3s ease;
-    transition: all 0.3s ease;
-}
-.block-options-right .match-colors .one-color:hover{
-    cursor: pointer;
-    height: 20px;
-    -webkit-transition: all 0.3s ease;
-    -moz-transition: all 0.3s ease;
-    transition: all 0.3s ease;
-}
-.one-block .block-option .block-details{
-    display: block;
-    padding: 20px;
-}
-.one-block .block-option .block-text{
-    margin: 0px;
-}
-.one-block .block-option .block-image{
-    display: block;
-    width: 200px;
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
-.one-block .grid-block .block-option .block-image{
-    width: 400px;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-.one-block .block-fills{
-    position: relative;
-}
-.one-block .block-fills .one-fill{
-    position: relative;
-    display: inline-block;
-    margin-bottom: 10px;
-}
-.one-block .block-fills .blank-fill{
-    position: relative;
-    display: inline-block;
-    width: 200px;
-    margin: 0px 10px 10px 10px;
-    padding: 10px;
-}
-.one-block .response-block .entity-text{
-    background-color: transparent;
-    border: 0px;
-    height: 200px;
-    padding: 0px;
-}
-.one-block .fill-block .entity-btn,
-.one-block .response-block .entity-btn{
-    position: relative;
-    display: inline-block;
-    left: auto;
-    right: auto;
-    bottom: auto;
-    width: auto;
-    padding: 9px 50px 8px;
-    font-size: 14px;
-    margin-right: 20px;
-}
-.one-block .remove-response{
-    display: inline-block;
-    margin-top: 10px;
-}
-.one-block .file-response .drop-area{
-    width: 100%;
-    max-width: 400px;
-    height: 400px;
-}
-.one-block .file-response .drop-area span{
-    color: inherit;
-}
-.one-block .view-file{
-    position: relative;
-    left: -20px;
-}
-.one-block .view-file .block-provider{
-    margin: 10px 0px 0px 20px;
-}
-/* File icons */
-.file-type{
-    position: relative;
-    width: 100%;
-    padding: 10px 0px;
-}
-.file-type label{
-    display: block;
-    position: absolute;
-    width: 100%;
-    bottom: 17px;
-    font-weight: 600;
-    margin: auto;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    text-align: center;
-}
-.file-type div{
-    position: relative;
-    display: block;
-    width: 150px;
-    height: 150px;
-    background-repeat: no-repeat;
-}
-.file-type .file-pdf{
-    background-position: -150px 0px;
-}
-.file-type .file-doc{
-    background-position: -300px 0px;
-}
-.file-type .file-ppt{
-    background-position: -450px 0px;
-}
-.file-type .file-xls{
-    background-position: -600px 0px;
-}
-.file-type .file-zip{
-    background-position: -750px 0px;
-}
-.file-type .file-song{
-    background-position: -900px 0px;
-}
-.file-type .file-video{
-    background-position: -1050px 0px;
-}
-.file-type .file-ai{
-    background-position: -1200px 0px;
-}
-.file-type .file-sketch{
-    background-position: -1350px 0px;
-}
-.file-type .file-psd{
-    background-position: -1500px 0px;
-}
-.file-type .file-code{
-    background-position: -1650px 0px;
-}
-.file-type .file-css{
-    background-position: -1800px 0px;
-}
-.file-download{
-    position: relative;
-    bottom: 40px;
-    text-align: center;
-    display: block;
-    padding: 5px 10px;
-    max-width: 200px;
-    margin: 0 auto;
-    font-size: 14px;
-    font-weight: 600;
-}
-/* List items */
-.list-items{
-    position: relative;
-    margin-top: 20px;
-}
-.one-list-item{
-    position: relative;
-    margin-bottom: 20px;
-}
-.overlay-items .one-list-item{
-    height: auto;
-    margin-bottom: 0px;
-}
-.one-list-item:last-of-type{
-    margin-bottom: 0px;
-}
-.one-list-item .one-list-content{
-    position: relative;
-    width: 70%;
-}
-.one-list-item .one-list-content.is-right{
-    float: right;
-}
-.one-list-item:after,
-.one-list-item .one-list-content.is-right:after{
-    display: block;
-    content: '';
-    clear: both;
-}
-.one-list-content .list-image{
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-    width: 60px;
-    height: 60px;
-    margin-right: 10px;
-    background-size: cover;
-    background-repeat: no-repeat;
-    border-radius: 30px;
-}
-.one-list-item .one-list-content.is-right .list-image{
-    margin-right: 0px;
-    margin-left: 10px;
-    float: right;
-}
-.one-list-content .list-text{
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-    width: calc(100% - 90px);
-    border-radius: 50px;
-    border-bottom-left-radius: 4px;
-    padding: 14px 28px;
-}
-.one-list-item .one-list-content.is-right .list-text{
-    border-bottom-left-radius: 50px;
-    border-bottom-right-radius: 4px;
-}
-.one-list-content .list-input{
-    display: inline-block;
-    vertical-align: top;
-    width: calc(100% - 80px);
-    border-radius: 50px;
-    border-bottom-left-radius: 4px;
-}
-.one-list-content.is-right .list-input{
-    border-bottom-left-radius: 50px;
-    border-bottom-right-radius: 4px;
-}
-/* Block art */
-.one-block.with-art > *:not(.block-actions) {
-    padding-right: 220px !important;
-}
-.one-block .block-art{
-    position: absolute;
-    right: 0px;
-    bottom: 0px;
-    width: 200px;
-    background-size: cover;
-    background-repeat: no-repeat;
-}
+
 /* Block actions */
 .one-block .block-actions{
     position: absolute;
@@ -1128,11 +347,7 @@ select, .orderType{
     -moz-transition: all 0.3s ease;
     transition: all 0.3s ease;
 }
-.one-block .block-actions.only-discuss{
-    top: auto;
-    bottom: 10px;
-    opacity: 1;
-}
+
 .one-block:hover .block-actions{
     opacity: 1;
     -webkit-transition: all 0.3s ease;
@@ -1155,11 +370,7 @@ select, .orderType{
 .block-actions span:last-of-type{
     margin-right: 0px;
 }
-.block-actions .action-show-insights a{
-    display: block;
-    width: 100%;
-    height: 100%;
-}
+
 /* Overlay */
 .overlay{
     display: none;
@@ -1197,31 +408,7 @@ select, .orderType{
     -ms-transform: translateY(-50px);
     transform: translateY(-50px);
 }
-.overlay-box.animation-box{
-    width: 100%;
-    height: 100%;
-    top: auto;
-    left: auto;
-    margin-left: auto;
-    box-shadow: inherit;
-    opacity: 1;
-    -webkit-transform: translateY(0);
-    -moz-transform: translateY(0);
-    -ms-transform: translateY(0);
-    transform: translateY(0);
-}
-.overlay-box.invited-box{
-    opacity: 1;
-    -webkit-transform: translateY(0);
-    -moz-transform: translateY(0);
-    -ms-transform: translateY(0);
-    transform: translateY(0);
-    top: 0px;
-}
-.overlay-box.new-cohort-box{
-    width: 440px;
-    margin-left: -220px;
-}
+
 /* Overlay form */
 .overlay-form{
     position: relative;
@@ -1230,58 +417,14 @@ select, .orderType{
     padding: 20px;
     vertical-align: top;
 }
-.new-course-box .overlay-form,
-.new-cohort-box .overlay-form,
+
 .new-pizza-box .overlay-form{
     padding-bottom: 100px;
 }
-.new-block-box .overlay-form,
-.block-theme-box .overlay-form,
-.discussion-box .overlay-form,
-.responses-box .overlay-form{
+.new-block-box .overlay-form{
     width: 640px;
 }
-.discussion-box.only-view .overlay-form{
-    width: 880px;
-}
-.course-members-box .overlay-form{
-    width: 640px;
-}
-.settings-box .overlay-form{
-    padding-bottom: 100px;
-}
-.invited-box .overlay-input{
-    position: relative;
-}
-.invited-box .overlay-input a{
-    position: absolute;
-    display: inline-block;
-    top: 10px;
-    right: 10px;
-    width: 165px;
-    padding: 9px 20px 8px;
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    letter-spacing: .025em;
-    border-radius: 50px;
-}
-.insight-box .overlay-form{
-    width: 880px;
-}
-.block-ifttt-box .one-block{
-    display: block;
-    background-color: transparent;
-    border-radius: 0px;
-    margin-bottom: 0px;
-}
-.block-ifttt-box .one-block.fill-block{
-    margin-top: 20px;
-}
-.overlay-box.animation-box .overlay-form{
-    width: 100%;
-    padding: 0px;
-}
+
 .overlay-box h2.message{
     font-family: 'IBM Plex Serif', serif;
     font-weight: 600;
@@ -1298,21 +441,7 @@ select, .orderType{
     outline: none;
     border-radius: 4px;
 }
-.entity-text{
-    position: relative;
-    width: 100%;
-    font-size: 16px;
-    height: 100px;
-    box-shadow: none;
-    padding: 14px;
-    border: 2px solid transparent;
-    border-radius: 4px;
-    outline: none;
-    -webkit-appearance: none;
-    resize: none;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
+
 .overlay-label{
     margin: 15px 0px 5px;
     font-weight: 600;
@@ -1321,22 +450,7 @@ select, .orderType{
 .overlay-label b{
     font-weight: 600;
 }
-.overlay-checkbox span{
-    position: relative;
-    top: 1px;
-    font-size: 14px;
-    padding-left: 5px;
-}
-.overlay-checkbox.isright-label{
-    display: block;
-    margin: 10px 0px;
-}
-.overlay-radio label{
-    position: relative;
-    top: 1px;
-    font-size: 14px;
-    margin-right: 5px;
-}
+
 .entity-btn{
     position: absolute;
     left: 20px;
@@ -1354,48 +468,14 @@ select, .orderType{
     cursor: pointer;
     -webkit-appearance: none;
 }
-.new-block-box .entity-btn,
-.block-theme-box .entity-btn,
-.responses-box .entity-btn,
-.insight-box .entity-btn{
+.new-block-box .entity-btn{
     position: relative;
     left: auto;
     right: auto;
     bottom: auto;
     width: 200px;
 }
-.insight-box .entity-btn{
-    width: 100%;
-}
-.entity-done{
-    position: relative;
-    width: 200px;
-    margin-top: 10px;
-    padding: 15px 20px 14px;
-    font-weight: 600;
-    font-size: 16px;
-    text-align: center;
-    letter-spacing: .025em;
-    outline: none;
-    border: 0px;
-    border-radius: 4px;
-    cursor: pointer;
-    -webkit-appearance: none;
-}
-.form-btn{
-    position: relative;
-    display: inline-block;
-    margin: 10px 0px;
-    padding: 9px 30px 8px;
-    font-weight: 600;
-    font-size: 14px;
-    text-align: center;
-    outline: none;
-    border: 0px;
-    border-radius: 4px;
-    cursor: pointer;
-    -webkit-appearance: none;
-}
+
 /* New block area */
 .new-block-area{
     position: relative;
@@ -1408,119 +488,7 @@ select, .orderType{
 .form-text > div{
     min-height: 300px;
 }
-.rich-text button{
-    display: none;
-}
-.rich-text table{
-    border-collapse: collapse;
-    table-layout: fixed;
-}
-.rich-text th,
-.rich-text td{
-    padding: 5px;
-    white-space: normal;
-    word-break: break-all;
-    word-wrap: break-word;
-    width: auto;
-}
-.rich-text div,
-.rich-text p,
-.rich-text figure,
-.rich-text h1,
-.rich-text h2,
-.rich-text h3,
-.rich-text h4,
-.rich-text h5,
-.rich-text h6,
-.rich-text spoiler{
-    display: block;
-    margin-bottom: 20px;
-}
-.rich-text h1{
-    font-size: 22px;
-    font-family: 'IBM Plex Serif', serif;
-    font-weight: 600;
-}
-.rich-text h2{
-    font-size: 20px;
-}
-.rich-text h3{
-    font-size: 18px;
-}
-.rich-text blockquote{
-    padding-left: 30px;
-    margin-bottom: 20px;
-}
-.rich-text strong,
-.rich-text b,
-.rich-text strong span,
-.rich-text b span{
-    font-weight: 600;
-}
-.rich-text strong em,
-.rich-text strong i,
-.rich-text b em,
-.rich-text b i,
-.rich-text em strong,
-.rich-text em b,
-.rich-text i strong,
-.rich-text i b{
-    font-weight: 600;
-    font-style: italic;
-}
-.rich-text em,
-.rich-text i{
-    font-style: italic;
-}
-.rich-text img{
-    display: block;
-    max-width: 100%;
-    margin: 20px 0px;
-}
-.rich-text ul,
-.rich-text ol{
-    margin: 10px 0px 10px 20px;
-}
-.rich-text li{
-    margin-bottom: 10px;
-}
-.rich-text li:last-of-type{
-    margin-bottom: 0px;
-}
-.rich-text pre{
-    padding: 20px;
-    margin-bottom: 20px;
-    white-space: normal;
-}
-.rich-text hr{
-    display: block;
-    height: 1px;
-    border: 0;
-    margin: 20px 0px;
-    padding: 0;
-}
-.rich-text > iframe{
-    width: 100%;
-    max-height: 500px;
-}
-.rich-text > *:last-of-type{
-    margin-bottom: 0px;
-}
-/* Link preview */
-.link-preview{
-    display: none;
-    margin-top: 10px;
-}
-.preview-title{
-    font-weight: 600;
-    font-size: 14px;
-}
-.preview-shots{
-    display: none;
-    position: relative;
-    padding: 15px 0px;
-    height: 120px;
-}
+
 .one-shot{
     position: relative;
     width: 100px;
@@ -2156,9 +1124,7 @@ select, .orderType{
     width: 440px;
     padding: 20px;
 }
-.new-cohort-box .overlay-about{
-    width: 0px;
-}
+
 .new-block-box .overlay-about,
 .block-theme-box .overlay-about,
 .course-members-box .overlay-about,
@@ -2179,9 +1145,7 @@ select, .orderType{
 .invited-box .overlay-about{
     background: transparent;
 }
-.insight-box .overlay-about{
-    width: 0px;
-}
+
 .drop-area{
     position: relative;
     text-align: center;
@@ -3165,19 +2129,7 @@ select, .orderType{
 }
 /* Responsive CSS */
 @media (min-width: 660px) and (max-width: 1100px){
-    .one-course{
-        height: 350px;
-    }
-    .one-course .course-content,
-    .one-block .container-content{
-        width: auto;
-        padding-right: 350px;
-    }
-    .one-course .course-image,
-    .one-block .container-image{
-        height: 350px !important;
-        width: 350px;
-    }
+ 
     .one-block{
         width: 100% !important;
     }
@@ -3185,10 +2137,7 @@ select, .orderType{
         width: 660px;
         margin-left: -330px;
     }
-    .overlay-box.new-cohort-box{
-        width: 330px;
-        margin-left: -165px;
-    }
+   
     .overlay-form,
     .overlay-about{
         width: 330px;
@@ -3295,8 +2244,7 @@ select, .orderType{
         width: 300px;
         height: 170px;
     }
-    .overlay-box,
-    .overlay-box.new-cohort-box{
+    .overlay-box{
         display: block;
         width: 100%;
         height: auto;
