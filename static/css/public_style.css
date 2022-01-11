@@ -1,12 +1,4 @@
-/* Font face */
-@font-face {
-    font-family: 'Back Issues BB';
-    src: url('fonts/BackIssuesBB.woff2') format('woff2'),
-        url('fonts/BackIssuesBB.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-/* Page CSS */
+
 html{
     position: relative;
     width:  100%;
@@ -63,7 +55,7 @@ input, a, textarea{
 input[type='checkbox'] {
     cursor: pointer;
 }
-/* Utilities */
+
 .u-hide{
     display: none !important;
 }
@@ -107,7 +99,7 @@ input[type='checkbox'] {
     max-width: 1400px;
     padding: 50px 0px;
 }
-/* Header wrap */
+
 .headerWrap{
     -webkit-transition: all 0.3s ease;
     -moz-transition: all 0.3s ease;
@@ -177,7 +169,7 @@ input[type='checkbox'] {
     background-color: transparent;
     color: #fff;
 }
-/* Main wrap */
+
 .mainWrap{
     position: absolute;
     top: 150px;
@@ -185,7 +177,7 @@ input[type='checkbox'] {
     width: 100%;
     padding: 20px;
 }
-/* Main header */
+
 .mainHeader .sectionBox{
     padding: 80px 40px;
 }
@@ -240,7 +232,7 @@ input[type='checkbox'] {
     box-shadow: 0px 0px 20px #e9e9ef;
 }
 
-/* Blocks */
+
 .all-blocks{
     position: relative;
     text-align: center;
@@ -268,27 +260,7 @@ input[type='checkbox'] {
     content: '';
     clear: both;
 }
-.one-block.is-comic .container-block{
-    padding: 0px;
-}
-.one-block .container-block.container-item-block{
-    cursor: pointer;
-    height: 400px;
-}
-.one-block .block-table{
-    position: relative;
-    display: table;
-    width: 100%;
-}
-.one-block .block-type{
-    display: table-cell;
-    width: 150px;
-}
-.one-block .block-details{
-    position: relative;
-    display: table-cell;
-    vertical-align: top;
-}
+
 .one-block .block-title{
     font-weight: 600;
     font-size: 18px;
@@ -301,158 +273,6 @@ input[type='checkbox'] {
     letter-spacing: 0.5px;
 }
 
-.one-block .divider-block{
-    position: relative;
-    display: block;
-    padding: 50px 0px;
-    border-radius: 0px;
-    background-color: #1A1A1A;
-}
-
-.one-block .block-options.block-options-left,
-.one-block .block-options.block-options-right{
-    position: relative;
-    width: 50%;
-    display: table-cell;
-    vertical-align: top;
-}
-.one-block .block-options.block-options-left{
-    border-right: 40px solid transparent;
-}
-.one-block .block-options.block-options-right{
-    border-left: 40px solid transparent;
-}
-.one-block .block-options > div{
-    position: relative;
-    display: inline-block;
-    vertical-align: top;
-    width: 200px;
-    cursor: pointer;
-    margin: 0px 20px 20px 0px;
-    background-color: rgba(0,0,0,0.2);
-    border-radius: 10px;
-}
-.one-block .match-options .block-options > div{
-    width: auto;
-}
-.one-block .grid-block .block-options > div{
-    width: 400px;
-}
-.one-block .block-options > div.selected{
-    background-color: #fff;
-    color: #1A1A1A;
-}
-.one-block .match-options .block-option{
-    display: block;
-}
-.match-block .match-colors{
-    position: absolute;
-    left: 10px;
-    top: -3px;
-    display: block;
-}
-.match-colors .one-color{
-    display: inline-block;
-    vertical-align: top;
-    height: 7px;
-    width: 20px;
-    margin-right: 3px;
-    cursor: inherit;
-    -webkit-transition: all 0.3s ease;
-    -moz-transition: all 0.3s ease;
-    transition: all 0.3s ease;
-}
-.block-options-right .match-colors .one-color:hover{
-    cursor: pointer;
-    height: 20px;
-    -webkit-transition: all 0.3s ease;
-    -moz-transition: all 0.3s ease;
-    transition: all 0.3s ease;
-}
-.one-block .block-option .block-details{
-    display: block;
-    padding: 20px;
-}
-.one-block .block-option .block-text{
-    margin: 0px;
-}
-.one-block .block-option .block-image{
-    display: block;
-    width: 200px;
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
-.one-block .grid-block .block-option .block-image{
-    width: 400px;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-.one-block .block-fills{
-    position: relative;
-}
-.one-block .block-fills .one-fill{
-    position: relative;
-    display: inline-block;
-    margin-bottom: 10px;
-}
-.one-block .block-fills .blank-fill{
-    position: relative;
-    display: inline-block;
-    width: 200px;
-    background-color: rgba(0,0,0,0.2);
-    color: #fff;
-    margin: 0px 10px 10px 10px;
-    padding: 10px;
-}
-.one-block .response-block .entity-text{
-    background-color: transparent;
-    color: #fff;
-    border: 0px;
-    height: 200px;
-    padding: 0px;
-}
-.one-block .fill-block .entity-btn,
-.one-block .response-block .entity-btn{
-    position: relative;
-    display: inline-block;
-    left: auto;
-    right: auto;
-    bottom: auto;
-    width: auto;
-    padding: 9px 50px 8px;
-    font-size: 14px;
-    margin-right: 20px;
-}
-.one-block .file-response .drop-area{
-    width: 100%;
-    max-width: 400px;
-    height: 400px;
-    border-color: #5A5A5A;
-}
-.one-block .file-response .drop-area span{
-    color: inherit;
-}
-.one-block .view-file{
-    position: relative;
-    left: -20px;
-}
-.one-block .view-file .block-provider{
-    margin: 10px 0px 0px 20px;
-}
-
-
-/* Block art */
-.one-block.themed-block a,
-.one-block.themed-block .entity-title,
-.one-block.themed-block .entity-text{
-    color: #1A1A1A !important;
-}
-.one-block.themed-block .rich-text a{
-    border-bottom: 1px dotted #1A1A1A;
-}
-.one-block.themed-block .rich-text a:hover{
-    border-bottom: 1px solid #1A1A1A;
-}
 
 /* Block actions */
 .one-block .block-actions{
@@ -466,44 +286,14 @@ input[type='checkbox'] {
     -moz-transition: all 0.3s ease;
     transition: all 0.3s ease;
 }
-.one-block .block-actions.only-discuss{
-    top: auto;
-    bottom: 10px;
-    opacity: 1;
-}
+
 .one-block:hover .block-actions{
     opacity: 1;
     -webkit-transition: all 0.3s ease;
     -moz-transition: all 0.3s ease;
     transition: all 0.3s ease;
 }
-.divider-block:hover  + .block-actions{
-    opacity: 0;
-}
-.block-actions span{
-    display: inline-block;
-    cursor: pointer;
-    vertical-align: top;
-    background-color: #151515;
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
-    margin-right: 2px;
-    background-image: url('../images/app/action-icons.png');
-    background-repeat: no-repeat;
-}
-.block-actions span:last-of-type{
-    margin-right: 0px;
-}
-.block-actions span:hover{
-    background-color: #ffd370;
-}
-.block-actions .action-discuss{
-    background-position: -160px 0px;
-}
-.block-actions .action-discuss:hover{
-    background-position: -160px -40px;
-}
+
 /* Overlay */
 .overlay{
     display: none;
@@ -560,10 +350,7 @@ input[type='checkbox'] {
 .forgot-box .overlay-form{
     background-image: linear-gradient(#625A71, #827897);
 }
-.terms-box .overlay-form{
-    width: 880px;
-    background-image: linear-gradient(#336081, #5E8AAB);
-}
+
 .overlay-form h2.message{
     color: #fff;
     font-family: 'IBM Plex Serif', serif;
@@ -732,23 +519,7 @@ input[type='checkbox'] {
     background-color: rgba(255, 255, 255, 0.3);
     border-radius: 4px;
 }
-/* Terms */
-.terms-text p{
-    font-size: 14px;
-    margin-bottom: 10px;
-}
-.terms-text b{
-    font-weight: 600;
-}
-.terms-text ul{
-    font-size: 14px;
-    padding-left: 40px;
-    margin-bottom: 10px;
-}
-.terms-text li{
-    margin-bottom: 5px;
-    font-size: 14;
-}
+
 /* Overlay form */
 .entity-title{
     width: 100%;
@@ -761,25 +532,8 @@ input[type='checkbox'] {
     outline: none;
     border-radius: 4px;
 }
-.entity-text{
-    position: relative;
-    width: 100%;
-    font-size: 16px;
-    height: 100px;
-    background-color: #fff;
-    box-shadow: none;
-    padding: 14px;
-    border: 2px solid transparent;
-    border-radius: 4px;
-    outline: none;
-    color: #1A1A1A;
-    -webkit-appearance: none;
-    resize: none;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-.entity-title:focus,
-.entity-text:focus{
+
+.entity-title:focus{
     border-color: #31eda8;
 }
 .entity-title.hasError{
@@ -825,12 +579,6 @@ input[type='checkbox'] {
     -webkit-appearance: none;
 }
 
-/* One item */
-.one-item{
-    position: relative;
-    padding: 15px 0px;
-    border-bottom: 1px dotted #5A5A5A;
-}
 
 /* Empty state */
 .zero-items{

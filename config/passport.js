@@ -1,8 +1,7 @@
 //Passport authentication strategies
 var LocalStrategy = require('passport-local').Strategy;
 var RememberMeStrategy = require('passport-remember-me').Strategy;
-//Async
-var async = require('async');
+
 //load the User model
 var User = require('../app/models/user').User;
 var LoginToken = require('../app/models/logintoken').LoginToken;
@@ -11,8 +10,7 @@ var validator = require('validator');
 //UUID
 const { v4: uuidv4 } = require('uuid');
 //Load crypto for hashing
-var crypto = require('crypto'),
-    shortid = require('shortid');
+var crypto = require('crypto');
 //Passport function
 module.exports = function(passport){
     //passport needs ability to serialize and unserialize users out of session
@@ -31,16 +29,7 @@ module.exports = function(passport){
         passwordField: 'password',
         passReqToCallback: true //allows us to pass in the req from our route
     }, function(req, email, password, done){
-        // console.log(req, email, password)
-        //Get unique name
-        // const {uniqueNamesGenerator, adjectives, animals, colors, names} = require('unique-names-generator');
-        // const randomName = uniqueNamesGenerator({
-        //     dictionaries: [adjectives, animals, colors, names],
-        //     length: 4,
-        //     separator: "-"
-        // });
-        // email = randomName.toLowerCase();
-        //async - User.findOne wont fire unless data is sent back
+        
         process.nextTick(function(){
             User.findOne({'email': email}, function(err, existingUser){
                 if(err) return done(err);
@@ -53,7 +42,6 @@ module.exports = function(passport){
                     newUser.password = newUser.generateHash(password);
                     newUser.name = req.body.name;
                     newUser.initials = newUser.name.split(' ').map(function (s) { return s.charAt(0); }).join('').toUpperCase();
-                    // newUser.username = shortid.generate();
                     newUser.age = req.body.age;
                     newUser.contact = req.body.contact;
                     newUser.consent = true;
