@@ -47,7 +47,7 @@
         "speakingurl": "14.0.1",
         "stripe": "^8.195.0",
         "uuid": "8.0.0",
-        "validator": "13.0.0",
+        "validator": "13.7.0",
         "xml": "1.0.1"
     },
     "devDependencies": {
