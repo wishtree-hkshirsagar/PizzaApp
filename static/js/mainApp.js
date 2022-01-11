@@ -561,7 +561,7 @@ ProjectManager.module('ProjectApp.EntityViews', function (EntityViews, ProjectMa
                 $('#cart-counter').text(totalQty);
             }
 
-            this.$el.width('100%');
+            // this.$el.width('100%');
             
         },
         events: {
@@ -815,13 +815,13 @@ ProjectManager.module('ProjectApp.EntityController', function (EntityController,
                             },
                             {
                                 data: null, class: 'order-dt-orders', render: function (data) {
-
+                                    console.log(data);
                                     return '<a class="show-order js-show-order" href="/order/' + data.slug + '">'+ data.slug +'</a>';
                                 }
                             },
                             {
                                 data: null, class: 'order-dt-name', render: function (data) {
-                                        
+                                        console.log(data);
                                         return data.customerId.name;
                                 }
                             },

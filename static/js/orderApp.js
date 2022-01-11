@@ -204,7 +204,7 @@ OrderManager.module('OrderApp.EntityViews', function (EntityViews, OrderManager,
         initialize: function(){
             console.log(this.model);
             this.$el.attr('data-id', this.model.get('_id'));
-            this.$el.width('100%');
+            // this.$el.width('100%');
         }
     });
 

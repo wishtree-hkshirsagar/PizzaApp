@@ -308,7 +308,7 @@ CartManager.module('CartApp.EntityViews', function (EntityViews, CartManager, Ba
             $('#cart-counter').text(totalQty);
            
            
-            this.$el.width('100%');
+            // this.$el.width('100%');
            
         }
     });

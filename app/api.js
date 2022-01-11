@@ -4,7 +4,6 @@ var util = require('util'),
     mongoose = require('mongoose'),
     validator = require('validator'),
     getSlug = require('speakingurl'),
-    linkifyHtml = require('linkifyjs/html'),
     shortid = require('shortid'),
     multer = require('multer'),
     fs = require('fs'),
@@ -262,7 +261,7 @@ var _getAdminOrders = async function(req, res) {
         await Order.find({ status: {$ne: 'completed'}}, 
         null,
         {sort: { 'createdAt': -1}}).populate('customerId','-password').exec((error, orders)=> {
-            // console.log('orders', orders)
+            console.log('265', orders)
             
             if (Object.prototype.hasOwnProperty.call(req.query, "start")) {
                 const columns = ["srno", "orderId", "customerName", "address", "status", "placedAt"];
@@ -297,6 +296,7 @@ var _getAdminOrders = async function(req, res) {
                         let skip = columnLength * (showPage - 1);
                         let limit = parseInt(columnLength, 10);
                         Order.find(searchStr).skip(skip).limit(limit).sort(sortCriteria).populate('customerId','-password').exec((err, results) => {
+                            console.log('300',results);
                             if (err) {
                                 console.log('error while getting results'+err);
                                 return;
@@ -571,17 +571,17 @@ var _orderPizza = function(req, res){
                                 placedOrder.paymentType = paymentType
                                 placedOrder.save().then((order) => {
                                     console.log('587', order)
-                                    // delete req.session.cart
+                                    delete req.session.cart
                                     return res.json({ message : 'Payment successful, Order placed successfully' });
                                 }).catch((error) => {
                                     console.log(error)
                                 })
                             }).catch((error) => {
-                                // delete req.session.cart
+                                delete req.session.cart
                                 return res.json({ message : 'OrderPlaced but payment failed, You can pay at delivery time' });
                             })
             } else {
-                // delete req.session.cart
+                delete req.session.cart
                 return res.json({ message : 'Order placed succesfully' });
             }
         })

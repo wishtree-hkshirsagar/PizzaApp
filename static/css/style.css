@@ -287,11 +287,12 @@ select, .orderType{
 .one-pizza{
     position: relative;
     display: block;
-    width: 100%;
+    width: 75%;
     height: 400px;
     padding: 50px;
     border-radius: 20px;
     margin-bottom: 20px;
+    margin-left: 165px;
 }
 
 .all-blocks{
@@ -305,7 +306,7 @@ select, .orderType{
     padding: 0px;
     border-radius: 10px;
     margin-bottom: 20px;
-    width: 65%;
+    width: 75%;
 }
 
 .one-block .container-block{
@@ -315,6 +316,11 @@ select, .orderType{
     display: block;
     content: '';
     clear: both;
+}
+
+.container-block .block-title{
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .one-block .container-block.container-item-block{

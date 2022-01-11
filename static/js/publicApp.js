@@ -548,7 +548,7 @@ PublicManager.module('PublicApp.EntityViews', function (EntityViews, PublicManag
                 console.log(this.model.get('item'))
             }
             
-            this.$el.width('100%');
+            // this.$el.width('100%');
             
            
         },
